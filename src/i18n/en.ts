@@ -9,6 +9,21 @@ const en = {
       "psst  — This probably isn't what your app looks like. (Unless your designer handed you these screens, and in that case, ship it!)",
     readyForLaunch: "Your app, almost ready for launch!",
     exciting: "(ohh, this is exciting!)",
+    letsGo: "Enter Yze!",
+  },
+  bottomNavigator: {
+    homeTab: "Home",
+    settingsTab: "Settings",
+  },
+  loginScreen: {
+    logIn: "Go ahead, log in!",
+    enterDetails: "Sign in to your account and collect achievements!",
+    emailFieldLabel: "Email",
+    passwordFieldLabel: "Password",
+    emailFieldPlaceholder: "Enter your email address",
+    passwordFieldPlaceholder: "Super secret password here",
+    tapToLogIn: "Enter Yze - the office league",
+    hint: "Hint: you can use any email address and your favorite password :)",
   },
   errorScreen: {
     title: "Something went wrong!",
