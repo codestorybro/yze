@@ -1,6 +1,8 @@
-import { useSession } from "@/store/ctx"
+import { ComponentType, useEffect, useMemo, useRef, useState } from "react"
+// eslint-disable-next-line no-restricted-imports
+import { TextInput, ViewStyle, Image, ImageStyle, StatusBar, View, Pressable } from "react-native"
 import { router } from "expo-router"
-import { TextInput, TextStyle, ViewStyle } from "react-native"
+
 import {
   Button,
   PressableIcon,
@@ -9,40 +11,35 @@ import {
   TextFieldAccessoryProps,
   Text,
 } from "@/components"
+import { AnimatedSvgIcon } from "@/components/AnimatedSvgIcon"
+import { SvgIconPaths } from "@/components/AnimatedSvgIcon/svgsPaths"
+import { useSession } from "@/store/ctx"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
-import { ComponentType, useMemo, useRef, useState } from "react"
 
 export default function SignIn() {
   const { signIn } = useSession()
+  const LogoIconRef = useRef(null)
   const authPasswordInput = useRef<TextInput>(null)
-  const [attemptsCount, setAttemptsCount] = useState(0)
   const [authEmail, setAuthEmail] = useState("")
   const [authPassword, setAuthPassword] = useState("")
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
-  const [isSubmitted, setIsSubmitted] = useState(false)
+
   const {
     themed,
     theme: { colors },
   } = useAppTheme()
 
-  // const error = isSubmitted ? validationError : ""
+  useEffect(() => {
+    LogoIconRef?.current?.animate()
+  }, [])
 
-  function login() {
-    setIsSubmitted(true)
-    setAttemptsCount(attemptsCount + 1)
-
+  const login = () => {
     signIn()
     router.replace("/")
 
-    // Make a request to your server to get an authentication token.
-    // If successful, reset the fields and set the token.
-    setIsSubmitted(false)
     setAuthPassword("")
     setAuthEmail("")
-
-    // We'll mock this with a fake token.
-    // setAuthToken(String(Date.now()))
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
@@ -62,79 +59,98 @@ export default function SignIn() {
   )
 
   return (
-    <Screen
-      preset="auto"
-      contentContainerStyle={themed($screenContentContainer)}
-      safeAreaEdges={["top", "bottom"]}
-    >
-      <Text testID="login-heading" tx="loginScreen:logIn" preset="heading" style={themed($logIn)} />
-      <Text tx="loginScreen:enterDetails" preset="subheading" style={themed($enterDetails)} />
-      {attemptsCount > 2 && (
-        <Text tx="loginScreen:hint" size="sm" weight="light" style={themed($hint)} />
-      )}
-
-      <TextField
-        value={authEmail}
-        onChangeText={setAuthEmail}
-        containerStyle={themed($textField)}
-        autoCapitalize="none"
-        autoComplete="email"
-        autoCorrect={false}
-        keyboardType="email-address"
-        labelTx="loginScreen:emailFieldLabel"
-        placeholderTx="loginScreen:emailFieldPlaceholder"
-        // helper={error}
-        // status={error ? "error" : undefined}
-        // onSubmitEditing={() => authPasswordInput.current?.focus()}
+    <Screen preset="fixed" safeAreaEdges={["bottom"]} backgroundColor="white">
+      <StatusBar barStyle="light-content" />
+      <Image
+        source={require("../../assets/images/background.png")}
+        style={themed($backgroundImage)}
+        resizeMode="stretch"
       />
 
-      <TextField
-        ref={authPasswordInput}
-        value={authPassword}
-        onChangeText={setAuthPassword}
-        containerStyle={themed($textField)}
-        autoCapitalize="none"
-        autoComplete="password"
-        autoCorrect={false}
-        secureTextEntry={isAuthPasswordHidden}
-        labelTx="loginScreen:passwordFieldLabel"
-        placeholderTx="loginScreen:passwordFieldPlaceholder"
-        onSubmitEditing={login}
-        RightAccessory={PasswordRightAccessory}
+      <AnimatedSvgIcon
+        containerStyle={[themed($logoIconContainer)]}
+        ref={LogoIconRef}
+        pathData={SvgIconPaths.LOGO}
+        color={colors.text}
+        size={128}
+        slow
       />
 
-      <Button
-        testID="login-button"
-        tx="loginScreen:tapToLogIn"
-        style={themed($tapButton)}
-        onPress={login}
-      />
+      <View style={themed($formContainer)}>
+        <TextField
+          value={authEmail}
+          onChangeText={setAuthEmail}
+          containerStyle={themed($textField)}
+          autoCapitalize="none"
+          autoComplete="email"
+          autoCorrect={false}
+          keyboardType="email-address"
+          placeholderTx="loginScreen:emailFieldPlaceholder"
+          // helper={error}
+          // status={error ? "error" : undefined}
+          // onSubmitEditing={() => authPasswordInput.current?.focus()}
+        />
+
+        <TextField
+          ref={authPasswordInput}
+          value={authPassword}
+          onChangeText={setAuthPassword}
+          containerStyle={themed($textField)}
+          autoCapitalize="none"
+          autoComplete="password"
+          autoCorrect={false}
+          secureTextEntry={isAuthPasswordHidden}
+          placeholderTx="loginScreen:passwordFieldPlaceholder"
+          onSubmitEditing={login}
+          RightAccessory={PasswordRightAccessory}
+        />
+
+        <Button
+          testID="login-button"
+          tx="loginScreen:tapToLogIn"
+          style={themed($tapButton)}
+          onPress={login}
+        />
+
+        <View style={themed($forgotPasswordContainer)}>
+          <Text tx="loginScreen:dontHaveAnAccount" />
+          <Pressable onPress={login}>
+            <Text tx="loginScreen:signUp" />
+          </Pressable>
+        </View>
+      </View>
     </Screen>
   )
 }
 
-const $screenContentContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  paddingVertical: spacing.xxl,
-  paddingHorizontal: spacing.lg,
+const $forgotPasswordContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  marginTop: spacing.md,
+  flexDirection: "row",
+  justifyContent: "center",
 })
 
-const $logIn: ThemedStyle<TextStyle> = ({ spacing }) => ({
-  marginBottom: spacing.sm,
+const $logoIconContainer: ThemedStyle<ViewStyle> = () => ({
+  position: "absolute",
+  width: "100%",
+  top: "15%",
 })
 
-const $enterDetails: ThemedStyle<TextStyle> = ({ spacing }) => ({
-  marginBottom: spacing.lg,
+const $formContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  height: "100%",
+  top: "50%",
+  marginHorizontal: spacing.lg,
 })
 
-const $hint: ThemedStyle<TextStyle> = ({ colors, spacing }) => ({
-  color: colors.text,
-  marginBottom: spacing.md,
+const $backgroundImage: ThemedStyle<ImageStyle> = () => ({
+  width: "100%",
+  height: "100%",
+  position: "absolute",
 })
 
 const $textField: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  marginBottom: spacing.lg,
+  marginBottom: spacing.sm,
 })
 
 const $tapButton: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  marginTop: spacing.xs,
+  marginTop: spacing.md,
 })
