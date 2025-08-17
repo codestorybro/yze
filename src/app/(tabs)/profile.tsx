@@ -1,7 +1,7 @@
 import { useCallback } from "react"
-import { LayoutAnimation, View, ViewStyle } from "react-native"
+import { LayoutAnimation } from "react-native"
 
-import { Button, Screen } from "@/components"
+import { Button, LoggedScreenWrapper } from "@/components"
 import { useAppTheme } from "@/theme/context"
 
 export default function Settings() {
@@ -13,14 +13,8 @@ export default function Settings() {
   }, [themeContext, setThemeContextOverride])
 
   return (
-    <Screen style={$root} preset="scroll">
-      <View>
-        <Button onPress={toggleTheme} text={`Toggle Theme: ${themeContext}`} />
-      </View>
-    </Screen>
+    <LoggedScreenWrapper preset="scroll">
+      <Button onPress={toggleTheme} text={`Toggle Theme: ${themeContext}`} />
+    </LoggedScreenWrapper>
   )
-}
-
-const $root: ViewStyle = {
-  flex: 1,
 }

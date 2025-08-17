@@ -11,8 +11,8 @@ import Animated, {
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 
-import { SvgIcon } from "./SvgIcon"
-import { SvgIconPaths } from "./SvgIcon/svgsPaths"
+import { SvgIcon } from "../SvgIcon"
+import { SvgIconPaths } from "../SvgIcon/svgsPaths"
 
 type TabBarButtonProps = Omit<ComponentProps<typeof PlatformPressable>, "children"> & {
   label: string

@@ -1,12 +1,14 @@
 // eslint-disable-next-line no-restricted-imports
-import { Text, View } from "react-native"
+import { Text } from "react-native"
 
+import { LoggedScreenWrapper } from "@/components"
 import { useSession } from "@/store/ctx"
 
 export default function Index() {
   const { signOut } = useSession()
+
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+    <LoggedScreenWrapper preset="fixed">
       <Text
         onPress={() => {
           signOut()
@@ -14,6 +16,6 @@ export default function Index() {
       >
         Sign Out
       </Text>
-    </View>
+    </LoggedScreenWrapper>
   )
 }

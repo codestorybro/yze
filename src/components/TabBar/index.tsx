@@ -2,15 +2,17 @@ import { useState } from "react"
 import { LayoutChangeEvent, View, ViewStyle } from "react-native"
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
 import { useLinkBuilder } from "@react-navigation/native"
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 
 import { TabBarButton } from "./TabBarButton"
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated"
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const { buildHref } = useLinkBuilder()
+  const { bottom } = useSafeAreaInsets()
   const {
     themed,
     theme: { colors },
@@ -36,7 +38,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   })
 
   return (
-    <View onLayout={onTabBarLayout} style={themed($tabBarContainer)}>
+    <View onLayout={onTabBarLayout} style={[themed($tabBarContainer), { bottom }]}>
       <Animated.View
         style={[
           themed($tabBarItemAnimationStyle),
@@ -93,7 +95,6 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 const $tabBarContainer: ThemedStyle<ViewStyle> = ({ colors }) => ({
   flexDirection: "row",
   position: "absolute",
-  bottom: 50,
   backgroundColor: colors.background,
   justifyContent: "space-between",
   alignItems: "center",
