@@ -8,6 +8,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  TextStyle,
 } from "react-native"
 import { router } from "expo-router"
 
@@ -19,7 +20,7 @@ import {
   TextFieldAccessoryProps,
   Text,
 } from "@/components"
-import { AnimatedSvgIcon } from "@/components/AnimatedSvgIcon"
+import { AnimatedSvgIcon, AnimatedSvgIconRef } from "@/components/AnimatedSvgIcon"
 import { SvgIconPaths } from "@/components/AnimatedSvgIcon/svgsPaths"
 import { WaveDivider } from "@/components/WaveDivider"
 import { useSession } from "@/store/ctx"
@@ -28,7 +29,7 @@ import type { ThemedStyle } from "@/theme/types"
 
 export default function SignIn() {
   const { signIn } = useSession()
-  const LogoIconRef = useRef(null)
+  const LogoIconRef = useRef<AnimatedSvgIconRef>(null)
   const authPasswordInput = useRef<TextInput>(null)
   const [authEmail, setAuthEmail] = useState("")
   const [authPassword, setAuthPassword] = useState("")
@@ -58,7 +59,7 @@ export default function SignIn() {
           <PressableIcon
             icon={isAuthPasswordHidden ? "view" : "hidden"}
             color={colors.palette.neutral800}
-            containerStyle={props.style}
+            containerStyle={props.style as ViewStyle}
             size={20}
             onPress={() => setIsAuthPasswordHidden(!isAuthPasswordHidden)}
           />
@@ -124,7 +125,7 @@ export default function SignIn() {
           <View style={themed($forgotPasswordContainer)}>
             <Text tx="loginScreen:dontHaveAnAccount" />
             <Pressable onPress={login}>
-              <Text tx="loginScreen:signUp" />
+              <Text tx="loginScreen:signUp" preset="bold" style={themed($signUpText)} />
             </Pressable>
           </View>
         </View>
@@ -132,6 +133,10 @@ export default function SignIn() {
     </Screen>
   )
 }
+
+const $signUpText: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.primary,
+})
 
 const $forgotPasswordContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   marginTop: spacing.md,

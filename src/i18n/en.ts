@@ -22,7 +22,7 @@ const en = {
     passwordFieldLabel: "Password",
     emailFieldPlaceholder: "Email",
     passwordFieldPlaceholder: "Password",
-    tapToLogIn: "Enter Yze - the office league",
+    tapToLogIn: "Enter Yze - the social mirror",
     hint: "Hint: you can use any email address and your favorite password :)",
     dontHaveAnAccount: "Don't have an account? ",
     signUp: "Sign up",

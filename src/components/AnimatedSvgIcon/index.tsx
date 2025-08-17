@@ -12,6 +12,10 @@ import { colors } from "@/theme/colors"
 
 const AnimatedPath = Animated.createAnimatedComponent(Path)
 
+export type AnimatedSvgIconRef = {
+  animate: () => void
+}
+
 type Props = {
   pathData?: string
   color?: string
@@ -20,7 +24,7 @@ type Props = {
   slow?: boolean
 }
 
-export const AnimatedSvgIcon = forwardRef((props: Props, ref) => {
+export const AnimatedSvgIcon = forwardRef<AnimatedSvgIconRef, Props>((props: Props, ref) => {
   const { color = colors.text, pathData, size, containerStyle, slow } = props
 
   const strokeOffset = useSharedValue(2000)
