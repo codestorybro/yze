@@ -43,8 +43,8 @@ export const AnimatedSvgIcon = forwardRef<AnimatedSvgIconRef, Props>((props: Pro
       fillOpacity.value = 0
       strokeOffset.value = 2000
 
-      strokeOffset.value = withTiming(0, { duration: slow ? 2000 : 900 })
-      fillOpacity.value = withDelay(200, withTiming(1, { duration: slow ? 1400 : 500 }))
+      strokeOffset.value = withTiming(0, { duration: slow ? 1500 : 900 })
+      fillOpacity.value = withDelay(200, withTiming(1, { duration: slow ? 1700 : 500 }))
     },
   }))
 

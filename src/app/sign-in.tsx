@@ -11,6 +11,7 @@ import {
   TextStyle,
 } from "react-native"
 import { router } from "expo-router"
+import Animated, { FadeInDown } from "react-native-reanimated"
 
 import {
   Button,
@@ -90,44 +91,53 @@ export default function SignIn() {
         keyboardVerticalOffset={0}
       >
         <View style={themed($formContainer)}>
-          <TextField
-            value={authEmail}
-            onChangeText={setAuthEmail}
-            containerStyle={themed($textField)}
-            autoCapitalize="none"
-            autoComplete="email"
-            autoCorrect={false}
-            keyboardType="email-address"
-            placeholderTx="loginScreen:emailFieldPlaceholder"
-          />
+          <Animated.View entering={FadeInDown.delay(200).duration(1000).springify()}>
+            <TextField
+              value={authEmail}
+              onChangeText={setAuthEmail}
+              containerStyle={themed($textField)}
+              autoCapitalize="none"
+              autoComplete="email"
+              autoCorrect={false}
+              keyboardType="email-address"
+              placeholderTx="loginScreen:emailFieldPlaceholder"
+            />
+          </Animated.View>
 
-          <TextField
-            ref={authPasswordInput}
-            value={authPassword}
-            onChangeText={setAuthPassword}
-            containerStyle={themed($textField)}
-            autoCapitalize="none"
-            autoComplete="password"
-            autoCorrect={false}
-            secureTextEntry={isAuthPasswordHidden}
-            placeholderTx="loginScreen:passwordFieldPlaceholder"
-            onSubmitEditing={login}
-            RightAccessory={PasswordRightAccessory}
-          />
+          <Animated.View entering={FadeInDown.delay(400).duration(1000).springify()}>
+            <TextField
+              ref={authPasswordInput}
+              value={authPassword}
+              onChangeText={setAuthPassword}
+              containerStyle={themed($textField)}
+              autoCapitalize="none"
+              autoComplete="password"
+              autoCorrect={false}
+              secureTextEntry={isAuthPasswordHidden}
+              placeholderTx="loginScreen:passwordFieldPlaceholder"
+              onSubmitEditing={login}
+              RightAccessory={PasswordRightAccessory}
+            />
+          </Animated.View>
 
-          <Button
-            testID="login-button"
-            tx="loginScreen:tapToLogIn"
-            style={themed($tapButton)}
-            onPress={login}
-          />
+          <Animated.View entering={FadeInDown.delay(600).duration(1000).springify()}>
+            <Button
+              testID="login-button"
+              tx="loginScreen:tapToLogIn"
+              style={themed($tapButton)}
+              onPress={login}
+            />
+          </Animated.View>
 
-          <View style={themed($forgotPasswordContainer)}>
+          <Animated.View
+            entering={FadeInDown.delay(800).duration(1000).springify()}
+            style={themed($forgotPasswordContainer)}
+          >
             <Text tx="loginScreen:dontHaveAnAccount" />
             <Pressable onPress={login}>
               <Text tx="loginScreen:signUp" preset="bold" style={themed($signUpText)} />
             </Pressable>
-          </View>
+          </Animated.View>
         </View>
       </KeyboardAvoidingView>
     </Screen>
