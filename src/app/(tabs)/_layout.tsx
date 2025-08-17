@@ -1,7 +1,6 @@
 import { Tabs, Redirect } from "expo-router"
-import FontAwesome from "@expo/vector-icons/FontAwesome"
 
-import { Text } from "@/components/Text"
+import { TabBar, Text } from "@/components"
 import { useSession } from "@/store/ctx"
 
 export default function TabLayout() {
@@ -16,19 +15,17 @@ export default function TabLayout() {
   }
 
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "blue" }}>
+    <Tabs tabBar={(props) => <TabBar {...props} />}>
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="home" color={color} />,
+          tabBarLabel: "Home",
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="profile"
         options={{
-          title: "Settings",
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="cog" color={color} />,
+          tabBarLabel: "Profile",
         }}
       />
     </Tabs>

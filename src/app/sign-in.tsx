@@ -22,7 +22,7 @@ import {
   Text,
 } from "@/components"
 import { AnimatedSvgIcon, AnimatedSvgIconRef } from "@/components/AnimatedSvgIcon"
-import { SvgIconPaths } from "@/components/AnimatedSvgIcon/svgsPaths"
+import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
 import { WaveDivider } from "@/components/WaveDivider"
 import { useSession } from "@/store/ctx"
 import { useAppTheme } from "@/theme/context"
@@ -30,7 +30,7 @@ import type { ThemedStyle } from "@/theme/types"
 
 export default function SignIn() {
   const { signIn } = useSession()
-  const LogoIconRef = useRef<AnimatedSvgIconRef>(null)
+  const logoIconRef = useRef<AnimatedSvgIconRef>(null)
   const authPasswordInput = useRef<TextInput>(null)
   const [authEmail, setAuthEmail] = useState("")
   const [authPassword, setAuthPassword] = useState("")
@@ -42,7 +42,7 @@ export default function SignIn() {
   } = useAppTheme()
 
   useEffect(() => {
-    LogoIconRef?.current?.animate()
+    logoIconRef?.current?.animate()
   }, [])
 
   const login = () => {
@@ -76,8 +76,8 @@ export default function SignIn() {
 
       <AnimatedSvgIcon
         containerStyle={[themed($logoIconContainer)]}
-        ref={LogoIconRef}
-        pathData={SvgIconPaths.LOGO_FULFILLED}
+        ref={logoIconRef}
+        pathData={SvgIconPaths.logoFulfilled}
         color={colors.textReversed}
         size={128}
         slow
