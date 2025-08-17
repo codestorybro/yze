@@ -188,12 +188,13 @@ const $baseViewStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   overflow: "hidden",
 })
 
-const $baseTextStyle: ThemedStyle<TextStyle> = ({ typography }) => ({
+const $baseTextStyle: ThemedStyle<TextStyle> = ({ typography, colors }) => ({
   fontSize: 16,
   lineHeight: 20,
   fontFamily: typography.primary.medium,
   textAlign: "center",
   flexShrink: 1,
+  color: colors.textReversed,
   flexGrow: 0,
   zIndex: 2,
 })
@@ -212,14 +213,10 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
     $styles.row,
     $baseViewStyle,
     ({ colors }) => ({
-      backgroundColor: colors.primaryButtonBackground,
+      backgroundColor: colors.primary,
     }),
   ],
-  secondary: [
-    $styles.row,
-    $baseViewStyle,
-    ({ colors }) => ({ backgroundColor: colors.secondaryButtonBackground }),
-  ],
+  secondary: [$styles.row, $baseViewStyle, ({ colors }) => ({ backgroundColor: colors.secondary })],
 }
 
 const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
@@ -228,8 +225,8 @@ const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
 }
 
 const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
-  default: ({ colors }) => ({ backgroundColor: colors.primaryButtonBackgroundPressed }),
-  secondary: ({ colors }) => ({ backgroundColor: colors.secondaryButtonBackgroundPressed }),
+  default: ({ colors }) => ({ backgroundColor: colors.primaryPressed }),
+  secondary: ({ colors }) => ({ backgroundColor: colors.secondaryPressed }),
 }
 
 const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {

@@ -1,6 +1,14 @@
 import { ComponentType, useEffect, useMemo, useRef, useState } from "react"
-// eslint-disable-next-line no-restricted-imports
-import { TextInput, ViewStyle, Image, ImageStyle, StatusBar, View, Pressable } from "react-native"
+import {
+  // eslint-disable-next-line no-restricted-imports
+  TextInput,
+  ViewStyle,
+  View,
+  Pressable,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native"
 import { router } from "expo-router"
 
 import {
@@ -13,6 +21,7 @@ import {
 } from "@/components"
 import { AnimatedSvgIcon } from "@/components/AnimatedSvgIcon"
 import { SvgIconPaths } from "@/components/AnimatedSvgIcon/svgsPaths"
+import { WaveDivider } from "@/components/WaveDivider"
 import { useSession } from "@/store/ctx"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
@@ -59,66 +68,67 @@ export default function SignIn() {
   )
 
   return (
-    <Screen preset="fixed" safeAreaEdges={["bottom"]} backgroundColor={colors.background}>
-      <StatusBar barStyle="light-content" />
-      <Image
-        source={require("../../assets/images/background.png")}
-        style={themed($backgroundImage)}
-        resizeMode="stretch"
-      />
+    <Screen disableKeyboardAvoidingView preset="fixed" backgroundColor={colors.background}>
+      <View style={StyleSheet.absoluteFill}>
+        <View style={themed($topDividerView)} />
+        <WaveDivider color={colors.background} />
+        <View style={themed($bottomDividerView)} />
+      </View>
 
       <AnimatedSvgIcon
         containerStyle={[themed($logoIconContainer)]}
         ref={LogoIconRef}
         pathData={SvgIconPaths.LOGO}
-        color={colors.text}
+        color={colors.textReversed}
         size={128}
         slow
       />
 
-      <View style={themed($formContainer)}>
-        <TextField
-          value={authEmail}
-          onChangeText={setAuthEmail}
-          containerStyle={themed($textField)}
-          autoCapitalize="none"
-          autoComplete="email"
-          autoCorrect={false}
-          keyboardType="email-address"
-          placeholderTx="loginScreen:emailFieldPlaceholder"
-          // helper={error}
-          // status={error ? "error" : undefined}
-          // onSubmitEditing={() => authPasswordInput.current?.focus()}
-        />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={0}
+      >
+        <View style={themed($formContainer)}>
+          <TextField
+            value={authEmail}
+            onChangeText={setAuthEmail}
+            containerStyle={themed($textField)}
+            autoCapitalize="none"
+            autoComplete="email"
+            autoCorrect={false}
+            keyboardType="email-address"
+            placeholderTx="loginScreen:emailFieldPlaceholder"
+          />
 
-        <TextField
-          ref={authPasswordInput}
-          value={authPassword}
-          onChangeText={setAuthPassword}
-          containerStyle={themed($textField)}
-          autoCapitalize="none"
-          autoComplete="password"
-          autoCorrect={false}
-          secureTextEntry={isAuthPasswordHidden}
-          placeholderTx="loginScreen:passwordFieldPlaceholder"
-          onSubmitEditing={login}
-          RightAccessory={PasswordRightAccessory}
-        />
+          <TextField
+            ref={authPasswordInput}
+            value={authPassword}
+            onChangeText={setAuthPassword}
+            containerStyle={themed($textField)}
+            autoCapitalize="none"
+            autoComplete="password"
+            autoCorrect={false}
+            secureTextEntry={isAuthPasswordHidden}
+            placeholderTx="loginScreen:passwordFieldPlaceholder"
+            onSubmitEditing={login}
+            RightAccessory={PasswordRightAccessory}
+          />
 
-        <Button
-          testID="login-button"
-          tx="loginScreen:tapToLogIn"
-          style={themed($tapButton)}
-          onPress={login}
-        />
+          <Button
+            testID="login-button"
+            tx="loginScreen:tapToLogIn"
+            style={themed($tapButton)}
+            onPress={login}
+          />
 
-        <View style={themed($forgotPasswordContainer)}>
-          <Text tx="loginScreen:dontHaveAnAccount" />
-          <Pressable onPress={login}>
-            <Text tx="loginScreen:signUp" />
-          </Pressable>
+          <View style={themed($forgotPasswordContainer)}>
+            <Text tx="loginScreen:dontHaveAnAccount" />
+            <Pressable onPress={login}>
+              <Text tx="loginScreen:signUp" />
+            </Pressable>
+          </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Screen>
   )
 }
@@ -137,14 +147,8 @@ const $logoIconContainer: ThemedStyle<ViewStyle> = () => ({
 
 const $formContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   height: "100%",
-  top: "50%",
+  top: "52%",
   marginHorizontal: spacing.lg,
-})
-
-const $backgroundImage: ThemedStyle<ImageStyle> = () => ({
-  width: "100%",
-  height: "100%",
-  position: "absolute",
 })
 
 const $textField: ThemedStyle<ViewStyle> = ({ spacing }) => ({
@@ -153,4 +157,14 @@ const $textField: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 
 const $tapButton: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   marginTop: spacing.md,
+})
+
+const $topDividerView: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  flex: 1,
+  backgroundColor: colors.secondary,
+})
+
+const $bottomDividerView: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  flex: 1,
+  backgroundColor: colors.background,
 })

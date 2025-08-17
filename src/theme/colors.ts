@@ -40,6 +40,7 @@ export const colors = {
   palette,
   transparent: "rgba(0, 0, 0, 0)",
   text: palette.neutral800,
+  textReversed: palette.neutral200,
   textDim: palette.neutral600,
   background: palette.neutral200,
   border: palette.neutral400,
@@ -48,10 +49,10 @@ export const colors = {
   separator: palette.neutral300,
   error: palette.angry500,
   errorBackground: palette.angry100,
-  inputBackground: "#0000000d",
+  inputBackground: "#e7e5e5",
 
-  primaryButtonBackground: palette.primary500,
-  primaryButtonBackgroundPressed: palette.primary600,
-  secondaryButtonBackground: palette.secondary500,
-  secondaryButtonBackgroundPressed: palette.secondary600,
+  primary: palette.primary500,
+  primaryPressed: palette.primary600,
+  secondary: palette.secondary500,
+  secondaryPressed: palette.secondary600,
 } as const

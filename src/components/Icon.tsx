@@ -2,6 +2,7 @@ import {
   Image,
   ImageStyle,
   StyleProp,
+  TextStyle,
   TouchableOpacity,
   TouchableOpacityProps,
   View,
