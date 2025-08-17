@@ -59,7 +59,7 @@ export default function SignIn() {
   )
 
   return (
-    <Screen preset="fixed" safeAreaEdges={["bottom"]} backgroundColor="white">
+    <Screen preset="fixed" safeAreaEdges={["bottom"]} backgroundColor={colors.background}>
       <StatusBar barStyle="light-content" />
       <Image
         source={require("../../assets/images/background.png")}

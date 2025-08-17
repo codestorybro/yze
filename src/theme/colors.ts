@@ -9,18 +9,19 @@ const palette = {
   neutral800: "#191015",
   neutral900: "#000000",
 
-  primary100: "#F4E0D9",
-  primary200: "#E8C1B4",
-  primary300: "#DDA28E",
-  primary400: "#D28468",
-  primary500: "#C76542",
-  primary600: "#A54F31",
+  primary100: "#D6E4FF",
+  primary200: "#ADC8FF",
+  primary300: "#84A9FF",
+  primary400: "#6690FF",
+  primary500: "#4169E1", // Royal Blue
+  primary600: "#2747B3",
 
-  secondary100: "#DCDDE9",
-  secondary200: "#BCC0D6",
-  secondary300: "#9196B9",
-  secondary400: "#626894",
-  secondary500: "#41476E",
+  secondary100: "#CCFBF1",
+  secondary200: "#99F6E4",
+  secondary300: "#5EEAD4",
+  secondary400: "#2DD4BF",
+  secondary500: "#14B8A6", // Teal / Turquoise
+  secondary600: "#0D9488",
 
   accent100: "#FFEED4",
   accent200: "#FFE1B2",
@@ -36,50 +37,21 @@ const palette = {
 } as const
 
 export const colors = {
-  /**
-   * The palette is available to use, but prefer using the name.
-   * This is only included for rare, one-off cases. Try to use
-   * semantic names as much as possible.
-   */
   palette,
-  /**
-   * A helper for making something see-thru.
-   */
   transparent: "rgba(0, 0, 0, 0)",
-  /**
-   * The default text color in many components.
-   */
   text: palette.neutral800,
-  /**
-   * Secondary text information.
-   */
   textDim: palette.neutral600,
-  /**
-   * The default color of the screen background.
-   */
   background: palette.neutral200,
-  /**
-   * The default border color.
-   */
   border: palette.neutral400,
-  /**
-   * The main tinting color.
-   */
   tint: palette.primary500,
-  /**
-   * The inactive tinting color.
-   */
   tintInactive: palette.neutral300,
-  /**
-   * A subtle color used for lines.
-   */
   separator: palette.neutral300,
-  /**
-   * Error messages.
-   */
   error: palette.angry500,
-  /**
-   * Error Background.
-   */
   errorBackground: palette.angry100,
+  inputBackground: "#0000000d",
+
+  primaryButtonBackground: palette.primary500,
+  primaryButtonBackgroundPressed: palette.primary600,
+  secondaryButtonBackground: palette.secondary500,
+  secondaryButtonBackgroundPressed: palette.secondary600,
 } as const

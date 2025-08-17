@@ -9,18 +9,19 @@ const palette = {
   neutral200: "#191015",
   neutral100: "#000000",
 
-  primary600: "#F4E0D9",
-  primary500: "#E8C1B4",
-  primary400: "#DDA28E",
-  primary300: "#D28468",
-  primary200: "#C76542",
-  primary100: "#A54F31",
+  primary100: "#1A2F6B",
+  primary200: "#223E8C",
+  primary300: "#2747B3",
+  primary400: "#3557CC",
+  primary500: "#4169E1", // Royal Blue
+  primary600: "#6688FF",
 
-  secondary500: "#DCDDE9",
-  secondary400: "#BCC0D6",
-  secondary300: "#9196B9",
-  secondary200: "#626894",
-  secondary100: "#41476E",
+  secondary100: "#134E4A",
+  secondary200: "#115E59",
+  secondary300: "#0F766E",
+  secondary400: "#0D9488",
+  secondary500: "#14B8A6", // Teal / Turquoise
+  secondary600: "#2DD4BF",
 
   accent500: "#FFEED4",
   accent400: "#FFE1B2",
@@ -47,4 +48,10 @@ export const colors = {
   separator: palette.neutral300,
   error: palette.angry500,
   errorBackground: palette.angry100,
+  inputBackground: "#FFFFFF14",
+
+  primaryButtonBackground: palette.primary500,
+  primaryButtonBackgroundPressed: palette.primary600,
+  secondaryButtonBackground: palette.secondary500,
+  secondaryButtonBackgroundPressed: palette.secondary600,
 } as const
