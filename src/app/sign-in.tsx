@@ -48,9 +48,6 @@ export default function SignIn() {
   const login = () => {
     signIn()
     router.replace("/")
-
-    setAuthPassword("")
-    setAuthEmail("")
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
