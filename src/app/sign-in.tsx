@@ -78,7 +78,7 @@ export default function SignIn() {
       <AnimatedSvgIcon
         containerStyle={[themed($logoIconContainer)]}
         ref={LogoIconRef}
-        pathData={SvgIconPaths.LOGO}
+        pathData={SvgIconPaths.LOGO_FULFILLED}
         color={colors.textReversed}
         size={128}
         slow
@@ -161,7 +161,7 @@ const $tapButton: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 
 const $topDividerView: ThemedStyle<ViewStyle> = ({ colors }) => ({
   flex: 1,
-  backgroundColor: colors.secondary,
+  backgroundColor: colors.primary,
 })
 
 const $bottomDividerView: ThemedStyle<ViewStyle> = ({ colors }) => ({

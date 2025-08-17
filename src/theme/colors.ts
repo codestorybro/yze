@@ -9,19 +9,19 @@ const palette = {
   neutral800: "#191015",
   neutral900: "#000000",
 
-  primary100: "#D6E4FF",
-  primary200: "#ADC8FF",
-  primary300: "#84A9FF",
-  primary400: "#6690FF",
-  primary500: "#4169E1", // Royal Blue
-  primary600: "#2747B3",
+  primary100: "#E6F4FB",
+  primary200: "#B3E1FA",
+  primary300: "#66C3F7",
+  primary400: "#33A8F5",
+  primary500: "#1da1f2",
+  primary600: "#157BC1",
 
-  secondary100: "#CCFBF1",
-  secondary200: "#99F6E4",
-  secondary300: "#5EEAD4",
-  secondary400: "#2DD4BF",
-  secondary500: "#14B8A6", // Teal / Turquoise
-  secondary600: "#0D9488",
+  secondary100: "#FFF3E6",
+  secondary200: "#FFD1A8",
+  secondary300: "#FFA566",
+  secondary400: "#FF9033",
+  secondary500: "#FF8C42",
+  secondary600: "#E67328",
 
   accent100: "#FFEED4",
   accent200: "#FFE1B2",
