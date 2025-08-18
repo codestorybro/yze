@@ -255,6 +255,8 @@ const $inputWrapperStyle: ThemedStyle<ViewStyle> = ({ colors }) => ({
   borderRadius: 16,
   backgroundColor: colors.inputBackground,
   overflow: "hidden",
+  borderWidth: 1,
+  borderColor: colors.inputBackground,
 })
 
 const $inputStyle: ThemedStyle<TextStyle> = ({ colors, typography, spacing }) => ({
@@ -273,7 +275,10 @@ const $inputStyle: ThemedStyle<TextStyle> = ({ colors, typography, spacing }) =>
 })
 
 const $helperStyle: ThemedStyle<TextStyle> = ({ spacing }) => ({
-  marginTop: spacing.xs,
+  left: spacing.xs,
+  fontSize: 12,
+  position: "absolute",
+  bottom: -20,
 })
 
 const $rightAccessoryStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
