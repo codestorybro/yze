@@ -8,12 +8,16 @@ import { Screen, ScreenProps } from "./Screen"
 
 export function LoggedScreenWrapper({ contentContainerStyle, children, ...props }: ScreenProps) {
   const { themed } = useAppTheme()
-  const { top } = useSafeAreaInsets()
+  const { top, bottom } = useSafeAreaInsets()
 
   return (
     <Screen
       preset="scroll"
-      contentContainerStyle={[themed($container), { top }, contentContainerStyle]}
+      contentContainerStyle={[
+        themed($container),
+        { top, paddingBottom: bottom + 60 },
+        contentContainerStyle,
+      ]}
       {...props}
     >
       {children}
