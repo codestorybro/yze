@@ -1,14 +1,10 @@
 import { Tabs, Redirect } from "expo-router"
 
-import { TabBar, Text } from "@/components"
-import { useSession } from "@/store/ctx"
+import { TabBar } from "@/components"
+import { useUser } from "@/store/auth"
 
 export default function TabLayout() {
-  const { user, isLoading } = useSession()
-
-  if (isLoading) {
-    return <Text>Loading...</Text>
-  }
+  const { user } = useUser()
 
   if (!user) {
     return <Redirect href="../sign-in" />

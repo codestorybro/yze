@@ -2,13 +2,13 @@ import { useCallback } from "react"
 import { LayoutAnimation, StyleSheet } from "react-native"
 
 import { Button, DevSection, LoggedScreenWrapper } from "@/components"
-import { useSession } from "@/store/ctx"
+import { useAuth } from "@/store/auth"
 import { useAppTheme } from "@/theme/context"
 import { Switch } from "@/components/Toggle/Switch"
 
 export default function Settings() {
   const { setThemeContextOverride, themeContext } = useAppTheme()
-  const { signOut } = useSession()
+  const { signOut } = useAuth()
 
   const toggleTheme = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)

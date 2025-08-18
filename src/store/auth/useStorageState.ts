@@ -1,12 +1,13 @@
+// session/useStorageState.ts
 import { useEffect, useCallback, useReducer } from "react"
 import { Platform } from "react-native"
 import * as SecureStore from "expo-secure-store"
 
-type UseStateHook<T> = [[boolean, T | null], (value: T | null) => void]
+type UseStateHook<T> = [T | null, (value: T | null) => void]
 
-function useAsyncState<T>(initialValue: [boolean, T | null] = [true, null]): UseStateHook<T> {
+function useAsyncState<T>(initialValue: T | null = null): UseStateHook<T> {
   return useReducer(
-    (state: [boolean, T | null], action: T | null = null): [boolean, T | null] => [false, action],
+    (_: T | null, action: T | null = null) => action,
     initialValue,
   ) as UseStateHook<T>
 }
@@ -28,10 +29,8 @@ export async function setStorageItemAsync(key: string, value: string | null) {
 }
 
 export function useStorageState(key: string): UseStateHook<string> {
-  // Public
   const [state, setState] = useAsyncState<string>()
 
-  // Get
   useEffect(() => {
     if (Platform.OS === "web") {
       try {
@@ -42,13 +41,10 @@ export function useStorageState(key: string): UseStateHook<string> {
         console.error("Local storage is unavailable:", e)
       }
     } else {
-      SecureStore.getItemAsync(key).then((value) => {
-        setState(value)
-      })
+      SecureStore.getItemAsync(key).then((value) => setState(value))
     }
   }, [key])
 
-  // Set
   const setValue = useCallback(
     (value: string | null) => {
       setState(value)

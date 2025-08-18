@@ -24,12 +24,12 @@ import {
 import { AnimatedSvgIcon, AnimatedSvgIconRef } from "@/components/AnimatedSvgIcon"
 import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
 import { WaveDivider } from "@/components/WaveDivider"
-import { useSession } from "@/store/ctx"
+import { useAuth } from "@/store/auth"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 
 export default function SignIn() {
-  const { signIn } = useSession()
+  const { signIn } = useAuth()
   const logoIconRef = useRef<AnimatedSvgIconRef>(null)
   const authPasswordInput = useRef<TextInput>(null)
   const [authEmail, setAuthEmail] = useState("")
@@ -46,8 +46,9 @@ export default function SignIn() {
   }, [])
 
   const login = () => {
-    signIn()
-    router.replace("/")
+    signIn(authEmail, authPassword).then(() => {
+      router.replace("/")
+    })
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
