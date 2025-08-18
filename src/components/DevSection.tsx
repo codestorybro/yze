@@ -91,7 +91,8 @@ const $itemsContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 })
 
 const $itemsInnerContainer: ThemedStyle<ViewStyle> = ({ spacing, colors }) => ({
-  backgroundColor: colors.secondary,
+  borderColor: colors.secondary,
+  borderWidth: 1,
   borderRadius: spacing.lg,
   padding: spacing.md,
 })

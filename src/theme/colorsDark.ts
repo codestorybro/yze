@@ -5,7 +5,7 @@ export const palette = {
   neutral600: "#B6ACA6",
   neutral500: "#978F8A",
   neutral400: "#564E4A",
-  neutral300: "#3C3836",
+  neutral300: "#303030",
   neutral200: "#191015",
   neutral100: "#000000",
 
@@ -30,7 +30,11 @@ export const palette = {
   accent100: "#FFBB50",
 
   angry100: "#F2D6CD",
+  angry200: "#E6A893",
+  angry300: "#D97B5A",
+  angry400: "#CC4D22",
   angry500: "#C03403",
+  angry600: "#A82B00",
 
   overlay20: "rgba(25, 16, 21, 0.2)",
   overlay50: "rgba(25, 16, 21, 0.5)",
@@ -43,11 +47,13 @@ export const colors = {
   textReversed: palette.neutral200,
   textDim: palette.neutral600,
   background: palette.neutral200,
+  tabBarBackground: palette.neutral300,
   border: palette.neutral400,
   tint: palette.primary500,
   tintInactive: palette.neutral300,
   separator: palette.neutral300,
   error: palette.angry500,
+  errorPressed: palette.angry400,
   errorBackground: palette.angry100,
   inputBackground: "#2b2227",
 

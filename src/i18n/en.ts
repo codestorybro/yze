@@ -45,6 +45,9 @@ const en = {
     reactotron: "Send to Reactotron",
     title: "Development only visible",
   },
+  profileScreen: {
+    darkMode: "Dark Mode",
+  },
 }
 
 export default en

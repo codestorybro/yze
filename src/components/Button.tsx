@@ -14,7 +14,7 @@ import type { ThemedStyle, ThemedStyleArray } from "@/theme/types"
 
 import { Text, TextProps } from "./Text"
 
-type Presets = "default" | "secondary"
+type Presets = "default" | "secondary" | "error"
 
 export interface ButtonAccessoryProps {
   style: StyleProp<any>
@@ -217,19 +217,23 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
     }),
   ],
   secondary: [$styles.row, $baseViewStyle, ({ colors }) => ({ backgroundColor: colors.secondary })],
+  error: [$styles.row, $baseViewStyle, ({ colors }) => ({ backgroundColor: colors.error })],
 }
 
 const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
   default: [$baseTextStyle],
   secondary: [$baseTextStyle],
+  error: [$baseTextStyle],
 }
 
 const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
   default: ({ colors }) => ({ backgroundColor: colors.primaryPressed }),
   secondary: ({ colors }) => ({ backgroundColor: colors.secondaryPressed }),
+  error: ({ colors }) => ({ backgroundColor: colors.errorPressed }),
 }
 
 const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
   default: () => ({ opacity: 0.9 }),
   secondary: () => ({ opacity: 0.9 }),
+  error: () => ({ opacity: 0.9 }),
 }

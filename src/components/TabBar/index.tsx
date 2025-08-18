@@ -92,20 +92,22 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   )
 }
 
-const $tabBarContainer: ThemedStyle<ViewStyle> = ({ colors }) => ({
+const $tabBarContainer: ThemedStyle<ViewStyle> = ({ colors, isDark }) => ({
   flexDirection: "row",
   position: "absolute",
-  backgroundColor: colors.background,
+  backgroundColor: colors.tabBarBackground,
   justifyContent: "space-between",
   alignItems: "center",
   marginHorizontal: 80,
   paddingVertical: 16,
   borderRadius: 32,
-  shadowColor: colors.palette.neutral900,
-  shadowOffset: { width: 0, height: 10 },
-  shadowRadius: 10,
-  shadowOpacity: 0.1,
-  elevation: 8,
+  ...(!isDark && {
+    shadowColor: colors.palette.neutral900,
+    shadowOffset: { width: 0, height: 10 },
+    shadowRadius: 10,
+    shadowOpacity: 0.1,
+    elevation: 8,
+  }),
 })
 
 const $tabBarItemAnimationStyle: ThemedStyle<ViewStyle> = ({ colors }) => ({
