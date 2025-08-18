@@ -67,7 +67,7 @@ export default function SignIn() {
   )
 
   return (
-    <Screen disableKeyboardAvoidingView preset="fixed" backgroundColor={colors.background}>
+    <Screen disableKeyboardAvoidingView preset="fixed">
       <View style={StyleSheet.absoluteFill}>
         <View style={themed($topDividerView)} />
         <WaveDivider color={colors.background} />

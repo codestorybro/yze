@@ -46,10 +46,6 @@ interface BaseScreenProps {
    */
   safeAreaEdges?: ExtendedEdge[]
   /**
-   * Background color
-   */
-  backgroundColor?: string
-  /**
    * System bar setting. Defaults to dark.
    */
   systemBarStyle?: SystemBarStyle
@@ -251,12 +247,8 @@ function ScreenWithScrolling(props: ScreenProps) {
  * @returns {JSX.Element} The rendered `Screen` component.
  */
 export function Screen(props: ScreenProps) {
+  const { themeContext } = useAppTheme()
   const {
-    theme: { colors },
-    themeContext,
-  } = useAppTheme()
-  const {
-    backgroundColor,
     KeyboardAvoidingViewProps,
     keyboardOffset = 0,
     safeAreaEdges,
@@ -272,7 +264,7 @@ export function Screen(props: ScreenProps) {
     progress.value = withTiming(themeContext === "dark" ? 1 : 0, { duration: 300 })
   }, [themeContext])
 
-  const animatedStyle = useAnimatedStyle(() => {
+  const animatedBackgroundStyle = useAnimatedStyle(() => {
     return {
       backgroundColor: interpolateColor(
         progress.value,
@@ -283,7 +275,7 @@ export function Screen(props: ScreenProps) {
   })
 
   return (
-    <Animated.View style={[$containerStyle, $containerInsets, animatedStyle]}>
+    <Animated.View style={[$containerStyle, $containerInsets, animatedBackgroundStyle]}>
       <SystemBars
         style={systemBarStyle || (themeContext === "dark" ? "light" : "dark")}
         {...SystemBarsProps}
