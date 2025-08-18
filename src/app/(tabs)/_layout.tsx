@@ -1,10 +1,15 @@
+import { ActivityIndicator } from "react-native"
 import { Tabs, Redirect } from "expo-router"
 
 import { TabBar } from "@/components"
 import { useUser } from "@/store/auth"
 
 export default function TabLayout() {
-  const { user } = useUser()
+  const { user, isLoading } = useUser()
+
+  if (isLoading) {
+    return <ActivityIndicator />
+  }
 
   if (!user) {
     return <Redirect href="../sign-in" />
