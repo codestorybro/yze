@@ -24,14 +24,14 @@ export default function Settings() {
         labelTx="profileScreen:darkMode"
         containerStyle={styles.singleOption}
       />
-      <Button tx="common:logOut" onPress={signOut} preset="secondary" />
       {__DEV__ && <DevSection />}
+      <Button tx="common:logOut" onPress={signOut} preset="secondary" />
     </LoggedScreenWrapper>
   )
 }
 
 const styles = StyleSheet.create({
   singleOption: {
-    marginBottom: 12,
+    marginVertical: 6,
   },
 })

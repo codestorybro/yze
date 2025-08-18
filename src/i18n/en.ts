@@ -27,6 +27,7 @@ const en = {
     hint: "Hint: you can use any email address and your favorite password :)",
     dontHaveAnAccount: "Don't have an account? ",
     signUp: "Sign up",
+    theSocialMirror: "The Social Mirror",
   },
   errorScreen: {
     title: "Something went wrong!",

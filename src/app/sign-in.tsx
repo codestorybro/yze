@@ -11,7 +11,7 @@ import {
   TextStyle,
 } from "react-native"
 import { router } from "expo-router"
-import Animated, { FadeInDown } from "react-native-reanimated"
+import Animated, { FadeInDown, FadeIn } from "react-native-reanimated"
 
 import {
   Button,
@@ -74,14 +74,22 @@ export default function SignIn() {
         <View style={themed($bottomDividerView)} />
       </View>
 
-      <AnimatedSvgIcon
-        containerStyle={[themed($logoIconContainer)]}
-        ref={logoIconRef}
-        pathData={SvgIconPaths.logoFulfilled}
-        color={colors.textReversed}
-        size={128}
-        slow
-      />
+      <View style={themed($logoIconContainer)}>
+        <AnimatedSvgIcon
+          ref={logoIconRef}
+          pathData={SvgIconPaths.logoFulfilled}
+          color={colors.textReversed}
+          size={128}
+          slow
+        />
+        <Animated.View entering={FadeIn.delay(1000).duration(800)}>
+          <Text
+            style={themed($subHeadingText)}
+            preset="subheading"
+            tx="loginScreen:theSocialMirror"
+          />
+        </Animated.View>
+      </View>
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -140,6 +148,12 @@ export default function SignIn() {
     </Screen>
   )
 }
+
+const $subHeadingText: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.textReversed,
+  marginTop: 12,
+  textAlign: "center",
+})
 
 const $signUpText: ThemedStyle<TextStyle> = ({ colors }) => ({
   color: colors.primary,
