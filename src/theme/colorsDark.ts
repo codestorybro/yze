@@ -1,4 +1,4 @@
-const palette = {
+export const palette = {
   neutral900: "#FFFFFF",
   neutral800: "#F4F2F1",
   neutral700: "#D7CEC9",

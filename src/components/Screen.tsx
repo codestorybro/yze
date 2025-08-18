@@ -1,4 +1,4 @@
-import { ReactNode, useRef, useState } from "react"
+import { ReactNode, useEffect, useRef, useState } from "react"
 import {
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
@@ -13,7 +13,15 @@ import {
 import { useScrollToTop } from "@react-navigation/native"
 import { SystemBars, SystemBarsProps, SystemBarStyle } from "react-native-edge-to-edge"
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller"
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  interpolateColor,
+} from "react-native-reanimated"
 
+import { palette as lightPalette } from "@/theme/colors"
+import { palette as darkPalette } from "@/theme/colorsDark"
 import { useAppTheme } from "@/theme/context"
 import { $styles } from "@/theme/styles"
 import { ExtendedEdge, useSafeAreaInsetsStyle } from "@/utils/useSafeAreaInsetsStyle"
@@ -258,14 +266,24 @@ export function Screen(props: ScreenProps) {
 
   const $containerInsets = useSafeAreaInsetsStyle(safeAreaEdges)
 
+  const progress = useSharedValue(themeContext === "dark" ? 1 : 0)
+
+  useEffect(() => {
+    progress.value = withTiming(themeContext === "dark" ? 1 : 0, { duration: 300 })
+  }, [themeContext])
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      backgroundColor: interpolateColor(
+        progress.value,
+        [0, 1],
+        [lightPalette.neutral200, darkPalette.neutral200],
+      ),
+    }
+  })
+
   return (
-    <View
-      style={[
-        $containerStyle,
-        { backgroundColor: backgroundColor || colors.background },
-        $containerInsets,
-      ]}
-    >
+    <Animated.View style={[$containerStyle, $containerInsets, animatedStyle]}>
       <SystemBars
         style={systemBarStyle || (themeContext === "dark" ? "light" : "dark")}
         {...SystemBarsProps}
@@ -293,7 +311,7 @@ export function Screen(props: ScreenProps) {
           )}
         </KeyboardAvoidingView>
       )}
-    </View>
+    </Animated.View>
   )
 }
 
