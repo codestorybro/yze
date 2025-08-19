@@ -38,6 +38,8 @@ export const palette = {
 
   overlay20: "rgba(25, 16, 21, 0.2)",
   overlay50: "rgba(25, 16, 21, 0.5)",
+
+  justBlack: "#000000",
 } as const
 
 export const colors = {

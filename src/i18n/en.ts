@@ -4,6 +4,7 @@ const en = {
     cancel: "Cancel",
     back: "Back",
     logOut: "Log out",
+    confirm: "Confirm",
   },
   welcomeScreen: {
     postscript:
