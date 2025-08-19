@@ -55,7 +55,8 @@ const en = {
     title: "Development only visible",
   },
   profileScreen: {
-    darkMode: "Dark Mode",
+    darkMode: "Dark mode",
+    selectGroup: "Select group",
   },
 }
 

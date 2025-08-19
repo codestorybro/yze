@@ -66,7 +66,7 @@ export default function SignIn() {
 
   const onSubmit = async (data: FormData) => {
     await signIn(data.email, data.password)
-    router.replace("/")
+    router.replace("/group-selector")
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(

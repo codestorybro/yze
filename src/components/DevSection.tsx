@@ -33,61 +33,55 @@ export function DevSection() {
   )
 
   return (
-    <View style={themed($itemsContainer)}>
-      <View style={themed($itemsInnerContainer)}>
-        <Text preset="bold" size="lg" tx="devSection:title" />
-        <ListItem
-          LeftComponent={
-            <View style={themed($item)}>
-              <Text preset="bold">App Id</Text>
-              <Text>{Application.applicationId}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={themed($item)}>
-              <Text preset="bold">App Name</Text>
-              <Text>{Application.applicationName}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={themed($item)}>
-              <Text preset="bold">App Version</Text>
-              <Text>{Application.nativeApplicationVersion}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={themed($item)}>
-              <Text preset="bold">App Build Version</Text>
-              <Text>{Application.nativeBuildVersion}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={themed($item)}>
-              <Text preset="bold">Hermes Enabled</Text>
-              <Text>{String(usingHermes)}</Text>
-            </View>
-          }
-        />
-        <Button tx="devSection:reactotron" onPress={reactotronDisplay} />
-      </View>
+    <View style={themed($itemsInnerContainer)}>
+      <Text preset="bold" size="lg" tx="devSection:title" />
+      <ListItem
+        LeftComponent={
+          <View style={themed($item)}>
+            <Text preset="bold">App Id</Text>
+            <Text>{Application.applicationId}</Text>
+          </View>
+        }
+      />
+      <ListItem
+        LeftComponent={
+          <View style={themed($item)}>
+            <Text preset="bold">App Name</Text>
+            <Text>{Application.applicationName}</Text>
+          </View>
+        }
+      />
+      <ListItem
+        LeftComponent={
+          <View style={themed($item)}>
+            <Text preset="bold">App Version</Text>
+            <Text>{Application.nativeApplicationVersion}</Text>
+          </View>
+        }
+      />
+      <ListItem
+        LeftComponent={
+          <View style={themed($item)}>
+            <Text preset="bold">App Build Version</Text>
+            <Text>{Application.nativeBuildVersion}</Text>
+          </View>
+        }
+      />
+      <ListItem
+        LeftComponent={
+          <View style={themed($item)}>
+            <Text preset="bold">Hermes Enabled</Text>
+            <Text>{String(usingHermes)}</Text>
+          </View>
+        }
+      />
+      <Button tx="devSection:reactotron" onPress={reactotronDisplay} />
     </View>
   )
 }
 
 const $item: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   marginBottom: spacing.md,
-})
-
-const $itemsContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  marginVertical: spacing.xl,
 })
 
 const $itemsInnerContainer: ThemedStyle<ViewStyle> = ({ spacing, colors }) => ({
