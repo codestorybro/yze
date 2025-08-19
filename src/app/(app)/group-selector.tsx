@@ -1,5 +1,3 @@
-import { router } from "expo-router"
-
 import { CircularCarousel, Screen } from "@/components"
 import { data } from "@/components/CircularCarousel/mockedData"
 

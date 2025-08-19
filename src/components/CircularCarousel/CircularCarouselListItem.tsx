@@ -1,4 +1,4 @@
-import { Dimensions, ImageProps, Image, ViewStyle, ImageStyle } from "react-native"
+import { Dimensions, ImageProps, Image, ViewStyle, ImageStyle, Pressable } from "react-native"
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated"
 
 import { useAppTheme } from "@/theme/context"
@@ -56,12 +56,14 @@ const CircularCarouselListItem: React.FC<CircularCarouselListItemProps> = ({
   })
 
   return (
-    <Animated.View style={[themed($wrapper), { width: ListItemWidth }, rStyle]}>
-      <Image
-        source={imageSrc}
-        style={[themed($image), { height: ListItemWidth, width: ListItemWidth }]}
-      />
-    </Animated.View>
+    <Pressable>
+      <Animated.View style={[themed($wrapper), { width: ListItemWidth }, rStyle]}>
+        <Image
+          source={imageSrc}
+          style={[themed($image), { height: ListItemWidth, width: ListItemWidth }]}
+        />
+      </Animated.View>
+    </Pressable>
   )
 }
 
@@ -72,7 +74,7 @@ const $wrapper: ThemedStyle<ViewStyle> = () => ({
 const $image: ThemedStyle<ImageStyle> = ({ colors }) => ({
   margin: 3,
   borderRadius: 50,
-  borderWidth: 1,
+  borderWidth: 2,
   borderColor: colors.tabBarBackground,
 })
 
