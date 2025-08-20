@@ -18,6 +18,8 @@ import { Button } from "../Button"
 import { CarouselItem } from "./CarouselItem"
 
 const { width } = Dimensions.get("window")
+
+// constants
 export const _itemSize = width * 0.24
 const _spacing = 12
 const _itemTotalSize = _itemSize + _spacing
