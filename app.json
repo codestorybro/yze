@@ -11,14 +11,13 @@
   },
   "newArchEnabled": true,
   "jsEngine": "hermes",
-  "assetBundlePatterns": [
-    "**/*"
-  ],
+  "assetBundlePatterns": ["**/*"],
   "android": {
     "icon": "./assets/images/app-icon-android-legacy.png",
     "package": "app.yze",
     "adaptiveIcon": {
       "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground.png",
+      "monochromeImage": "./assets/images/app-icon-android-adaptive-monochrome.png",
       "backgroundImage": "./assets/images/app-icon-android-adaptive-background.png"
     },
     "allowBackup": false,
@@ -26,15 +25,13 @@
   },
   "ios": {
     "icon": "./assets/images/app-icon-ios.png",
-    "supportsTablet": true,
+    "supportsTablet": false,
     "bundleIdentifier": "app.yze",
     "privacyManifests": {
       "NSPrivacyAccessedAPITypes": [
         {
           "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
-          "NSPrivacyAccessedAPITypeReasons": [
-            "CA92.1"
-          ]
+          "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
         }
       ]
     },
@@ -49,13 +46,17 @@
   "plugins": [
     "expo-localization",
     "expo-font",
+    "expo-secure-store",
     [
       "expo-splash-screen",
       {
         "image": "./assets/images/app-icon-android-adaptive-foreground.png",
         "imageWidth": 300,
-        "resizeMode": "contain",
-        "backgroundColor": "#191015"
+        "backgroundColor": "#1DA1F2",
+        "dark": {
+          "image": "./assets/images/app-icon-android-adaptive-foreground.png",
+          "backgroundColor": "#191015"
+        }
       }
     ],
     [
