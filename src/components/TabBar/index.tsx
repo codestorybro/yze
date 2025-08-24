@@ -42,7 +42,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
       <Animated.View
         style={[
           themed($tabBarItemAnimationStyle),
-          { height: dimensions.height - 15, width: buttonWidth - 25 },
+          { height: dimensions.height - 18, width: buttonWidth - 25 },
           animatedStyle,
         ]}
       />

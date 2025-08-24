@@ -27,6 +27,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="voting"
+        options={{
+          tabBarLabel: "Voting",
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           tabBarLabel: "Profile",

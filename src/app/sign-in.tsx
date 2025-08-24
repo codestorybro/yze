@@ -96,7 +96,7 @@ export default function SignIn() {
       <View style={themed($logoIconContainer)}>
         <AnimatedSvgIcon
           ref={logoIconRef}
-          pathData={SvgIconPaths.logoFulfilled}
+          pathData={SvgIconPaths.logo}
           color={colors.textReversed}
           size={128}
           slow

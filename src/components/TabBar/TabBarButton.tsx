@@ -40,7 +40,7 @@ export function TabBarButton({ routeName, color, label, isFocused, ...props }: T
   const animatedIconStyle = useAnimatedStyle(() => {
     const scaleValue = interpolate(scale.value, [0, 1], [1, 1.2])
 
-    const top = interpolate(scale.value, [0, 1], [0, 8])
+    const top = interpolate(scale.value, [0, 1], [0, 7])
 
     return { transform: [{ scale: scaleValue }], top }
   })
