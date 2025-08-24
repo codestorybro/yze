@@ -7,6 +7,7 @@ import { SingleAttribute } from "./SingleAttribute"
 export const _spacing = 8
 
 export type AttributeType = {
+  id: string
   name: string
   score: number
 }
@@ -23,7 +24,7 @@ export default function Leaderboard({ attributes }: Props) {
       <View style={{ gap: _spacing }}>
         {attributes.map((attribute, index) => (
           <SingleAttribute
-            key={index}
+            key={attribute.id}
             attribute={attribute}
             index={index}
             anim={_anim}
