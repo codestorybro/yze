@@ -1,4 +1,4 @@
-import { View, StyleSheet, Dimensions } from "react-native"
+import { View, StyleSheet, Dimensions, TextStyle } from "react-native"
 import Animated, {
   interpolate,
   SharedValue,
@@ -6,6 +6,10 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated"
+
+import { Text } from "@/components"
+import { useAppTheme } from "@/theme/context"
+import { ThemedStyle } from "@/theme/types"
 
 export type UserType = {
   id: string
@@ -20,7 +24,7 @@ type Props = {
 // constants
 const { width } = Dimensions.get("screen")
 const _imageWidth = width * 0.7
-const _imageHeight = _imageWidth * 1.76
+const _imageHeight = _imageWidth
 const _spacing = 12
 
 function Avatar({
@@ -46,10 +50,8 @@ function Avatar({
   })
 
   return (
-    <View
-      style={{ width: _imageWidth, height: _imageHeight, overflow: "hidden", borderRadius: 16 }}
-    >
-      <Animated.Image source={{ uri: item.avatarUri }} style={[{ flex: 1 }, stylez]} />
+    <View style={[styles.avatarWrapper, { width: _imageWidth, height: _imageHeight }]}>
+      <Animated.Image source={{ uri: item.avatarUri }} style={[styles.flexContainer, stylez]} />
     </View>
   )
 }
@@ -79,6 +81,8 @@ function BackdropAvatar({
 }
 
 export function HorizontalSlider({ users }: Props) {
+  const { themed } = useAppTheme()
+
   const scrollX = useSharedValue(0)
   const onScroll = useAnimatedScrollHandler((e) => {
     scrollX.value = e.contentOffset.x / (_imageWidth + _spacing)
@@ -95,12 +99,17 @@ export function HorizontalSlider({ users }: Props) {
         data={users}
         keyExtractor={(item) => item.id}
         horizontal
-        style={{ flexGrow: 0 }}
+        style={styles.flatListContainer}
         snapToInterval={_imageWidth + _spacing}
         decelerationRate="fast"
         contentContainerStyle={{ gap: _spacing, paddingHorizontal: (width - _imageWidth) / 2 }}
         renderItem={({ item, index }) => {
-          return <Avatar item={item} index={index} scrollX={scrollX} />
+          return (
+            <View style={styles.wrapper}>
+              <Avatar item={item} index={index} scrollX={scrollX} />
+              <Text style={themed($text)}>{item.name}</Text>
+            </View>
+          )
         }}
         onScroll={onScroll}
         scrollEventThrottle={1000 / 60}
@@ -110,7 +119,25 @@ export function HorizontalSlider({ users }: Props) {
   )
 }
 
+const $text: ThemedStyle<TextStyle> = ({ colors }) => ({
+  backgroundColor: colors.tabBarBackground,
+  paddingHorizontal: 8,
+  paddingVertical: 4,
+  borderRadius: 8,
+  marginTop: 16,
+})
+
 const styles = StyleSheet.create({
+  avatarWrapper: {
+    borderRadius: "100%",
+    overflow: "hidden",
+  },
+  flatListContainer: {
+    flexGrow: 0,
+  },
+  flexContainer: {
+    flex: 1,
+  },
   wrapper: {
     alignItems: "center",
     flex: 1,
