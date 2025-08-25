@@ -1,7 +1,5 @@
-import { View, StyleSheet, Dimensions, Pressable, ViewStyle, TextStyle, Image } from "react-native"
+import { View, StyleSheet, Dimensions, Pressable, ViewStyle, TextStyle } from "react-native"
 import Animated, {
-  interpolate,
-  SharedValue,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
@@ -11,12 +9,16 @@ import Animated, {
   interpolateColor,
 } from "react-native-reanimated"
 
-import { Button, Text, TextField } from "@/components"
+import { Button, Text } from "@/components"
 import { useSearch, useVote } from "@/store/vote"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 import { QuestionType } from "@/types/questionType"
 import { UserType } from "@/types/userType"
+
+import { Avatar } from "./Avatar"
+import { BackdropAvatar } from "./BackdropAvatar"
+import { UserSearchBar } from "./UserSearchBar"
 
 type Props = {
   users: UserType[]
@@ -26,109 +28,9 @@ type Props = {
 
 // constants
 const { width } = Dimensions.get("screen")
-const _imageWidth = width * 0.7
-const _imageHeight = _imageWidth
+export const _imageWidth = width * 0.7
+export const _imageHeight = _imageWidth
 const _spacing = 12
-
-export function UserSearchBar() {
-  const { searchTerm, setSearchTerm } = useSearch()
-
-  return (
-    <View style={{ width: _imageWidth }}>
-      <TextField placeholder="Search user..." value={searchTerm} onChangeText={setSearchTerm} />
-    </View>
-  )
-}
-
-function Avatar({
-  item,
-  index,
-  scrollX,
-  isSelected,
-}: {
-  item: UserType
-  index: number
-  scrollX: SharedValue<number>
-  isSelected: boolean
-}) {
-  const { themed } = useAppTheme()
-
-  const stylez = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          scale: interpolate(scrollX.value, [index - 1, index, index + 1], [1.4, 1, 1.4]),
-        },
-        {
-          rotate: `${interpolate(scrollX.value, [index - 1, index, index + 1], [15, 0, -15])}deg`,
-        },
-      ],
-    }
-  })
-
-  const borderStyle = useAnimatedStyle(() => {
-    return {
-      borderWidth: withTiming(isSelected ? 4 : 0, { duration: 250 }),
-    }
-  })
-
-  return (
-    <Animated.View
-      style={[
-        themed($avatarWrapper),
-        {
-          width: _imageWidth,
-          height: _imageHeight,
-          borderRadius: _imageWidth / 2,
-        },
-        borderStyle,
-      ]}
-    >
-      {item.id === "0" ? (
-        <View style={styles.placeholderContainer}>
-          <Image
-            source={require("../../../assets/images/placeholder.png")}
-            style={styles.placeholderImage}
-            resizeMode="contain"
-          />
-        </View>
-      ) : (
-        <Animated.Image
-          source={{ uri: item.avatarUri }}
-          style={[StyleSheet.absoluteFillObject, stylez]}
-          resizeMode="cover"
-        />
-      )}
-    </Animated.View>
-  )
-}
-
-function BackdropAvatar({
-  user,
-  index,
-  scrollX,
-}: {
-  user: UserType
-  index: number
-  scrollX: SharedValue<number>
-}) {
-  const { themed } = useAppTheme()
-  const stylez = useAnimatedStyle(() => {
-    return {
-      opacity: interpolate(scrollX.value, [index - 1, index, index + 1], [0, 1, 0]),
-    }
-  })
-
-  return user.id !== "0" ? (
-    <Animated.Image
-      source={{ uri: user.avatarUri }}
-      style={[StyleSheet.absoluteFillObject, stylez]}
-      blurRadius={50}
-    />
-  ) : (
-    <View style={themed($emptyBackgroundWrapper)} />
-  )
-}
 
 export function HorizontalSlider({ users, question, onSubmit }: Props) {
   const {
@@ -276,17 +178,6 @@ const $text: ThemedStyle<TextStyle> = ({ colors }) => ({
   marginVertical: 16,
 })
 
-const $avatarWrapper: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  overflow: "hidden",
-  borderColor: colors.primary,
-})
-
-const $emptyBackgroundWrapper: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  width: "100%",
-  height: "100%",
-  backgroundColor: colors.background,
-})
-
 const styles = StyleSheet.create({
   buttonsContainer: {
     flexDirection: "row",
@@ -294,15 +185,6 @@ const styles = StyleSheet.create({
   },
   flatListContainer: {
     flexGrow: 0,
-  },
-  placeholderContainer: {
-    alignItems: "center",
-    flex: 1,
-    justifyContent: "center",
-  },
-  placeholderImage: {
-    height: _imageWidth,
-    width: _imageWidth,
   },
   resetButton: {
     flex: 1,
