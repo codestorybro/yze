@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
+import { GroupType } from "@/types/groupType"
 
 import { Button } from "../Button"
 import { CarouselItem } from "./CarouselItem"
@@ -24,14 +25,9 @@ export const _itemSize = width * 0.24
 const _spacing = 12
 const _itemTotalSize = _itemSize + _spacing
 
-type ItemType = {
-  id: string
-  imageUri: string
-}
-
 type Props = {
   onConfirm: () => void
-  items: ItemType[]
+  items: GroupType[]
 }
 
 export function CircularSlider({ onConfirm, items }: Props) {

@@ -1,4 +1,4 @@
-import { View, StyleSheet, Dimensions, TextStyle } from "react-native"
+import { View, StyleSheet, Dimensions, TextStyle, Pressable } from "react-native"
 import Animated, {
   interpolate,
   SharedValue,
@@ -8,17 +8,15 @@ import Animated, {
 } from "react-native-reanimated"
 
 import { Text } from "@/components"
+import { useVote } from "@/store/vote"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
-
-export type UserType = {
-  id: string
-  name: string
-  avatarUri: string
-}
+import { QuestionType } from "@/types/questionType"
+import { UserType } from "@/types/userType"
 
 type Props = {
   users: UserType[]
+  question: QuestionType
 }
 
 // constants
@@ -80,8 +78,9 @@ function BackdropAvatar({
   )
 }
 
-export function HorizontalSlider({ users }: Props) {
+export function HorizontalSlider({ users, question }: Props) {
   const { themed } = useAppTheme()
+  const { voteForUser, selectedUsers } = useVote()
 
   const scrollX = useSharedValue(0)
   const onScroll = useAnimatedScrollHandler((e) => {
@@ -95,6 +94,7 @@ export function HorizontalSlider({ users }: Props) {
           <BackdropAvatar key={`backdrop_${user.id}`} user={user} index={index} scrollX={scrollX} />
         ))}
       </View>
+      <Text style={themed($text)}>{question.text}</Text>
       <Animated.FlatList
         data={users}
         keyExtractor={(item) => item.id}
@@ -105,16 +105,19 @@ export function HorizontalSlider({ users }: Props) {
         contentContainerStyle={{ gap: _spacing, paddingHorizontal: (width - _imageWidth) / 2 }}
         renderItem={({ item, index }) => {
           return (
-            <View style={styles.wrapper}>
+            <Pressable onPress={() => voteForUser(item)} style={styles.wrapper}>
               <Avatar item={item} index={index} scrollX={scrollX} />
               <Text style={themed($text)}>{item.name}</Text>
-            </View>
+            </Pressable>
           )
         }}
         onScroll={onScroll}
         scrollEventThrottle={1000 / 60}
         showsHorizontalScrollIndicator={false}
       />
+      <Text style={themed($text)}>
+        Selected: {selectedUsers?.length ?? 0}/{question.howMuchPick}
+      </Text>
     </View>
   )
 }
@@ -124,7 +127,7 @@ const $text: ThemedStyle<TextStyle> = ({ colors }) => ({
   paddingHorizontal: 8,
   paddingVertical: 4,
   borderRadius: 8,
-  marginTop: 16,
+  marginVertical: 16,
 })
 
 const styles = StyleSheet.create({

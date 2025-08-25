@@ -12,8 +12,8 @@ import Animated, {
 } from "react-native-reanimated"
 
 import { useAppTheme } from "@/theme/context"
+import { AttributeType } from "@/types/attributeType"
 
-import type { AttributeType } from "."
 import { _spacing } from "."
 
 // constants

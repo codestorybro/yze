@@ -1,16 +1,12 @@
 import { View } from "react-native"
 import { useSharedValue } from "react-native-reanimated"
 
+import { AttributeType } from "@/types/attributeType"
+
 import { SingleAttribute } from "./SingleAttribute"
 
 // constants
 export const _spacing = 8
-
-export type AttributeType = {
-  id: string
-  name: string
-  score: number
-}
 
 type Props = {
   attributes: AttributeType[]

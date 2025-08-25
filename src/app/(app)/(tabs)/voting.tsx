@@ -60,10 +60,16 @@ const mockedUsers = [
   },
 ]
 
+const mockedQuestion = {
+  howMuchPick: 1,
+  text: "Who is your favorite?",
+  attribute: "Charisma",
+}
+
 export default function Voting() {
   return (
     <Screen style={styles.container}>
-      <HorizontalSlider users={mockedUsers} />
+      <HorizontalSlider users={mockedUsers} question={mockedQuestion} />
     </Screen>
   )
 }

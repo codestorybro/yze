@@ -7,6 +7,7 @@ import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-c
 
 import { initI18n } from "@/i18n"
 import { AuthProvider } from "@/store/auth"
+import { AppStoreProvider } from "@/store/vote"
 import { ThemeProvider } from "@/theme/context"
 import { customFontsToLoad } from "@/theme/typography"
 import { loadDateFnsLocale } from "@/utils/formatDate"
@@ -56,7 +57,9 @@ export default function Root() {
         <ThemeProvider>
           <KeyboardProvider>
             <AuthProvider>
-              <Slot />
+              <AppStoreProvider>
+                <Slot />
+              </AppStoreProvider>
             </AuthProvider>
           </KeyboardProvider>
         </ThemeProvider>

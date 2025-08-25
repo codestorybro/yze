@@ -1,12 +1,8 @@
 import { createContext, useContext, type PropsWithChildren } from "react"
 
-import { useStorageState } from "./useStorageState"
+import { UserType } from "@/types/userType"
 
-export type UserType = {
-  id: string
-  email: string
-  name: string
-}
+import { useStorageState } from "./useStorageState"
 
 type AuthContextType = {
   user: UserType | null
