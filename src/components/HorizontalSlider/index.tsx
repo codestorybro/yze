@@ -1,4 +1,4 @@
-import { View, StyleSheet, Dimensions, Pressable, ViewStyle, TextStyle } from "react-native"
+import { View, StyleSheet, Dimensions, Pressable, TextStyle } from "react-native"
 import Animated, {
   useAnimatedScrollHandler,
   useAnimatedStyle,
@@ -19,6 +19,7 @@ import { UserType } from "@/types/userType"
 import { Avatar } from "./Avatar"
 import { BackdropAvatar } from "./BackdropAvatar"
 import { UserSearchBar } from "./UserSearchBar"
+import Ticker from "../Ticker"
 
 type Props = {
   users: UserType[]
@@ -135,11 +136,9 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
         showsHorizontalScrollIndicator={false}
       />
 
-      <Animated.View style={[themed($textWrapper), counterStyle]}>
-        <Text>
-          Selected: {selectedUsers?.length ?? 0}/{question.howMuchPick}
-        </Text>
-      </Animated.View>
+      <Animated.Text style={[themed($textWrapper), counterStyle]}>
+        Selected: <Ticker value={selectedUsers?.length ?? 0} /> / {question.howMuchPick}
+      </Animated.Text>
       <View style={styles.buttonsContainer}>
         <Button
           onPress={() => {
@@ -163,11 +162,12 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
   )
 }
 
-const $textWrapper: ThemedStyle<ViewStyle> = () => ({
+const $textWrapper: ThemedStyle<TextStyle> = ({ colors }) => ({
   paddingHorizontal: 8,
   paddingVertical: 4,
   borderRadius: 8,
   marginVertical: 16,
+  color: colors.text,
 })
 
 const $text: ThemedStyle<TextStyle> = ({ colors }) => ({
