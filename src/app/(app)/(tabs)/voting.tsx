@@ -1,7 +1,9 @@
+import { useEffect } from "react"
 import { StyleSheet } from "react-native"
 
 import { Screen } from "@/components"
 import { HorizontalSlider } from "@/components/HorizontalSlider"
+import { useQuestion } from "@/store/vote"
 
 const mockedUsers = [
   {
@@ -61,15 +63,23 @@ const mockedUsers = [
 ]
 
 const mockedQuestion = {
-  howMuchPick: 1,
+  howMuchPick: 3,
   text: "Who is your favorite?",
   attribute: "Charisma",
 }
 
 export default function Voting() {
+  const { question, setQuestion } = useQuestion()
+
+  useEffect(() => {
+    setQuestion(mockedQuestion)
+  }, [])
+
+  if (!question) return null
+
   return (
     <Screen style={styles.container}>
-      <HorizontalSlider users={mockedUsers} question={mockedQuestion} />
+      <HorizontalSlider users={mockedUsers} question={question} />
     </Screen>
   )
 }

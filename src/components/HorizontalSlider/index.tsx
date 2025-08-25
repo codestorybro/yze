@@ -1,10 +1,14 @@
-import { View, StyleSheet, Dimensions, TextStyle, Pressable } from "react-native"
+import { View, StyleSheet, Dimensions, Pressable, ViewStyle, TextStyle } from "react-native"
 import Animated, {
   interpolate,
   SharedValue,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
+  withSequence,
+  withTiming,
+  withSpring,
+  interpolateColor,
 } from "react-native-reanimated"
 
 import { Text } from "@/components"
@@ -29,11 +33,15 @@ function Avatar({
   item,
   index,
   scrollX,
+  isSelected,
 }: {
   item: UserType
   index: number
   scrollX: SharedValue<number>
+  isSelected: boolean
 }) {
+  const { themed } = useAppTheme()
+
   const stylez = useAnimatedStyle(() => {
     return {
       transform: [
@@ -47,10 +55,22 @@ function Avatar({
     }
   })
 
+  const borderStyle = useAnimatedStyle(() => {
+    return {
+      borderWidth: withTiming(isSelected ? 4 : 0, { duration: 250 }),
+    }
+  })
+
   return (
-    <View style={[styles.avatarWrapper, { width: _imageWidth, height: _imageHeight }]}>
+    <Animated.View
+      style={[
+        themed($avatarWrapper),
+        { width: _imageWidth, height: _imageHeight, borderRadius: _imageWidth / 2 },
+        borderStyle,
+      ]}
+    >
       <Animated.Image source={{ uri: item.avatarUri }} style={[styles.flexContainer, stylez]} />
-    </View>
+    </Animated.View>
   )
 }
 
@@ -79,13 +99,56 @@ function BackdropAvatar({
 }
 
 export function HorizontalSlider({ users, question }: Props) {
-  const { themed } = useAppTheme()
+  const {
+    themed,
+    theme: { colors },
+  } = useAppTheme()
   const { voteForUser, selectedUsers } = useVote()
 
   const scrollX = useSharedValue(0)
   const onScroll = useAnimatedScrollHandler((e) => {
     scrollX.value = e.contentOffset.x / (_imageWidth + _spacing)
   })
+
+  const shakeScale = useSharedValue(1)
+  const shakeRotate = useSharedValue(0)
+  const colorProgress = useSharedValue(0)
+
+  const counterStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: shakeScale.value }, { rotate: `${shakeRotate.value}deg` }],
+      backgroundColor: interpolateColor(
+        colorProgress.value,
+        [0, 1, 2],
+        [colors.tabBarBackground, colors.error, colors.tabBarBackground],
+      ),
+    }
+  })
+
+  const triggerShake = () => {
+    shakeScale.value = withSequence(
+      withTiming(1.2, { duration: 500 }),
+      withSpring(1, { damping: 5 }),
+    )
+    shakeRotate.value = withSequence(
+      withTiming(-5, { duration: 100 }),
+      withTiming(5, { duration: 100 }),
+      withTiming(-5, { duration: 100 }),
+      withSpring(0, { damping: 5 }),
+    )
+    colorProgress.value = withSequence(
+      withTiming(1, { duration: 100 }),
+      withTiming(2, { duration: 1000 }),
+    )
+  }
+
+  const onAvatarPress = (user: UserType) => {
+    try {
+      voteForUser(user)
+    } catch {
+      triggerShake()
+    }
+  }
 
   return (
     <View style={styles.wrapper}>
@@ -105,8 +168,13 @@ export function HorizontalSlider({ users, question }: Props) {
         contentContainerStyle={{ gap: _spacing, paddingHorizontal: (width - _imageWidth) / 2 }}
         renderItem={({ item, index }) => {
           return (
-            <Pressable onPress={() => voteForUser(item)} style={styles.wrapper}>
-              <Avatar item={item} index={index} scrollX={scrollX} />
+            <Pressable onPress={() => onAvatarPress(item)} style={styles.wrapper}>
+              <Avatar
+                item={item}
+                index={index}
+                scrollX={scrollX}
+                isSelected={!!selectedUsers?.some((u) => u.id === item.id)}
+              />
               <Text style={themed($text)}>{item.name}</Text>
             </Pressable>
           )
@@ -115,12 +183,22 @@ export function HorizontalSlider({ users, question }: Props) {
         scrollEventThrottle={1000 / 60}
         showsHorizontalScrollIndicator={false}
       />
-      <Text style={themed($text)}>
-        Selected: {selectedUsers?.length ?? 0}/{question.howMuchPick}
-      </Text>
+
+      <Animated.View style={[themed($textWrapper), counterStyle]}>
+        <Text>
+          Selected: {selectedUsers?.length ?? 0}/{question.howMuchPick}
+        </Text>
+      </Animated.View>
     </View>
   )
 }
+
+const $textWrapper: ThemedStyle<ViewStyle> = () => ({
+  paddingHorizontal: 8,
+  paddingVertical: 4,
+  borderRadius: 8,
+  marginVertical: 16,
+})
 
 const $text: ThemedStyle<TextStyle> = ({ colors }) => ({
   backgroundColor: colors.tabBarBackground,
@@ -130,11 +208,12 @@ const $text: ThemedStyle<TextStyle> = ({ colors }) => ({
   marginVertical: 16,
 })
 
+const $avatarWrapper: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  overflow: "hidden",
+  borderColor: colors.primary,
+})
+
 const styles = StyleSheet.create({
-  avatarWrapper: {
-    borderRadius: "100%",
-    overflow: "hidden",
-  },
   flatListContainer: {
     flexGrow: 0,
   },
