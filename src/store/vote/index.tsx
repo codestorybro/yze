@@ -8,6 +8,8 @@ type AppContextType = {
   voteForUser: (user: UserType) => void
   question: QuestionType | null
   setQuestion: (question: QuestionType | null) => void
+  searchTerm: string
+  setSearchTerm: (term: string) => void
 }
 
 const AppContext = createContext<AppContextType | null>(null)
@@ -15,6 +17,7 @@ const AppContext = createContext<AppContextType | null>(null)
 export function AppStoreProvider({ children }: PropsWithChildren) {
   const [selectedUsers, setSelectedUsers] = useState<UserType[] | null>(null)
   const [question, setQuestion] = useState<QuestionType | null>(null)
+  const [searchTerm, setSearchTerm] = useState("")
 
   const voteForUser = (user: UserType) => {
     const list = selectedUsers ?? []
@@ -39,6 +42,8 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
         voteForUser,
         question,
         setQuestion,
+        searchTerm,
+        setSearchTerm,
       }}
     >
       {children}
@@ -63,5 +68,15 @@ export function useQuestion() {
   return {
     question: ctx.question,
     setQuestion: ctx.setQuestion,
+  }
+}
+
+export function useSearch() {
+  const ctx = useContext(AppContext)
+  if (!ctx) throw new Error("useSearch must be used within <AppProvider />")
+
+  return {
+    searchTerm: ctx.searchTerm,
+    setSearchTerm: ctx.setSearchTerm,
   }
 }

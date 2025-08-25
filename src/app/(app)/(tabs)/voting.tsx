@@ -1,7 +1,6 @@
 import { useEffect } from "react"
-import { StyleSheet } from "react-native"
+import { StyleSheet, View } from "react-native"
 
-import { Screen } from "@/components"
 import { HorizontalSlider } from "@/components/HorizontalSlider"
 import { useQuestion } from "@/store/vote"
 
@@ -78,9 +77,9 @@ export default function Voting() {
   if (!question) return null
 
   return (
-    <Screen style={styles.container}>
+    <View style={styles.container}>
       <HorizontalSlider users={mockedUsers} question={question} />
-    </Screen>
+    </View>
   )
 }
 

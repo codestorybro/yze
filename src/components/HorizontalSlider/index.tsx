@@ -11,8 +11,8 @@ import Animated, {
   interpolateColor,
 } from "react-native-reanimated"
 
-import { Text } from "@/components"
-import { useVote } from "@/store/vote"
+import { Text, TextField } from "@/components"
+import { useSearch, useVote } from "@/store/vote"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 import { QuestionType } from "@/types/questionType"
@@ -28,6 +28,16 @@ const { width } = Dimensions.get("screen")
 const _imageWidth = width * 0.7
 const _imageHeight = _imageWidth
 const _spacing = 12
+
+export function UserSearchBar() {
+  const { searchTerm, setSearchTerm } = useSearch()
+
+  return (
+    <View style={{ width: _imageWidth }}>
+      <TextField placeholder="Search user..." value={searchTerm} onChangeText={setSearchTerm} />
+    </View>
+  )
+}
 
 function Avatar({
   item,
@@ -104,6 +114,7 @@ export function HorizontalSlider({ users, question }: Props) {
     theme: { colors },
   } = useAppTheme()
   const { voteForUser, selectedUsers } = useVote()
+  const { searchTerm } = useSearch()
 
   const scrollX = useSharedValue(0)
   const onScroll = useAnimatedScrollHandler((e) => {
@@ -157,9 +168,10 @@ export function HorizontalSlider({ users, question }: Props) {
           <BackdropAvatar key={`backdrop_${user.id}`} user={user} index={index} scrollX={scrollX} />
         ))}
       </View>
+      <UserSearchBar />
       <Text style={themed($text)}>{question.text}</Text>
       <Animated.FlatList
-        data={users}
+        data={users.filter((user) => user.name.includes(searchTerm))}
         keyExtractor={(item) => item.id}
         horizontal
         style={styles.flatListContainer}
