@@ -1,4 +1,4 @@
-import { View, StyleSheet, Dimensions, Pressable, ViewStyle, TextStyle } from "react-native"
+import { View, StyleSheet, Dimensions, Pressable, ViewStyle, TextStyle, Image } from "react-native"
 import Animated, {
   interpolate,
   SharedValue,
@@ -75,11 +75,29 @@ function Avatar({
     <Animated.View
       style={[
         themed($avatarWrapper),
-        { width: _imageWidth, height: _imageHeight, borderRadius: _imageWidth / 2 },
+        {
+          width: _imageWidth,
+          height: _imageHeight,
+          borderRadius: _imageWidth / 2,
+        },
         borderStyle,
       ]}
     >
-      <Animated.Image source={{ uri: item.avatarUri }} style={[styles.flexContainer, stylez]} />
+      {item.id === "0" ? (
+        <View style={styles.placeholderContainer}>
+          <Image
+            source={require("../../../assets/images/placeholder.png")}
+            style={styles.placeholderImage}
+            resizeMode="contain"
+          />
+        </View>
+      ) : (
+        <Animated.Image
+          source={{ uri: item.avatarUri }}
+          style={[StyleSheet.absoluteFillObject, stylez]}
+          resizeMode="cover"
+        />
+      )}
     </Animated.View>
   )
 }
@@ -93,18 +111,21 @@ function BackdropAvatar({
   index: number
   scrollX: SharedValue<number>
 }) {
+  const { themed } = useAppTheme()
   const stylez = useAnimatedStyle(() => {
     return {
       opacity: interpolate(scrollX.value, [index - 1, index, index + 1], [0, 1, 0]),
     }
   })
 
-  return (
+  return user.id !== "0" ? (
     <Animated.Image
       source={{ uri: user.avatarUri }}
       style={[StyleSheet.absoluteFillObject, stylez]}
       blurRadius={50}
     />
+  ) : (
+    <View style={themed($emptyBackgroundWrapper)} />
   )
 }
 
@@ -161,17 +182,28 @@ export function HorizontalSlider({ users, question }: Props) {
     }
   }
 
+  const filtered = users.filter((user) => user.name.includes(searchTerm))
+  const dataResult = filtered.length
+    ? filtered
+    : [
+        {
+          id: "0",
+          name: "No Results",
+          avatarUri: require("../../../assets/images/placeholder.png"),
+        },
+      ]
+
   return (
     <View style={styles.wrapper}>
       <View style={StyleSheet.absoluteFillObject}>
-        {users.map((user, index) => (
+        {dataResult.map((user, index) => (
           <BackdropAvatar key={`backdrop_${user.id}`} user={user} index={index} scrollX={scrollX} />
         ))}
       </View>
       <UserSearchBar />
       <Text style={themed($text)}>{question.text}</Text>
       <Animated.FlatList
-        data={users.filter((user) => user.name.includes(searchTerm))}
+        data={dataResult}
         keyExtractor={(item) => item.id}
         horizontal
         style={styles.flatListContainer}
@@ -180,7 +212,11 @@ export function HorizontalSlider({ users, question }: Props) {
         contentContainerStyle={{ gap: _spacing, paddingHorizontal: (width - _imageWidth) / 2 }}
         renderItem={({ item, index }) => {
           return (
-            <Pressable onPress={() => onAvatarPress(item)} style={styles.wrapper}>
+            <Pressable
+              disabled={dataResult[0].id === "0"}
+              onPress={() => onAvatarPress(item)}
+              style={styles.wrapper}
+            >
               <Avatar
                 item={item}
                 index={index}
@@ -225,12 +261,24 @@ const $avatarWrapper: ThemedStyle<ViewStyle> = ({ colors }) => ({
   borderColor: colors.primary,
 })
 
+const $emptyBackgroundWrapper: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  width: "100%",
+  height: "100%",
+  backgroundColor: colors.background,
+})
+
 const styles = StyleSheet.create({
   flatListContainer: {
     flexGrow: 0,
   },
-  flexContainer: {
+  placeholderContainer: {
+    alignItems: "center",
     flex: 1,
+    justifyContent: "center",
+  },
+  placeholderImage: {
+    height: _imageWidth,
+    width: _imageWidth,
   },
   wrapper: {
     alignItems: "center",
