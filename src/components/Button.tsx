@@ -130,7 +130,7 @@ export function Button(props: ButtonProps) {
       themed($viewPresets[preset]),
       $viewStyleOverride,
       !!pressed && themed([$pressedViewPresets[preset], $pressedViewStyleOverride]),
-      !!disabled && $disabledViewStyleOverride,
+      !!disabled && ($disabledViewStyleOverride || themed($disabledView)),
     ]
   }
   /**
@@ -237,3 +237,7 @@ const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
   secondary: () => ({ opacity: 0.9 }),
   error: () => ({ opacity: 0.9 }),
 }
+
+const $disabledView: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  backgroundColor: colors.border,
+})

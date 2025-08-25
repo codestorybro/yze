@@ -1,8 +1,10 @@
 import { useEffect } from "react"
-import { StyleSheet, View } from "react-native"
+import { View, ViewStyle } from "react-native"
 
 import { HorizontalSlider } from "@/components/HorizontalSlider"
-import { useQuestion } from "@/store/vote"
+import { useQuestion, useVote } from "@/store/vote"
+import { useAppTheme } from "@/theme/context"
+import { ThemedStyle } from "@/theme/types"
 
 const mockedUsers = [
   {
@@ -68,7 +70,13 @@ const mockedQuestion = {
 }
 
 export default function Voting() {
+  const { themed } = useAppTheme()
   const { question, setQuestion } = useQuestion()
+  const { selectedUsers } = useVote()
+
+  const onSubmit = () => {
+    console.log(selectedUsers)
+  }
 
   useEffect(() => {
     setQuestion(mockedQuestion)
@@ -77,16 +85,15 @@ export default function Voting() {
   if (!question) return null
 
   return (
-    <View style={styles.container}>
-      <HorizontalSlider users={mockedUsers} question={question} />
+    <View style={themed($container)}>
+      <HorizontalSlider users={mockedUsers} question={question} onSubmit={onSubmit} />
     </View>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    flex: 1,
-    justifyContent: "center",
-  },
+const $container: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  backgroundColor: colors.palette.justBlack,
+  alignItems: "center",
+  flex: 1,
+  justifyContent: "center",
 })

@@ -5,6 +5,7 @@ import { UserType } from "@/types/userType"
 
 type AppContextType = {
   selectedUsers: UserType[] | null
+  resetUsers: () => void
   voteForUser: (user: UserType) => void
   question: QuestionType | null
   setQuestion: (question: QuestionType | null) => void
@@ -18,6 +19,10 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   const [selectedUsers, setSelectedUsers] = useState<UserType[] | null>(null)
   const [question, setQuestion] = useState<QuestionType | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
+
+  const resetUsers = () => {
+    setSelectedUsers(null)
+  }
 
   const voteForUser = (user: UserType) => {
     const list = selectedUsers ?? []
@@ -39,6 +44,7 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
     <AppContext.Provider
       value={{
         selectedUsers,
+        resetUsers,
         voteForUser,
         question,
         setQuestion,
@@ -57,6 +63,7 @@ export function useVote() {
 
   return {
     selectedUsers: ctx.selectedUsers,
+    resetUsers: ctx.resetUsers,
     voteForUser: ctx.voteForUser,
   }
 }

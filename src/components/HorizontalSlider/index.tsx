@@ -11,7 +11,7 @@ import Animated, {
   interpolateColor,
 } from "react-native-reanimated"
 
-import { Text, TextField } from "@/components"
+import { Button, Text, TextField } from "@/components"
 import { useSearch, useVote } from "@/store/vote"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
@@ -21,6 +21,7 @@ import { UserType } from "@/types/userType"
 type Props = {
   users: UserType[]
   question: QuestionType
+  onSubmit: () => void
 }
 
 // constants
@@ -129,12 +130,12 @@ function BackdropAvatar({
   )
 }
 
-export function HorizontalSlider({ users, question }: Props) {
+export function HorizontalSlider({ users, question, onSubmit }: Props) {
   const {
     themed,
     theme: { colors },
   } = useAppTheme()
-  const { voteForUser, selectedUsers } = useVote()
+  const { voteForUser, selectedUsers, resetUsers } = useVote()
   const { searchTerm } = useSearch()
 
   const scrollX = useSharedValue(0)
@@ -237,6 +238,25 @@ export function HorizontalSlider({ users, question }: Props) {
           Selected: {selectedUsers?.length ?? 0}/{question.howMuchPick}
         </Text>
       </Animated.View>
+      <View style={styles.buttonsContainer}>
+        <Button
+          onPress={() => {
+            resetUsers()
+          }}
+          preset="secondary"
+          style={styles.resetButton}
+          disabled={!selectedUsers || selectedUsers?.length === 0}
+        >
+          Reset
+        </Button>
+        <Button
+          disabled={!selectedUsers || selectedUsers?.length === 0}
+          style={styles.submitButton}
+          onPress={onSubmit}
+        >
+          Submit
+        </Button>
+      </View>
     </View>
   )
 }
@@ -268,6 +288,10 @@ const $emptyBackgroundWrapper: ThemedStyle<ViewStyle> = ({ colors }) => ({
 })
 
 const styles = StyleSheet.create({
+  buttonsContainer: {
+    flexDirection: "row",
+    width: "100%",
+  },
   flatListContainer: {
     flexGrow: 0,
   },
@@ -279,6 +303,16 @@ const styles = StyleSheet.create({
   placeholderImage: {
     height: _imageWidth,
     width: _imageWidth,
+  },
+  resetButton: {
+    flex: 1,
+    marginLeft: 32,
+    marginRight: 16,
+  },
+  submitButton: {
+    flex: 1,
+    marginLeft: 16,
+    marginRight: 32,
   },
   wrapper: {
     alignItems: "center",
