@@ -1,4 +1,4 @@
-import { View, StyleSheet, Dimensions, Pressable, TextStyle } from "react-native"
+import { View, StyleSheet, Dimensions, Pressable, TextStyle, ViewStyle } from "react-native"
 import Animated, {
   useAnimatedScrollHandler,
   useAnimatedStyle,
@@ -136,9 +136,11 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
         showsHorizontalScrollIndicator={false}
       />
 
-      <Animated.Text style={[themed($textWrapper), counterStyle]}>
-        Selected: <Ticker value={selectedUsers?.length ?? 0} /> / {question.howMuchPick}
-      </Animated.Text>
+      <Animated.View style={[themed($textWrapper), counterStyle]}>
+        <Text>Selected: </Text>
+        <Ticker value={selectedUsers?.length ?? 0} />
+        <Text> / {question.howMuchPick}</Text>
+      </Animated.View>
       <View style={styles.buttonsContainer}>
         <Button
           onPress={() => {
@@ -162,12 +164,14 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
   )
 }
 
-const $textWrapper: ThemedStyle<TextStyle> = ({ colors }) => ({
+const $textWrapper: ThemedStyle<ViewStyle> = ({ colors }) => ({
   paddingHorizontal: 8,
   paddingVertical: 4,
   borderRadius: 8,
   marginVertical: 16,
   color: colors.text,
+  flexDirection: "row",
+  alignItems: "center",
 })
 
 const $text: ThemedStyle<TextStyle> = ({ colors }) => ({
