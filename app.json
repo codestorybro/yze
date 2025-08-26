@@ -55,18 +55,7 @@
     "expo-localization",
     "expo-font",
     "expo-secure-store",
-    [
-      "expo-splash-screen",
-      {
-        "image": "./assets/images/app-icon-android-adaptive-foreground.png",
-        "imageWidth": 300,
-        "backgroundColor": "#1DA1F2",
-        "dark": {
-          "image": "./assets/images/app-icon-android-adaptive-foreground.png",
-          "backgroundColor": "#191015"
-        }
-      }
-    ],
+    ["react-native-bootsplash", { "assetsDir": "assets/bootsplash" }],
     [
       "react-native-edge-to-edge",
       {

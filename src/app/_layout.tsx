@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react"
-import { Slot, SplashScreen } from "expo-router"
+import { Slot } from "expo-router"
 import { useFonts } from "@expo-google-fonts/space-grotesk"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { KeyboardProvider } from "react-native-keyboard-controller"
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 
+import { AnimatedBootSplash } from "@/components/AnimatedBootSplash"
 import { initI18n } from "@/i18n"
 import { AuthProvider } from "@/store/auth"
 import { AppStoreProvider } from "@/store/vote"
@@ -12,14 +13,9 @@ import { ThemeProvider } from "@/theme/context"
 import { customFontsToLoad } from "@/theme/typography"
 import { loadDateFnsLocale } from "@/utils/formatDate"
 
-SplashScreen.preventAutoHideAsync()
-
 const queryClient = new QueryClient()
 
 if (__DEV__) {
-  // Load Reactotron configuration in development. We don't want to
-  // include this in our production bundle, so we are using `if (__DEV__)`
-  // to only execute this in development.
   require("src/devtools/ReactotronConfig.ts")
 }
 
@@ -28,6 +24,8 @@ export { ErrorBoundary } from "@/components/ErrorBoundary/ErrorBoundary"
 export default function Root() {
   const [fontsLoaded, fontError] = useFonts(customFontsToLoad)
   const [isI18nInitialized, setIsI18nInitialized] = useState(false)
+  const [appIsReady, setAppIsReady] = useState(false)
+  const [showSplash, setShowSplash] = useState(true)
 
   useEffect(() => {
     initI18n()
@@ -35,21 +33,15 @@ export default function Root() {
       .then(() => loadDateFnsLocale())
   }, [])
 
-  const loaded = fontsLoaded && isI18nInitialized
-
   useEffect(() => {
     if (fontError) throw fontError
   }, [fontError])
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync()
+    if (fontsLoaded && isI18nInitialized) {
+      setAppIsReady(true)
     }
-  }, [loaded])
-
-  if (!loaded) {
-    return null
-  }
+  }, [fontsLoaded, isI18nInitialized])
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -58,7 +50,18 @@ export default function Root() {
           <KeyboardProvider>
             <AuthProvider>
               <AppStoreProvider>
-                <Slot />
+                {appIsReady ? (
+                  <>
+                    <Slot />
+                    {showSplash && (
+                      <AnimatedBootSplash
+                        onAnimationEnd={() => {
+                          setShowSplash(false)
+                        }}
+                      />
+                    )}
+                  </>
+                ) : null}
               </AppStoreProvider>
             </AuthProvider>
           </KeyboardProvider>
