@@ -92,7 +92,7 @@ export default function Voting() {
 }
 
 const $container: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  backgroundColor: colors.palette.justBlack,
+  backgroundColor: colors.background,
   alignItems: "center",
   flex: 1,
   justifyContent: "center",

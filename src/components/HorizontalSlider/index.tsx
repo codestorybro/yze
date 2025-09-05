@@ -17,7 +17,7 @@ import { QuestionType } from "@/types/questionType"
 import { UserType } from "@/types/userType"
 
 import { Avatar } from "./Avatar"
-import { BackdropAvatar } from "./BackdropAvatar"
+// import { BackdropAvatar } from "./BackdropAvatar"
 import { UserSearchBar } from "./UserSearchBar"
 import Ticker from "../Ticker"
 
@@ -56,7 +56,7 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
       backgroundColor: interpolateColor(
         colorProgress.value,
         [0, 1, 2],
-        [colors.tabBarBackground, colors.error, colors.tabBarBackground],
+        [colors.background, colors.error, colors.background],
       ),
     }
   })
@@ -99,11 +99,11 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
 
   return (
     <View style={styles.wrapper}>
-      <View style={StyleSheet.absoluteFillObject}>
+      {/* <View style={StyleSheet.absoluteFillObject}>
         {dataResult.map((user, index) => (
           <BackdropAvatar key={`backdrop_${user.id}`} user={user} index={index} scrollX={scrollX} />
         ))}
-      </View>
+      </View> */}
       <UserSearchBar />
       <Text style={themed($text)}>{question.text}</Text>
       <Animated.FlatList
@@ -175,7 +175,7 @@ const $textWrapper: ThemedStyle<ViewStyle> = ({ colors }) => ({
 })
 
 const $text: ThemedStyle<TextStyle> = ({ colors }) => ({
-  backgroundColor: colors.tabBarBackground,
+  backgroundColor: colors.background,
   paddingHorizontal: 8,
   paddingVertical: 4,
   borderRadius: 8,

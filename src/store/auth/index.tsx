@@ -15,6 +15,14 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
+const fakeUser: UserType = {
+  id: "1",
+  email: "example@example.com",
+  name: "John Doe",
+  avatarUri:
+    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541",
+}
+
 export function AuthProvider({ children }: PropsWithChildren) {
   const [[isUserLoading, storedUser], setStoredUser] = useStorageState("user")
   const [[isAuthTokenLoading, storedAuthToken], setStoredAuthToken] = useStorageState("authToken")
@@ -35,7 +43,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const signIn = async (email: string, password: string) => {
     // TODO: call backend here, mock for now
-    const fakeUser: UserType = { id: "1", email, name: "John Doe" }
     const fakeAuthToken = "fakeAuthToken123"
     const fakeRefreshToken = "fakeRefreshToken456"
 

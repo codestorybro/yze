@@ -1,5 +1,11 @@
+import { StyleSheet, TextStyle } from "react-native"
+import Animated from "react-native-reanimated"
+
 import { LoggedScreenWrapper } from "@/components"
 import AttributeLeaderboard from "@/components/AttributeLeaderboard"
+import { useUser } from "@/store/auth"
+import { useAppTheme } from "@/theme/context"
+import { ThemedStyle } from "@/theme/types"
 
 const mockedAttributes = [
   {
@@ -30,9 +36,36 @@ const mockedAttributes = [
 ]
 
 export default function Index() {
+  const { themed } = useAppTheme()
+  const { user } = useUser()
+
   return (
-    <LoggedScreenWrapper preset="fixed">
+    <LoggedScreenWrapper preset="scroll">
+      <Animated.Image
+        source={{ uri: user?.avatarUri }}
+        width={150}
+        height={150}
+        style={styles.avatar}
+      />
+      <Animated.Text style={themed($nameText)}>{user?.name}</Animated.Text>
       <AttributeLeaderboard attributes={mockedAttributes} />
     </LoggedScreenWrapper>
   )
 }
+
+const $nameText: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.text,
+  fontSize: 18,
+  fontWeight: "bold",
+  marginBottom: 20,
+  textAlign: "center",
+})
+
+const styles = StyleSheet.create({
+  avatar: {
+    alignSelf: "center",
+    borderRadius: 75,
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+})
