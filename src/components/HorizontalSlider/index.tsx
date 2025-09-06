@@ -1,4 +1,4 @@
-import { View, StyleSheet, Dimensions, Pressable, TextStyle, ViewStyle } from "react-native"
+import { View, StyleSheet, Dimensions, Pressable, ViewStyle, TextStyle } from "react-native"
 import Animated, {
   useAnimatedScrollHandler,
   useAnimatedStyle,
@@ -28,7 +28,7 @@ type Props = {
 }
 
 // constants
-const { width } = Dimensions.get("screen")
+export const { width } = Dimensions.get("screen")
 export const _imageWidth = width * 0.7
 export const _imageHeight = _imageWidth
 const _spacing = 12
@@ -36,7 +36,7 @@ const _spacing = 12
 export function HorizontalSlider({ users, question, onSubmit }: Props) {
   const {
     themed,
-    theme: { colors },
+    theme: { colors, spacing },
   } = useAppTheme()
   const { voteForUser, selectedUsers, resetUsers } = useVote()
   const { searchTerm } = useSearch()
@@ -105,7 +105,13 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
         ))}
       </View> */}
       <UserSearchBar />
-      <Text style={themed($text)}>{question.text}</Text>
+      <View style={themed($row)}>
+        <Text style={themed($text)}>{question.text}</Text>
+        <Animated.View style={[themed($textWrapper), counterStyle]}>
+          <Ticker value={selectedUsers?.length ?? 0} />
+          <Text> / {question.howMuchPick}</Text>
+        </Animated.View>
+      </View>
       <Animated.FlatList
         data={dataResult}
         keyExtractor={(item) => item.id}
@@ -136,69 +142,54 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
         showsHorizontalScrollIndicator={false}
       />
 
-      <Animated.View style={[themed($textWrapper), counterStyle]}>
-        <Text>Selected: </Text>
-        <Ticker value={selectedUsers?.length ?? 0} />
-        <Text> / {question.howMuchPick}</Text>
-      </Animated.View>
-      <View style={styles.buttonsContainer}>
-        <Button
-          onPress={() => {
-            resetUsers()
-          }}
-          preset="secondary"
-          style={styles.resetButton}
-          disabled={!selectedUsers || selectedUsers?.length === 0}
-        >
-          Reset
-        </Button>
-        <Button
-          disabled={!selectedUsers || selectedUsers?.length === 0}
-          style={styles.submitButton}
-          onPress={onSubmit}
-        >
-          Submit
-        </Button>
-      </View>
+      <Button
+        onPress={() => {
+          resetUsers()
+        }}
+        preset="secondary"
+        disabled={!selectedUsers || selectedUsers?.length === 0}
+        style={[{ width: width - spacing.xxl }, themed($button)]}
+      >
+        Reset
+      </Button>
+      <Button
+        disabled={!selectedUsers || selectedUsers?.length === 0}
+        onPress={onSubmit}
+        style={[{ width: width - spacing.xxl }, themed($button)]}
+      >
+        Submit
+      </Button>
     </View>
   )
 }
 
-const $textWrapper: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  paddingHorizontal: 8,
-  paddingVertical: 4,
-  borderRadius: 8,
-  marginVertical: 16,
-  color: colors.text,
+const $button: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  marginVertical: spacing.xs,
+})
+
+const $row: ThemedStyle<ViewStyle> = () => ({
+  flexDirection: "row",
+  alignItems: "center",
+  flexWrap: "nowrap",
+})
+
+const $textWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  paddingHorizontal: spacing.xs,
+  paddingVertical: spacing.xxs,
+  borderRadius: spacing.xs,
   flexDirection: "row",
   alignItems: "center",
 })
 
-const $text: ThemedStyle<TextStyle> = ({ colors }) => ({
-  backgroundColor: colors.background,
-  paddingHorizontal: 8,
-  paddingVertical: 4,
-  borderRadius: 8,
-  marginVertical: 16,
+const $text: ThemedStyle<TextStyle> = ({ spacing }) => ({
+  borderRadius: spacing.xs,
+  marginVertical: spacing.xs,
+  paddingVertical: spacing.xxs,
 })
 
 const styles = StyleSheet.create({
-  buttonsContainer: {
-    flexDirection: "row",
-    width: "100%",
-  },
   flatListContainer: {
     flexGrow: 0,
-  },
-  resetButton: {
-    flex: 1,
-    marginLeft: 32,
-    marginRight: 16,
-  },
-  submitButton: {
-    flex: 1,
-    marginLeft: 16,
-    marginRight: 32,
   },
   wrapper: {
     alignItems: "center",
