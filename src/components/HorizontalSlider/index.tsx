@@ -1,4 +1,13 @@
-import { View, StyleSheet, Dimensions, Pressable, ViewStyle, TextStyle } from "react-native"
+import { useRef } from "react"
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  Pressable,
+  ViewStyle,
+  TextStyle,
+  FlatList,
+} from "react-native"
 import Animated, {
   useAnimatedScrollHandler,
   useAnimatedStyle,
@@ -40,6 +49,7 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
   } = useAppTheme()
   const { voteForUser, selectedUsers, resetUsers } = useVote()
   const { searchTerm } = useSearch()
+  const flatListRef = useRef<FlatList>(null)
 
   const scrollX = useSharedValue(0)
   const onScroll = useAnimatedScrollHandler((e) => {
@@ -113,6 +123,7 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
         </Animated.View>
       </View>
       <Animated.FlatList
+        ref={flatListRef}
         data={dataResult}
         keyExtractor={(item) => item.id}
         horizontal
@@ -145,6 +156,7 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
       <Button
         onPress={() => {
           resetUsers()
+          flatListRef.current?.scrollToOffset({ offset: 0, animated: true })
         }}
         preset="secondary"
         disabled={!selectedUsers || selectedUsers?.length === 0}
