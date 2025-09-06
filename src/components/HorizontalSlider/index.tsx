@@ -207,11 +207,10 @@ const styles = StyleSheet.create({
     flexGrow: 0,
   },
   question: {
-    flex: 3,
+    flex: 2,
   },
   wrapper: {
     alignItems: "center",
-    flex: 1,
     justifyContent: "center",
   },
 })

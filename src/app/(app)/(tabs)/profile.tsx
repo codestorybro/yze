@@ -23,7 +23,7 @@ export default function Settings() {
   }, [themeContext, setThemeContextOverride])
 
   return (
-    <LoggedScreenWrapper preset="scroll">
+    <LoggedScreenWrapper>
       <Button tx="profileScreen:selectGroup" onPress={onSelectGroup} style={themed($option)} />
       <Switch
         value={themeContext === "dark"}

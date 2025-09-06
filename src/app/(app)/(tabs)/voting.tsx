@@ -1,6 +1,7 @@
 import { useEffect } from "react"
-import { View, ViewStyle } from "react-native"
+import { ViewStyle } from "react-native"
 
+import { LoggedScreenWrapper } from "@/components"
 import { HorizontalSlider } from "@/components/HorizontalSlider"
 import { useQuestion, useVote } from "@/store/vote"
 import { useAppTheme } from "@/theme/context"
@@ -85,15 +86,12 @@ export default function Voting() {
   if (!question) return null
 
   return (
-    <View style={themed($container)}>
+    <LoggedScreenWrapper contentContainerStyle={themed($container)}>
       <HorizontalSlider users={mockedUsers} question={question} onSubmit={onSubmit} />
-    </View>
+    </LoggedScreenWrapper>
   )
 }
 
-const $container: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  backgroundColor: colors.background,
-  alignItems: "center",
-  flex: 1,
-  justifyContent: "center",
+const $container: ThemedStyle<ViewStyle> = () => ({
+  marginHorizontal: 0,
 })

@@ -40,7 +40,7 @@ export default function Index() {
   const { user } = useUser()
 
   return (
-    <LoggedScreenWrapper preset="scroll">
+    <LoggedScreenWrapper>
       <Animated.Image
         source={{ uri: user?.avatarUri }}
         width={150}
