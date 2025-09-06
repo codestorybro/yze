@@ -1,4 +1,4 @@
-import { Image, View, ViewStyle, StyleSheet } from "react-native"
+import { View, ViewStyle, StyleSheet } from "react-native"
 import Animated, {
   interpolate,
   SharedValue,
@@ -6,6 +6,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated"
 
+import { SkeletonImage } from "@/components"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 import { UserType } from "@/types/userType"
@@ -58,14 +59,17 @@ export function Avatar({
     >
       {item.id === "0" ? (
         <View style={styles.placeholderContainer}>
-          <Image
+          <SkeletonImage
+            size={_imageWidth}
             source={require("../../../assets/images/placeholder.png")}
             style={styles.placeholderImage}
             resizeMode="contain"
           />
         </View>
       ) : (
-        <Animated.Image
+        <SkeletonImage
+          size={_imageWidth}
+          animated
           source={{ uri: item.avatarUri }}
           style={[StyleSheet.absoluteFillObject, stylez]}
           resizeMode="cover"

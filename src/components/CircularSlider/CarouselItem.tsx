@@ -1,4 +1,4 @@
-import { Image, StyleSheet } from "react-native"
+import { StyleSheet } from "react-native"
 import Animated, {
   interpolate,
   interpolateColor,
@@ -7,6 +7,8 @@ import Animated, {
 } from "react-native-reanimated"
 
 import { useAppTheme } from "@/theme/context"
+
+import { SkeletonImage } from "../SkeletonImage"
 
 import { _itemSize } from "."
 
@@ -46,7 +48,8 @@ export function CarouselItem({
     <Animated.View
       style={[{ width: _itemSize, height: _itemSize, borderRadius: _itemSize / 2 }, stylez]}
     >
-      <Image
+      <SkeletonImage
+        size={_itemSize}
         source={{ uri: imageUri }}
         style={[styles.flexContainer, { borderRadius: _itemSize / 2 }]}
       />

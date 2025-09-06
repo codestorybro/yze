@@ -128,7 +128,7 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
         data={dataResult}
         keyExtractor={(item) => item.id}
         horizontal
-        style={styles.flatListContainer}
+        style={themed($flatListContainer)}
         snapToInterval={_imageWidth + _spacing}
         decelerationRate="fast"
         contentContainerStyle={{ gap: _spacing, paddingHorizontal: (width - _imageWidth) / 2 }}
@@ -202,10 +202,12 @@ const $textWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   borderRadius: spacing.xs,
 })
 
+const $flatListContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  flexGrow: 0,
+  paddingVertical: spacing.xl,
+})
+
 const styles = StyleSheet.create({
-  flatListContainer: {
-    flexGrow: 0,
-  },
   question: {
     flex: 2,
   },

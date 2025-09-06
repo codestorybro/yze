@@ -1,7 +1,7 @@
 import { StyleSheet, TextStyle } from "react-native"
-import Animated from "react-native-reanimated"
+import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated"
 
-import { LoggedScreenWrapper } from "@/components"
+import { LoggedScreenWrapper, SkeletonImage } from "@/components"
 import AttributeLeaderboard from "@/components/AttributeLeaderboard"
 import { useUser } from "@/store/auth"
 import { useAppTheme } from "@/theme/context"
@@ -35,19 +35,31 @@ const mockedAttributes = [
   },
 ]
 
+const _avatarSize = 150
+
 export default function Index() {
   const { themed } = useAppTheme()
   const { user } = useUser()
 
   return (
     <LoggedScreenWrapper>
-      <Animated.Image
-        source={{ uri: user?.avatarUri }}
-        width={150}
-        height={150}
-        style={styles.avatar}
-      />
-      <Animated.Text style={themed($nameText)}>{user?.name}</Animated.Text>
+      <Animated.View entering={FadeInUp.delay(200).duration(1000).springify()}>
+        <SkeletonImage
+          animated
+          size={150}
+          source={{ uri: user?.avatarUri }}
+          width={_avatarSize}
+          height={_avatarSize}
+          style={[styles.avatar, { borderRadius: _avatarSize / 2 }]}
+        />
+      </Animated.View>
+
+      <Animated.Text
+        entering={FadeInDown.delay(400).duration(1000).springify()}
+        style={themed($nameText)}
+      >
+        {user?.name}
+      </Animated.Text>
       <AttributeLeaderboard attributes={mockedAttributes} />
     </LoggedScreenWrapper>
   )
@@ -64,7 +76,6 @@ const $nameText: ThemedStyle<TextStyle> = ({ colors }) => ({
 const styles = StyleSheet.create({
   avatar: {
     alignSelf: "center",
-    borderRadius: 75,
     justifyContent: "center",
     marginBottom: 10,
   },
