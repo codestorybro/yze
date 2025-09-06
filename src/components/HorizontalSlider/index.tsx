@@ -116,8 +116,9 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
       </View> */}
       <UserSearchBar />
       <View style={themed($row)}>
-        <Text style={themed($text)}>{question.text}</Text>
+        <Text style={[themed($text), styles.question]}>{question.text}</Text>
         <Animated.View style={[themed($textWrapper), counterStyle]}>
+          <Text>Selected: </Text>
           <Ticker value={selectedUsers?.length ?? 0} />
           <Text> / {question.howMuchPick}</Text>
         </Animated.View>
@@ -179,29 +180,34 @@ const $button: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   marginVertical: spacing.xs,
 })
 
-const $row: ThemedStyle<ViewStyle> = () => ({
+const $row: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   flexDirection: "row",
   alignItems: "center",
-  flexWrap: "nowrap",
-})
-
-const $textWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  paddingHorizontal: spacing.xs,
-  paddingVertical: spacing.xxs,
-  borderRadius: spacing.xs,
-  flexDirection: "row",
-  alignItems: "center",
+  marginHorizontal: spacing.xl,
 })
 
 const $text: ThemedStyle<TextStyle> = ({ spacing }) => ({
-  borderRadius: spacing.xs,
   marginVertical: spacing.xs,
   paddingVertical: spacing.xxs,
+  borderRadius: spacing.xs,
+})
+
+const $textWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  flex: 1,
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+  paddingHorizontal: spacing.xs,
+  paddingVertical: spacing.xxs,
+  borderRadius: spacing.xs,
 })
 
 const styles = StyleSheet.create({
   flatListContainer: {
     flexGrow: 0,
+  },
+  question: {
+    flex: 3,
   },
   wrapper: {
     alignItems: "center",
