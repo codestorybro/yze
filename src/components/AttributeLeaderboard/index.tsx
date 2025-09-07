@@ -2,6 +2,7 @@ import { View } from "react-native"
 import { useSharedValue } from "react-native-reanimated"
 
 import { AttributeType } from "@/types/attributeType"
+import { normalizeAttributes } from "@/utils/normalizeAttributes"
 
 import { SingleAttribute } from "./SingleAttribute"
 
@@ -13,24 +14,8 @@ type Props = {
 }
 
 export default function Leaderboard({ attributes }: Props) {
-  const rankImages: Record<number, any> = {
-    1: require("../../../assets/images/home/gold.png"),
-    2: require("../../../assets/images/home/silver.png"),
-    3: require("../../../assets/images/home/bronze.png"),
-  }
-
   const _anim = useSharedValue(0)
-  const maxScore = Math.max(...attributes.map((attr) => attr.score))
-  const sorted = [...attributes].sort((a, b) => b.score - a.score)
-  const normalizedAttributes = attributes.map((attr) => {
-    const rank = sorted.findIndex((el) => el.id === attr.id) + 1
-    return {
-      ...attr,
-      widthPercent: (attr.score / maxScore) * 100,
-      rank: rank <= 3 ? rank : null,
-      rankImage: rank <= 3 ? rankImages[rank] : null,
-    }
-  })
+  const normalizedAttributes = normalizeAttributes(attributes)
 
   return (
     <View>

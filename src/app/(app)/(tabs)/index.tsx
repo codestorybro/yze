@@ -11,27 +11,27 @@ const mockedAttributes = [
   {
     id: "1",
     name: "Towarzyskość i relacje",
-    score: 200,
+    score: 50,
   },
   {
     id: "2",
     name: "Energia i nastawienie",
-    score: 100,
+    score: 3,
   },
   {
     id: "3",
     name: "Umysł i działanie",
-    score: 5,
+    score: 10,
   },
   {
     id: "4",
     name: "Postawa społeczna",
-    score: 30,
+    score: 20,
   },
   {
     id: "5",
     name: "Kreatywność i vibe",
-    score: 30,
+    score: 0,
   },
 ]
 
