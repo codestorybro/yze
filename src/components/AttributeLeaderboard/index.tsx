@@ -13,6 +13,12 @@ type Props = {
 }
 
 export default function Leaderboard({ attributes }: Props) {
+  const rankImages: Record<number, any> = {
+    1: require("../../../assets/images/home/gold.png"),
+    2: require("../../../assets/images/home/silver.png"),
+    3: require("../../../assets/images/home/bronze.png"),
+  }
+
   const _anim = useSharedValue(0)
   const maxScore = Math.max(...attributes.map((attr) => attr.score))
   const sorted = [...attributes].sort((a, b) => b.score - a.score)
@@ -22,6 +28,7 @@ export default function Leaderboard({ attributes }: Props) {
       ...attr,
       widthPercent: (attr.score / maxScore) * 100,
       rank: rank <= 3 ? rank : null,
+      rankImage: rank <= 3 ? rankImages[rank] : null,
     }
   })
 

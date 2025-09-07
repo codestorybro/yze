@@ -1,4 +1,4 @@
-import { View, Image, StyleSheet, TextStyle } from "react-native"
+import { View, Image, StyleSheet, TextStyle, ImageSourcePropType } from "react-native"
 import Animated, {
   FadeInUp,
   interpolate,
@@ -11,9 +11,12 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated"
 
+import { Text } from "@/components"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 import { AttributeType } from "@/types/attributeType"
+
+import { SkeletonImage } from "../SkeletonImage"
 
 import { _spacing } from "."
 
@@ -22,7 +25,11 @@ const _avatarSize = 40
 const _stagger = 150
 
 type Props = {
-  attribute: AttributeType & { widthPercent: number; rank: number | null }
+  attribute: AttributeType & {
+    widthPercent: number
+    rank: number | null
+    rankImage: ImageSourcePropType | null
+  }
   index: number
   onFinish: (() => void) | null
   anim: SharedValue<number>
@@ -68,7 +75,7 @@ export function SingleAttribute({ attribute, index, onFinish, anim }: Props) {
     }
   })
 
-  const textStylez = useAnimatedStyle(() => {
+  const attributeTitleWrapperStylez = useAnimatedStyle(() => {
     return {
       opacity: interpolate(_anim.value, [0, 0.5, 1], [0, 0, 1]),
     }
@@ -76,7 +83,10 @@ export function SingleAttribute({ attribute, index, onFinish, anim }: Props) {
 
   return (
     <View style={styles.outerContainer}>
-      <Animated.Text style={[themed($attributeTitle), textStylez]}>{attribute.name}</Animated.Text>
+      <Animated.View style={[attributeTitleWrapperStylez, styles.attributeTitleWrapper]}>
+        {attribute.rankImage && <SkeletonImage size={32} source={attribute.rankImage} />}
+        <Text style={themed($attributeTitle)}>{attribute.name}</Text>
+      </Animated.View>
       <Animated.View
         entering={FadeInUp.delay(_stagger * index)
           .springify()
@@ -111,10 +121,14 @@ export function SingleAttribute({ attribute, index, onFinish, anim }: Props) {
 const $attributeTitle: ThemedStyle<TextStyle> = ({ colors }) => ({
   color: colors.text,
   fontSize: 16,
-  marginBottom: 2,
 })
 
 const styles = StyleSheet.create({
+  attributeTitleWrapper: {
+    alignItems: "center",
+    flexDirection: "row",
+    marginBottom: 2,
+  },
   avatar: {
     alignItems: "flex-end",
   },
