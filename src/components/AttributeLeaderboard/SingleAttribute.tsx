@@ -1,4 +1,4 @@
-import { View, Image, StyleSheet, TextStyle, ImageSourcePropType } from "react-native"
+import { View, StyleSheet, TextStyle, ImageSourcePropType } from "react-native"
 import Animated, {
   FadeInUp,
   interpolate,
@@ -29,6 +29,7 @@ type Props = {
     widthPercent: number
     rank: number | null
     rankImage: ImageSourcePropType | null
+    attributeImage: ImageSourcePropType | null
   }
   index: number
   onFinish: (() => void) | null
@@ -107,8 +108,9 @@ export function SingleAttribute({ attribute, index, onFinish, anim }: Props) {
           ]}
         >
           <View style={[styles.imageWrapper, { width: _avatarSize }]}>
-            <Image
-              source={{ uri: `https://i.pravatar.cc/150?u=user_${attribute.name}` }}
+            <SkeletonImage
+              size={_avatarSize}
+              source={attribute.attributeImage ?? undefined}
               style={[styles.avatarImage, { borderRadius: _avatarSize }]}
             />
           </View>

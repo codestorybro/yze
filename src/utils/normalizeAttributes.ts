@@ -1,9 +1,17 @@
 import { AttributeType } from "@/types/attributeType"
 
 const rankImages: Record<number, any> = {
-  1: require("../../assets/images/home/gold.png"),
-  2: require("../../assets/images/home/silver.png"),
-  3: require("../../assets/images/home/bronze.png"),
+  1: require("../../assets/images/home/medal-gold.png"),
+  2: require("../../assets/images/home/medal-silver.png"),
+  3: require("../../assets/images/home/medal-bronze.png"),
+}
+
+const attributeImages: Record<string, any> = {
+  relations: require("../../assets/images/home/relations.png"),
+  energy: require("../../assets/images/home/energy.png"),
+  mind: require("../../assets/images/home/mind.png"),
+  social: require("../../assets/images/home/social.png"),
+  creativity: require("../../assets/images/home/creativity.png"),
 }
 
 export const normalizeAttributes = (attributes: AttributeType[]) => {
@@ -31,6 +39,7 @@ export const normalizeAttributes = (attributes: AttributeType[]) => {
         widthPercent: maxScore > 0 ? (attr.score / maxScore) * 100 : 0,
         rank: null,
         rankImage: null,
+        attributeImage: attributeImages[attr.id],
       }
     }
 
@@ -40,6 +49,7 @@ export const normalizeAttributes = (attributes: AttributeType[]) => {
       widthPercent: (attr.score / maxScore) * 100,
       rank: rank <= 3 ? rank : null,
       rankImage: rank <= 3 ? rankImages[rank] : null,
+      attributeImage: attributeImages[attr.id],
     }
   })
 }

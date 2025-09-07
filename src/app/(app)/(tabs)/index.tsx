@@ -9,27 +9,27 @@ import { ThemedStyle } from "@/theme/types"
 
 const mockedAttributes = [
   {
-    id: "1",
+    id: "relations",
     name: "Towarzyskość i relacje",
     score: 50,
   },
   {
-    id: "2",
+    id: "energy",
     name: "Energia i nastawienie",
     score: 3,
   },
   {
-    id: "3",
+    id: "mind",
     name: "Umysł i działanie",
     score: 10,
   },
   {
-    id: "4",
+    id: "social",
     name: "Postawa społeczna",
     score: 20,
   },
   {
-    id: "5",
+    id: "creativity",
     name: "Kreatywność i vibe",
     score: 0,
   },
