@@ -13,6 +13,7 @@ interface SkeletonImageProps extends ImageProps {
 export const SkeletonImage: React.FC<SkeletonImageProps> = ({
   size,
   animated = false,
+  style,
   ...props
 }) => {
   const { themeContext } = useAppTheme()
@@ -21,7 +22,7 @@ export const SkeletonImage: React.FC<SkeletonImageProps> = ({
   const ImageComponent: any = animated ? Animated.Image : Image
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { maxHeight: size, maxWidth: size }]}>
       {loading && (
         <Skeleton
           radius={size / 2}
@@ -30,7 +31,11 @@ export const SkeletonImage: React.FC<SkeletonImageProps> = ({
           colorMode={themeContext === "dark" ? "dark" : "light"}
         />
       )}
-      <ImageComponent {...props} onLoadEnd={() => setLoading(false)} />
+      <ImageComponent
+        {...props}
+        style={[{ maxHeight: size, maxWidth: size }, style]}
+        onLoadEnd={() => setLoading(false)}
+      />
     </View>
   )
 }

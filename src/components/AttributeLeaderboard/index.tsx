@@ -14,11 +14,21 @@ type Props = {
 
 export default function Leaderboard({ attributes }: Props) {
   const _anim = useSharedValue(0)
+  const maxScore = Math.max(...attributes.map((attr) => attr.score))
+  const sorted = [...attributes].sort((a, b) => b.score - a.score)
+  const normalizedAttributes = attributes.map((attr) => {
+    const rank = sorted.findIndex((el) => el.id === attr.id) + 1
+    return {
+      ...attr,
+      widthPercent: (attr.score / maxScore) * 100,
+      rank: rank <= 3 ? rank : null,
+    }
+  })
 
   return (
     <View>
       <View style={{ gap: _spacing }}>
-        {attributes.map((attribute, index) => (
+        {normalizedAttributes.map((attribute, index) => (
           <SingleAttribute
             key={attribute.id}
             attribute={attribute}

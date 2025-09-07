@@ -10,27 +10,27 @@ import { ThemedStyle } from "@/theme/types"
 const mockedAttributes = [
   {
     id: "1",
-    name: "Strength",
-    score: 10,
+    name: "Towarzyskość i relacje",
+    score: 200,
   },
   {
     id: "2",
-    name: "Agility",
-    score: 15,
+    name: "Energia i nastawienie",
+    score: 100,
   },
   {
     id: "3",
-    name: "Intelligence",
-    score: 20,
+    name: "Umysł i działanie",
+    score: 5,
   },
   {
     id: "4",
-    name: "Charisma",
-    score: 25,
+    name: "Postawa społeczna",
+    score: 30,
   },
   {
     id: "5",
-    name: "Wisdom",
+    name: "Kreatywność i vibe",
     score: 30,
   },
 ]
@@ -40,14 +40,19 @@ const _avatarSize = 150
 export default function Index() {
   const { themed } = useAppTheme()
   const { user } = useUser()
+  const avatarUri = user?.avatarUri
+    ? { uri: user.avatarUri }
+    : require("../../../../assets/images/placeholder.png")
 
   return (
     <LoggedScreenWrapper>
-      <Animated.View entering={FadeInUp.delay(200).duration(1000).springify()}>
+      <Animated.View
+        entering={FadeInUp.delay(200).duration(1000).springify()}
+        style={styles.avatarWrapper}
+      >
         <SkeletonImage
-          animated
-          size={150}
-          source={{ uri: user?.avatarUri }}
+          size={_avatarSize}
+          source={avatarUri}
           width={_avatarSize}
           height={_avatarSize}
           style={[styles.avatar, { borderRadius: _avatarSize / 2 }]}
@@ -69,7 +74,7 @@ const $nameText: ThemedStyle<TextStyle> = ({ colors }) => ({
   color: colors.text,
   fontSize: 18,
   fontWeight: "bold",
-  marginBottom: 20,
+  marginBottom: 32,
   textAlign: "center",
 })
 
@@ -77,6 +82,9 @@ const styles = StyleSheet.create({
   avatar: {
     alignSelf: "center",
     justifyContent: "center",
-    marginBottom: 10,
+  },
+  avatarWrapper: {
+    alignItems: "center",
+    marginBottom: 8,
   },
 })

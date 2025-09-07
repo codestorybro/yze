@@ -1,4 +1,4 @@
-import { View, Image, StyleSheet } from "react-native"
+import { View, Image, StyleSheet, TextStyle } from "react-native"
 import Animated, {
   FadeInUp,
   interpolate,
@@ -12,16 +12,17 @@ import Animated, {
 } from "react-native-reanimated"
 
 import { useAppTheme } from "@/theme/context"
+import { ThemedStyle } from "@/theme/types"
 import { AttributeType } from "@/types/attributeType"
 
 import { _spacing } from "."
 
 // constants
-const _avatarSize = 28
+const _avatarSize = 40
 const _stagger = 150
 
 type Props = {
-  attribute: AttributeType
+  attribute: AttributeType & { widthPercent: number; rank: number | null }
   index: number
   onFinish: (() => void) | null
   anim: SharedValue<number>
@@ -29,8 +30,15 @@ type Props = {
 
 export function SingleAttribute({ attribute, index, onFinish, anim }: Props) {
   const {
+    themed,
     theme: { colors },
   } = useAppTheme()
+
+  const rankColors: Record<number, string> = {
+    1: colors.palette.justGold,
+    2: colors.palette.justSilver,
+    3: colors.palette.justBronze,
+  }
 
   const _anim = useDerivedValue(() => {
     return withDelay(
@@ -42,17 +50,21 @@ export function SingleAttribute({ attribute, index, onFinish, anim }: Props) {
     )
   })
 
+  const attributeColor =
+    attribute.rank != null ? rankColors[attribute.rank] : colors.inputBackground
+
   const stylez = useAnimatedStyle(() => {
     return {
       width: interpolate(
         _anim.value,
         [0, 1],
-        [_avatarSize, Math.max(attribute.score * 3, _avatarSize + _spacing)],
+        [_avatarSize, Math.max(attribute.widthPercent * 3, _avatarSize + _spacing)],
       ),
-      backgroundColor:
-        index === 4
-          ? interpolateColor(_anim.value, [0, 1], [colors.border, "turquoise"])
-          : colors.border,
+      backgroundColor: interpolateColor(
+        _anim.value,
+        [0, 1],
+        [colors.inputBackground, attributeColor],
+      ),
     }
   })
 
@@ -63,36 +75,44 @@ export function SingleAttribute({ attribute, index, onFinish, anim }: Props) {
   })
 
   return (
-    <Animated.View
-      entering={FadeInUp.delay(_stagger * index)
-        .springify()
-        .damping(80)
-        .stiffness(200)
-        .withCallback((finished) => {
-          if (finished && onFinish) {
-            runOnJS(onFinish)()
-          }
-        })}
-      style={styles.container}
-    >
+    <View style={styles.outerContainer}>
+      <Animated.Text style={[themed($attributeTitle), textStylez]}>{attribute.name}</Animated.Text>
       <Animated.View
-        style={[
-          styles.avatar,
-          { backgroundColor: colors.border, borderRadius: _avatarSize },
-          stylez,
-        ]}
+        entering={FadeInUp.delay(_stagger * index)
+          .springify()
+          .damping(80)
+          .stiffness(200)
+          .withCallback((finished) => {
+            if (finished && onFinish) {
+              runOnJS(onFinish)()
+            }
+          })}
+        style={styles.innerContainer}
       >
-        <View style={[styles.imageWrapper, { width: _avatarSize }]}>
-          <Image
-            source={{ uri: `https://i.pravatar.cc/150?u=user_${attribute.name}` }}
-            style={[styles.avatarImage, { borderRadius: _avatarSize }]}
-          />
-        </View>
+        <Animated.View
+          style={[
+            styles.avatar,
+            { backgroundColor: colors.border, borderRadius: _avatarSize },
+            stylez,
+          ]}
+        >
+          <View style={[styles.imageWrapper, { width: _avatarSize }]}>
+            <Image
+              source={{ uri: `https://i.pravatar.cc/150?u=user_${attribute.name}` }}
+              style={[styles.avatarImage, { borderRadius: _avatarSize }]}
+            />
+          </View>
+        </Animated.View>
       </Animated.View>
-      <Animated.Text style={[styles.scoreText, textStylez]}>{attribute.score}</Animated.Text>
-    </Animated.View>
+    </View>
   )
 }
+
+const $attributeTitle: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.text,
+  fontSize: 16,
+  marginBottom: 2,
+})
 
 const styles = StyleSheet.create({
   avatar: {
@@ -102,15 +122,14 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     flex: 1,
   },
-  container: {
-    alignItems: "center",
-    flexDirection: "row",
-  },
   imageWrapper: {
     aspectRatio: 1,
   },
-  scoreText: {
-    fontSize: 7,
-    fontWeight: "700",
+  innerContainer: {
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  outerContainer: {
+    marginBottom: 12,
   },
 })

@@ -19,8 +19,6 @@ const fakeUser: UserType = {
   id: "1",
   email: "example@example.com",
   name: "John Doe",
-  avatarUri:
-    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541",
 }
 
 export function AuthProvider({ children }: PropsWithChildren) {
