@@ -73,9 +73,10 @@ const mockedQuestion = {
 export default function Voting() {
   const { themed } = useAppTheme()
   const { question, setQuestion } = useQuestion()
-  const { selectedUsers } = useVote()
+  const { selectedUsers, setIsVoted } = useVote()
 
   const onSubmit = () => {
+    setIsVoted(true)
     console.log(selectedUsers)
   }
 

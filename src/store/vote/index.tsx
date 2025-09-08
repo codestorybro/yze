@@ -11,6 +11,8 @@ type AppContextType = {
   setQuestion: (question: QuestionType | null) => void
   searchTerm: string
   setSearchTerm: (term: string) => void
+  isVoted: boolean
+  setIsVoted: (voted: boolean) => void
 }
 
 const AppContext = createContext<AppContextType | null>(null)
@@ -19,6 +21,7 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   const [selectedUsers, setSelectedUsers] = useState<UserType[] | null>(null)
   const [question, setQuestion] = useState<QuestionType | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
+  const [isVoted, setIsVoted] = useState(false)
 
   const resetUsers = () => {
     setSelectedUsers(null)
@@ -50,6 +53,8 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
         setQuestion,
         searchTerm,
         setSearchTerm,
+        isVoted,
+        setIsVoted,
       }}
     >
       {children}
@@ -65,6 +70,8 @@ export function useVote() {
     selectedUsers: ctx.selectedUsers,
     resetUsers: ctx.resetUsers,
     voteForUser: ctx.voteForUser,
+    isVoted: ctx.isVoted,
+    setIsVoted: ctx.setIsVoted,
   }
 }
 

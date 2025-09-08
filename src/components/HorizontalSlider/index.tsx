@@ -49,7 +49,7 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
     themed,
     theme: { colors, spacing },
   } = useAppTheme()
-  const { voteForUser, selectedUsers, resetUsers } = useVote()
+  const { voteForUser, selectedUsers, resetUsers, isVoted } = useVote()
   const { searchTerm, setSearchTerm } = useSearch()
   const flatListRef = useRef<FlatList>(null)
 
@@ -118,7 +118,7 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
   const handleSubmitButtonPress = () => {
     openSheet({
       title: "Are you sure?",
-      description: "The action cannot be undone.",
+      description: "This action cannot be undone.",
       actionSection: (
         <>
           <Button
@@ -166,7 +166,7 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
         renderItem={({ item, index }) => {
           return (
             <Pressable
-              disabled={dataResult[0].id === "0"}
+              disabled={isVoted || dataResult[0].id === "0"}
               onPress={() => onAvatarPress(item)}
               style={styles.wrapper}
             >
@@ -184,25 +184,37 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
         scrollEventThrottle={1000 / 60}
         showsHorizontalScrollIndicator={false}
       />
-
-      <Button
-        onPress={handleResetButtonPress}
-        preset="reverse"
-        disabled={!selectedUsers || selectedUsers?.length === 0}
-        style={[{ width: width - spacing.xxl }, themed($button)]}
-      >
-        Reset
-      </Button>
-      <Button
-        disabled={!selectedUsers || selectedUsers?.length === 0}
-        onPress={handleSubmitButtonPress}
-        style={[{ width: width - spacing.xxl }, themed($button)]}
-      >
-        Submit
-      </Button>
+      {isVoted ? (
+        <Text preset="subheading" style={themed($alreadyVotedText)}>
+          Nice, you have already voted today!
+        </Text>
+      ) : (
+        <>
+          <Button
+            onPress={handleResetButtonPress}
+            preset="reverse"
+            disabled={isVoted || !selectedUsers || selectedUsers?.length === 0}
+            style={[{ width: width - spacing.xxl }, themed($button)]}
+          >
+            Reset
+          </Button>
+          <Button
+            disabled={isVoted || !selectedUsers || selectedUsers?.length === 0}
+            onPress={handleSubmitButtonPress}
+            style={[{ width: width - spacing.xxl }, themed($button)]}
+          >
+            Submit
+          </Button>
+        </>
+      )}
     </View>
   )
 }
+
+const $alreadyVotedText: ThemedStyle<TextStyle> = ({ spacing }) => ({
+  marginHorizontal: spacing.xl,
+  textAlign: "center",
+})
 
 const $button: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   marginVertical: spacing.xs,
