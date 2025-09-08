@@ -24,12 +24,12 @@ export default function Settings() {
 
   return (
     <LoggedScreenWrapper>
-      <Button tx="profileScreen:selectGroup" onPress={onSelectGroup} style={themed($option)} />
+      <Button tx="settingsScreen:selectGroup" onPress={onSelectGroup} style={themed($option)} />
       <Switch
         value={themeContext === "dark"}
         onValueChange={toggleTheme}
         labelPosition="left"
-        labelTx="profileScreen:darkMode"
+        labelTx="settingsScreen:darkMode"
         containerStyle={themed($option)}
       />
       <Button tx="common:logOut" onPress={signOut} preset="error" style={themed($option)} />

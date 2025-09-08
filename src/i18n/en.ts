@@ -55,7 +55,7 @@ const en = {
     reactotron: "Send to Reactotron",
     title: "Development only visible",
   },
-  profileScreen: {
+  settingsScreen: {
     darkMode: "Dark mode",
     selectGroup: "Select group",
   },
