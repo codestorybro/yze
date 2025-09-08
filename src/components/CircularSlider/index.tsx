@@ -90,7 +90,7 @@ const $button: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   position: "absolute",
   left: 0,
   right: 0,
-  marginHorizontal: spacing.xxxl,
+  marginHorizontal: spacing.lg,
 })
 
 const styles = StyleSheet.create({

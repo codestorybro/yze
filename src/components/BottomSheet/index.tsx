@@ -60,14 +60,13 @@ export function BottomSheet({ isOpen, toggleSheet, duration = 500, children }: P
   )
 }
 
-const $sheetStyle: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  alignItems: "center",
+const $sheetStyle: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   backgroundColor: colors.tabBarBackground,
   borderTopLeftRadius: 24,
   borderTopRightRadius: 24,
   bottom: 0,
-  justifyContent: "center",
-  padding: 16,
+  paddingTop: spacing.md,
+  paddingHorizontal: spacing.lg,
   position: "absolute",
   width: "100%",
   zIndex: 2,

@@ -116,13 +116,26 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
   }
 
   const handleSubmitButtonPress = () => {
-    openSheet(
-      <View style={{ alignItems: "center" }}>
-        <Text style={{ marginBottom: 12 }}>Hello from Global BottomSheet 👋</Text>
-        <Button onPress={closeSheet}>Close</Button>
-      </View>,
-    )
-    // onSubmit()
+    openSheet({
+      title: "Are you sure?",
+      description: "The action cannot be undone.",
+      actionSection: (
+        <>
+          <Button
+            style={styles.flex}
+            onPress={() => {
+              onSubmit()
+              closeSheet()
+            }}
+          >
+            Continue
+          </Button>
+          <Button preset="error" style={styles.flex} onPress={closeSheet}>
+            Cancel
+          </Button>
+        </>
+      ),
+    })
   }
 
   return (
@@ -223,6 +236,9 @@ const $flatListContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 })
 
 const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
   question: {
     flex: 2,
   },
