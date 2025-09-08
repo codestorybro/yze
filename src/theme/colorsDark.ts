@@ -32,9 +32,9 @@ export const palette = {
   angry100: "#F2D6CD",
   angry200: "#E6A893",
   angry300: "#D97B5A",
-  angry400: "#CC4D22",
-  angry500: "#C03403",
-  angry600: "#A82B00",
+  angry400: "#ef5350",
+  angry500: "#d32f2f",
+  angry600: "#c62828",
 
   overlay20: "rgba(25, 16, 21, 0.2)",
   overlay50: "rgba(25, 16, 21, 0.5)",
@@ -47,7 +47,6 @@ export const palette = {
 
 export const colors = {
   palette,
-  transparent: "rgba(0, 0, 0, 0)",
   text: palette.neutral800,
   textReversed: palette.neutral200,
   textDim: palette.neutral600,
@@ -66,4 +65,6 @@ export const colors = {
   primaryPressed: palette.primary600,
   secondary: palette.secondary500,
   secondaryPressed: palette.secondary600,
+  transparent: "rgba(0, 0, 0, 0)",
+  transparentPressed: "rgba(255, 255, 255, 0.1)",
 } as const

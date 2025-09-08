@@ -159,7 +159,7 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
           resetUsers()
           flatListRef.current?.scrollToOffset({ offset: 0, animated: true })
         }}
-        preset="secondary"
+        preset="reverse"
         disabled={!selectedUsers || selectedUsers?.length === 0}
         style={[{ width: width - spacing.xxl }, themed($button)]}
       >

@@ -32,7 +32,7 @@ export default function Settings() {
         labelTx="profileScreen:darkMode"
         containerStyle={themed($option)}
       />
-      <Button tx="common:logOut" onPress={signOut} preset="secondary" style={themed($option)} />
+      <Button tx="common:logOut" onPress={signOut} preset="error" style={themed($option)} />
       {__DEV__ && <DevSection />}
     </LoggedScreenWrapper>
   )

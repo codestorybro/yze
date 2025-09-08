@@ -14,7 +14,7 @@ import type { ThemedStyle, ThemedStyleArray } from "@/theme/types"
 
 import { Text, TextProps } from "./Text"
 
-type Presets = "default" | "secondary" | "error"
+type Presets = "default" | "secondary" | "error" | "reverse"
 
 export interface ButtonAccessoryProps {
   style: StyleProp<any>
@@ -130,7 +130,7 @@ export function Button(props: ButtonProps) {
       themed($viewPresets[preset]),
       $viewStyleOverride,
       !!pressed && themed([$pressedViewPresets[preset], $pressedViewStyleOverride]),
-      !!disabled && ($disabledViewStyleOverride || themed($disabledView)),
+      !!disabled && themed([$disabledViewPresets[preset], $disabledViewStyleOverride]),
     ]
   }
   /**
@@ -143,7 +143,7 @@ export function Button(props: ButtonProps) {
       themed($textPresets[preset]),
       $textStyleOverride,
       !!pressed && themed([$pressedTextPresets[preset], $pressedTextStyleOverride]),
-      !!disabled && $disabledTextStyleOverride,
+      !!disabled && themed([$disabledTextPresets[preset], $disabledTextStyleOverride]),
     ]
   }
 
@@ -218,26 +218,51 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
   ],
   secondary: [$styles.row, $baseViewStyle, ({ colors }) => ({ backgroundColor: colors.secondary })],
   error: [$styles.row, $baseViewStyle, ({ colors }) => ({ backgroundColor: colors.error })],
+  reverse: [
+    $styles.row,
+    $baseViewStyle,
+    ({ colors }) => ({
+      backgroundColor: "transparent",
+      borderColor: colors.primary,
+      borderWidth: 1,
+    }),
+  ],
 }
 
 const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
   default: [$baseTextStyle],
   secondary: [$baseTextStyle],
   error: [$baseTextStyle],
+  reverse: [$baseTextStyle, ({ colors }) => ({ color: colors.primary })],
 }
 
 const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
   default: ({ colors }) => ({ backgroundColor: colors.primaryPressed }),
   secondary: ({ colors }) => ({ backgroundColor: colors.secondaryPressed }),
   error: ({ colors }) => ({ backgroundColor: colors.errorPressed }),
+  reverse: ({ colors }) => ({ backgroundColor: colors.transparentPressed }),
 }
 
 const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
   default: () => ({ opacity: 0.9 }),
   secondary: () => ({ opacity: 0.9 }),
   error: () => ({ opacity: 0.9 }),
+  reverse: () => ({ opacity: 0.9 }),
 }
 
-const $disabledView: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  backgroundColor: colors.border,
-})
+const $disabledViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
+  default: ({ colors }) => ({ backgroundColor: colors.border }),
+  secondary: ({ colors }) => ({ backgroundColor: colors.border }),
+  error: ({ colors }) => ({ backgroundColor: colors.border }),
+  reverse: ({ colors }) => ({
+    borderColor: colors.border,
+    backgroundColor: colors.transparentPressed,
+  }),
+}
+
+const $disabledTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
+  default: ({ colors }) => ({ color: colors.textDim }),
+  secondary: ({ colors }) => ({ color: colors.textDim }),
+  error: ({ colors }) => ({ color: colors.textDim }),
+  reverse: ({ colors }) => ({ color: colors.textDim }),
+}
