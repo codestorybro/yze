@@ -222,7 +222,7 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
     $styles.row,
     $baseViewStyle,
     ({ colors }) => ({
-      backgroundColor: "transparent",
+      backgroundColor: colors.palette.transparent,
       borderColor: colors.primary,
       borderWidth: 1,
     }),
@@ -240,7 +240,7 @@ const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
   default: ({ colors }) => ({ backgroundColor: colors.primaryPressed }),
   secondary: ({ colors }) => ({ backgroundColor: colors.secondaryPressed }),
   error: ({ colors }) => ({ backgroundColor: colors.errorPressed }),
-  reverse: ({ colors }) => ({ backgroundColor: colors.transparentPressed }),
+  reverse: ({ colors }) => ({ backgroundColor: colors.palette.transparentPressed }),
 }
 
 const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
@@ -251,12 +251,12 @@ const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
 }
 
 const $disabledViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
-  default: ({ colors }) => ({ backgroundColor: colors.border }),
-  secondary: ({ colors }) => ({ backgroundColor: colors.border }),
-  error: ({ colors }) => ({ backgroundColor: colors.border }),
+  default: ({ colors }) => ({ backgroundColor: colors.disabled }),
+  secondary: ({ colors }) => ({ backgroundColor: colors.disabled }),
+  error: ({ colors }) => ({ backgroundColor: colors.disabled }),
   reverse: ({ colors }) => ({
-    borderColor: colors.border,
-    backgroundColor: colors.transparentPressed,
+    borderColor: colors.disabled,
+    backgroundColor: colors.palette.transparentPressed,
   }),
 }
 

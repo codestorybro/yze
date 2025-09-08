@@ -28,6 +28,7 @@ import { UserType } from "@/types/userType"
 import { Avatar } from "./Avatar"
 // import { BackdropAvatar } from "./BackdropAvatar"
 import { UserSearchBar } from "./UserSearchBar"
+import { useBottomSheet } from "../BottomSheet/BottomSheetProvider"
 import Ticker from "../Ticker"
 
 type Props = {
@@ -43,12 +44,13 @@ export const _imageHeight = _imageWidth
 const _spacing = 12
 
 export function HorizontalSlider({ users, question, onSubmit }: Props) {
+  const { openSheet, closeSheet } = useBottomSheet()
   const {
     themed,
     theme: { colors, spacing },
   } = useAppTheme()
   const { voteForUser, selectedUsers, resetUsers } = useVote()
-  const { searchTerm } = useSearch()
+  const { searchTerm, setSearchTerm } = useSearch()
   const flatListRef = useRef<FlatList>(null)
 
   const scrollX = useSharedValue(0)
@@ -107,6 +109,22 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
         },
       ]
 
+  const handleResetButtonPress = () => {
+    setSearchTerm("")
+    resetUsers()
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true })
+  }
+
+  const handleSubmitButtonPress = () => {
+    openSheet(
+      <View style={{ alignItems: "center" }}>
+        <Text style={{ marginBottom: 12 }}>Hello from Global BottomSheet 👋</Text>
+        <Button onPress={closeSheet}>Close</Button>
+      </View>,
+    )
+    // onSubmit()
+  }
+
   return (
     <View style={styles.wrapper}>
       {/* <View style={StyleSheet.absoluteFillObject}>
@@ -155,10 +173,7 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
       />
 
       <Button
-        onPress={() => {
-          resetUsers()
-          flatListRef.current?.scrollToOffset({ offset: 0, animated: true })
-        }}
+        onPress={handleResetButtonPress}
         preset="reverse"
         disabled={!selectedUsers || selectedUsers?.length === 0}
         style={[{ width: width - spacing.xxl }, themed($button)]}
@@ -167,7 +182,7 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
       </Button>
       <Button
         disabled={!selectedUsers || selectedUsers?.length === 0}
-        onPress={onSubmit}
+        onPress={handleSubmitButtonPress}
         style={[{ width: width - spacing.xxl }, themed($button)]}
       >
         Submit

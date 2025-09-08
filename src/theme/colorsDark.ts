@@ -4,9 +4,10 @@ export const palette = {
   neutral700: "#D7CEC9",
   neutral600: "#B6ACA6",
   neutral500: "#978F8A",
-  neutral400: "#564E4A",
-  neutral300: "#303030",
-  neutral200: "#191015",
+  neutral450: "#3A3D4A",
+  neutral400: "#1E2230",
+  neutral300: "#272B3C",
+  neutral200: "#13151D",
   neutral100: "#000000",
 
   primary100: "#0D2C40",
@@ -43,6 +44,9 @@ export const palette = {
   justGold: "#FFD700",
   justSilver: "#C0C0C0",
   justBronze: "#CD7F32",
+  modalBackdrop: "rgba(0, 0, 0, 0.5)",
+  transparent: "rgba(0, 0, 0, 0)",
+  transparentPressed: "rgba(255, 255, 255, 0.05)",
 } as const
 
 export const colors = {
@@ -52,6 +56,7 @@ export const colors = {
   textDim: palette.neutral600,
   background: palette.neutral200,
   tabBarBackground: palette.neutral300,
+  disabled: palette.neutral450,
   border: palette.neutral400,
   tint: palette.primary500,
   tintInactive: palette.neutral300,
@@ -59,12 +64,10 @@ export const colors = {
   error: palette.angry500,
   errorPressed: palette.angry400,
   errorBackground: palette.angry100,
-  inputBackground: "#2b2227",
+  inputBackground: palette.neutral400,
 
   primary: palette.primary500,
   primaryPressed: palette.primary600,
   secondary: palette.secondary500,
   secondaryPressed: palette.secondary600,
-  transparent: "rgba(0, 0, 0, 0)",
-  transparentPressed: "rgba(255, 255, 255, 0.1)",
 } as const

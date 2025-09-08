@@ -92,7 +92,7 @@ function SwitchInput(props: SwitchInputProps) {
   ].filter(Boolean)[0]
 
   const onBackgroundColor = [
-    disabled && colors.transparent,
+    disabled && colors.palette.transparent,
     status === "error" && colors.errorBackground,
     colors.primary,
   ].filter(Boolean)[0]
@@ -226,7 +226,7 @@ const $inputOuter: StyleProp<ViewStyle> = [
 ]
 
 const $switchInner: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  borderColor: colors.transparent,
+  borderColor: colors.palette.transparent,
   position: "absolute",
   paddingStart: 4,
   paddingEnd: 4,
