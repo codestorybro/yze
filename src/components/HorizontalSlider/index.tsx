@@ -24,11 +24,11 @@ import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 import { QuestionType } from "@/types/questionType"
 import { UserType } from "@/types/userType"
+import { useBottomSheet } from "@/utils/useStructuredBottomSheet"
 
 import { Avatar } from "./Avatar"
 // import { BackdropAvatar } from "./BackdropAvatar"
 import { UserSearchBar } from "./UserSearchBar"
-import { useBottomSheet } from "../BottomSheet/BottomSheetProvider"
 import Ticker from "../Ticker"
 
 type Props = {

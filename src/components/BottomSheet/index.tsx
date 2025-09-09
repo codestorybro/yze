@@ -70,6 +70,7 @@ const $sheetStyle: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   position: "absolute",
   width: "100%",
   zIndex: 2,
+  maxHeight: "80%",
 })
 
 const styles = StyleSheet.create({

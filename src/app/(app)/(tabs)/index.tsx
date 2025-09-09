@@ -1,11 +1,12 @@
 import { StyleSheet, TextStyle } from "react-native"
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated"
 
-import { LoggedScreenWrapper, SkeletonImage } from "@/components"
+import { Button, DateRangePicker, LoggedScreenWrapper, SkeletonImage } from "@/components"
 import AttributeLeaderboard from "@/components/AttributeLeaderboard"
 import { useUser } from "@/store/auth"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
+import { useBottomSheet } from "@/utils/useStructuredBottomSheet"
 
 const mockedAttributes = [
   {
@@ -38,6 +39,7 @@ const mockedAttributes = [
 const _avatarSize = 150
 
 export default function Index() {
+  const { openSheet } = useBottomSheet()
   const { themed } = useAppTheme()
   const { user } = useUser()
   const avatarUri = user?.avatarUri
@@ -65,6 +67,9 @@ export default function Index() {
       >
         {user?.name}
       </Animated.Text>
+      <Button onPress={() => openSheet({ type: "custom", content: <DateRangePicker /> })}>
+        Select date range
+      </Button>
       <AttributeLeaderboard attributes={mockedAttributes} />
     </LoggedScreenWrapper>
   )
