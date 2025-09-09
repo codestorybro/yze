@@ -6,7 +6,7 @@ import AttributeLeaderboard from "@/components/AttributeLeaderboard"
 import { useUser } from "@/store/auth"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
-import { useBottomSheet } from "@/utils/useStructuredBottomSheet"
+import { useBottomSheet } from "@/utils/useBottomSheet"
 
 const mockedAttributes = [
   {
@@ -67,7 +67,11 @@ export default function Index() {
       >
         {user?.name}
       </Animated.Text>
-      <Button onPress={() => openSheet({ type: "custom", content: <DateRangePicker /> })}>
+      <Button
+        onPress={() =>
+          openSheet({ type: "custom", content: <DateRangePicker />, scrollable: true })
+        }
+      >
         Select date range
       </Button>
       <AttributeLeaderboard attributes={mockedAttributes} />

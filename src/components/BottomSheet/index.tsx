@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, ViewStyle } from "react-native"
+import { ScrollView, StyleSheet, TouchableOpacity, ViewStyle } from "react-native"
 import Animated, {
   SharedValue,
   useAnimatedStyle,
@@ -17,12 +17,13 @@ type Props = {
   toggleSheet: () => void
   duration?: number
   children: React.ReactNode
+  scrollable?: boolean
 }
 
-export function BottomSheet({ isOpen, toggleSheet, duration = 500, children }: Props) {
+export function BottomSheet({ isOpen, toggleSheet, duration = 500, children, scrollable }: Props) {
   const {
     themed,
-    theme: { colors },
+    theme: { colors, spacing },
   } = useAppTheme()
   const { bottom } = useSafeAreaInsets()
   const height = useSharedValue(0)
@@ -52,9 +53,23 @@ export function BottomSheet({ isOpen, toggleSheet, duration = 500, children }: P
         onLayout={(e) => {
           height.value = e.nativeEvent.layout.height
         }}
-        style={[themed($sheetStyle), sheetStylez, { paddingBottom: bottom }]}
+        style={[
+          themed($sheetStyle),
+          sheetStylez,
+          !scrollable && { paddingBottom: bottom, paddingTop: spacing.md },
+        ]}
       >
-        {children}
+        {scrollable ? (
+          <ScrollView
+            style={[styles.flex, { paddingTop: spacing.md }]}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: bottom }}
+          >
+            {children}
+          </ScrollView>
+        ) : (
+          children
+        )}
       </Animated.View>
     </>
   )
@@ -65,7 +80,6 @@ const $sheetStyle: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   borderTopLeftRadius: 24,
   borderTopRightRadius: 24,
   bottom: 0,
-  paddingTop: spacing.md,
   paddingHorizontal: spacing.lg,
   position: "absolute",
   width: "100%",

@@ -1,8 +1,10 @@
 import { useState, useMemo } from "react"
-import { ScrollView } from "react-native"
+import { View, ViewStyle, StyleSheet } from "react-native"
 import { Calendar } from "react-native-calendars"
 
 import { useAppTheme } from "@/theme/context"
+import { ThemedStyle } from "@/theme/types"
+import { useBottomSheet } from "@/utils/useBottomSheet"
 
 import { Button } from "./Button"
 
@@ -29,9 +31,11 @@ function getDatesInRange(start: string, end: string) {
 
 export function DateRangePicker() {
   const {
+    themed,
     theme: { colors },
     themeContext,
   } = useAppTheme()
+  const { closeSheet } = useBottomSheet()
 
   const [startDate, setStartDate] = useState<string | null>(formatDate(new Date(_minDate)))
   const [endDate, setEndDate] = useState<string | null>(formatDate(new Date()))
@@ -97,10 +101,10 @@ export function DateRangePicker() {
   }, [startDate, endDate, colors.primary])
 
   return (
-    <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+    <>
       <Calendar
         key={`start-${themeContext}`}
-        style={{ backgroundColor: colors.tabBarBackground, marginBottom: 16, height: 350 }}
+        style={themed($calendarStyles)}
         theme={calendarTheme}
         markingType="period"
         markedDates={markedDates}
@@ -125,7 +129,7 @@ export function DateRangePicker() {
 
       <Calendar
         key={`end-${themeContext}`}
-        style={{ backgroundColor: colors.tabBarBackground, height: 350 }}
+        style={themed($calendarStyles)}
         theme={calendarTheme}
         markingType="period"
         markedDates={markedDates}
@@ -148,15 +152,39 @@ export function DateRangePicker() {
           endMonthYear.year === minDateMonthYear.year
         }
       />
-
-      <Button
-        onPress={() => {
-          console.log("Selected Start Date:", startDate)
-          console.log("Selected End Date:", endDate)
-        }}
-      >
-        Confirm
-      </Button>
-    </ScrollView>
+      <View style={themed($actionSectionStyles)}>
+        <Button
+          style={styles.flex}
+          onPress={() => {
+            console.log("Selected Start Date:", startDate)
+            console.log("Selected End Date:", endDate)
+            closeSheet()
+          }}
+        >
+          Confirm
+        </Button>
+        <Button preset="error" style={styles.flex} onPress={closeSheet}>
+          Cancel
+        </Button>
+      </View>
+    </>
   )
 }
+
+const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
+})
+
+const $calendarStyles: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  backgroundColor: colors.tabBarBackground,
+  height: 350,
+})
+
+const $actionSectionStyles: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  flexDirection: "row",
+  gap: spacing.xs,
+  justifyContent: "space-between",
+  marginTop: spacing.lg,
+})

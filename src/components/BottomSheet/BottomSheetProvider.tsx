@@ -20,8 +20,8 @@ type StructuredContent = {
 }
 
 type ContentType =
-  | ({ type?: "structured" } & StructuredContent)
-  | { type: "custom"; content: ReactNode }
+  | ({ type?: "structured"; scrollable?: boolean } & StructuredContent)
+  | { type: "custom"; scrollable?: boolean; content: ReactNode }
 
 export function BottomSheetProvider({ children }: { children: ReactNode }) {
   const isOpen = useSharedValue(false)
@@ -48,7 +48,7 @@ export function BottomSheetProvider({ children }: { children: ReactNode }) {
   return (
     <BottomSheetContext.Provider value={{ openSheet, closeSheet }}>
       {children}
-      <BottomSheet isOpen={isOpen} toggleSheet={toggleSheet}>
+      <BottomSheet isOpen={isOpen} toggleSheet={toggleSheet} scrollable={content?.scrollable}>
         {content?.type === "custom" ? (
           content.content
         ) : (
