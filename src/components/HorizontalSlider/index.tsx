@@ -181,7 +181,7 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
           )
         }}
         onScroll={onScroll}
-        scrollEventThrottle={1000 / 60}
+        scrollEventThrottle={16}
         showsHorizontalScrollIndicator={false}
       />
       {isVoted ? (

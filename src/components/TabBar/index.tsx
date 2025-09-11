@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { LayoutChangeEvent, View, ViewStyle } from "react-native"
+import { LayoutChangeEvent, Platform, View, ViewStyle } from "react-native"
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
 import { useLinkBuilder } from "@react-navigation/native"
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated"
@@ -38,7 +38,16 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   })
 
   return (
-    <View onLayout={onTabBarLayout} style={[themed($tabBarContainer), { bottom }]}>
+    <View
+      onLayout={onTabBarLayout}
+      style={[
+        themed($tabBarContainer),
+        Platform.OS === "android" && {
+          marginBottom: bottom,
+        },
+        { bottom },
+      ]}
+    >
       <Animated.View
         style={[
           themed($tabBarItemAnimationStyle),
