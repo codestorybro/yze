@@ -31,6 +31,7 @@ import { translate } from "@/i18n/translate"
 import { useAuth } from "@/store/auth"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
+import { funcWithKeyboardDismiss } from "@/utils/funcWithKeyboardDismiss"
 
 type FormData = {
   email: string
@@ -65,12 +66,10 @@ export default function SignIn() {
   }, [])
 
   const onSubmit = async (data: FormData) => {
-    Keyboard.dismiss()
-
-    setTimeout(async () => {
-      await signIn(data.email, data.password)
+    funcWithKeyboardDismiss(() => {
+      signIn(data.email, data.password)
       router.replace("/group-selector")
-    }, 100)
+    })
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
@@ -148,7 +147,11 @@ export default function SignIn() {
                     placeholderTx="loginScreen:emailFieldPlaceholder"
                     helperTx={error?.message as TxKeyPath}
                     status={errors.email ? "error" : undefined}
-                    onSubmitEditing={() => authPasswordInput.current?.focus()}
+                    onSubmitEditing={() => {
+                      funcWithKeyboardDismiss(() => {
+                        authPasswordInput?.current?.focus()
+                      })
+                    }}
                   />
                 </Animated.View>
               )}
