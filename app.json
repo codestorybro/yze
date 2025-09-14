@@ -13,14 +13,6 @@
   "jsEngine": "hermes",
   "assetBundlePatterns": ["**/*"],
   "android": {
-    "manifest": {
-      "supports-screens": {
-        "small": true,
-        "normal": true,
-        "large": false,
-        "xlarge": false
-      }
-    },
     "icon": "./assets/images/app-icon-android-legacy.png",
     "package": "app.yze",
     "adaptiveIcon": {
