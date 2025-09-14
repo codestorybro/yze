@@ -1,8 +1,8 @@
 import { Keyboard } from "react-native"
 
-export const funcWithKeyboardDismiss = (func: () => void) => {
+export const withKeyboardDismiss = (func: () => void) => {
   Keyboard.dismiss()
   setTimeout(() => {
     func()
-  }, 100)
+  }, 75)
 }

@@ -31,7 +31,7 @@ import { translate } from "@/i18n/translate"
 import { useAuth } from "@/store/auth"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
-import { funcWithKeyboardDismiss } from "@/utils/funcWithKeyboardDismiss"
+import { withKeyboardDismiss } from "@/utils/withKeyboardDismiss"
 
 type FormData = {
   email: string
@@ -66,7 +66,7 @@ export default function SignIn() {
   }, [])
 
   const onSubmit = async (data: FormData) => {
-    funcWithKeyboardDismiss(() => {
+    withKeyboardDismiss(() => {
       signIn(data.email, data.password)
       router.replace("/group-selector")
     })
@@ -148,7 +148,7 @@ export default function SignIn() {
                     helperTx={error?.message as TxKeyPath}
                     status={errors.email ? "error" : undefined}
                     onSubmitEditing={() => {
-                      funcWithKeyboardDismiss(() => {
+                      withKeyboardDismiss(() => {
                         authPasswordInput?.current?.focus()
                       })
                     }}
