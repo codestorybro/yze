@@ -2,7 +2,7 @@ import { useCallback } from "react"
 import { LayoutAnimation, ViewStyle } from "react-native"
 import { router } from "expo-router"
 
-import { Button, DevSection, LoggedScreenWrapper } from "@/components"
+import { Button, Card, DevSection, LoggedScreenWrapper, Text } from "@/components"
 import { Switch } from "@/components/Toggle/Switch"
 import { useAuth } from "@/store/auth"
 import { useAppTheme } from "@/theme/context"
@@ -24,20 +24,41 @@ export default function Settings() {
 
   return (
     <LoggedScreenWrapper>
-      <Button tx="settingsScreen:selectGroup" onPress={onSelectGroup} style={themed($option)} />
-      <Switch
-        value={themeContext === "dark"}
-        onValueChange={toggleTheme}
-        labelPosition="left"
-        labelTx="settingsScreen:darkMode"
-        containerStyle={themed($option)}
+      <Button tx="settingsScreen:selectGroup" onPress={onSelectGroup} />
+
+      <Card
+        style={themed($option)}
+        HeadingComponent={
+          <Text preset="bold" size="lg">
+            User Settings
+          </Text>
+        }
+        ContentComponent={
+          <Switch
+            value={themeContext === "dark"}
+            onValueChange={toggleTheme}
+            labelPosition="left"
+            labelTx="settingsScreen:darkMode"
+            containerStyle={themed($option)}
+          />
+        }
       />
-      <Button tx="common:logOut" onPress={signOut} preset="error" style={themed($option)} />
+
+      <Card
+        style={themed($option)}
+        HeadingComponent={
+          <Text preset="bold" size="lg">
+            Group Settings
+          </Text>
+        }
+      />
+
       {__DEV__ && <DevSection />}
+      <Button tx="common:logOut" onPress={signOut} preset="error" style={themed($option)} />
     </LoggedScreenWrapper>
   )
 }
 
 const $option: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  marginVertical: spacing.xs,
+  marginTop: spacing.xs,
 })

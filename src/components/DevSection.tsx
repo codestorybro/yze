@@ -14,6 +14,7 @@ export function DevSection() {
 
   return (
     <Card
+      style={themed($cardStyle)}
       HeadingComponent={<Text preset="bold" size="lg" tx="devSection:title" />}
       ContentComponent={
         <>
@@ -65,4 +66,8 @@ export function DevSection() {
 
 const $item: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   marginBottom: spacing.md,
+})
+
+const $cardStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  marginTop: spacing.sm,
 })

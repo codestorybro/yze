@@ -16,7 +16,7 @@ type Props = {
   onSubmit: () => void
 }
 
-const _imageSize = 64
+const _imageSize = 80
 
 export const SelectableAvatars: React.FC<Props> = ({ users, onSubmit, question }) => {
   const { themed } = useAppTheme()
