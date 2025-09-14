@@ -19,7 +19,7 @@ export function LoggedScreenWrapper({ contentContainerStyle, children, ...props 
       preset="scroll"
       contentContainerStyle={[
         themed($container),
-        { top: top + spacing.xl, paddingBottom },
+        { top: top + spacing.sm, paddingBottom },
         contentContainerStyle,
       ]}
       {...props}

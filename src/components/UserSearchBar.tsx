@@ -8,7 +8,7 @@ import { useAppTheme } from "@/theme/context"
 export function UserSearchBar() {
   const { searchTerm, setSearchTerm } = useSearch()
   const {
-    theme: { colors, spacing },
+    theme: { colors },
   } = useAppTheme()
 
   const SearchRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
@@ -28,13 +28,11 @@ export function UserSearchBar() {
   )
 
   return (
-    <View style={{ width: width - spacing.xxl }}>
-      <TextField
-        placeholder="Search user..."
-        value={searchTerm}
-        onChangeText={setSearchTerm}
-        RightAccessory={searchTerm !== "" ? SearchRightAccessory : undefined}
-      />
-    </View>
+    <TextField
+      placeholder="Search user..."
+      value={searchTerm}
+      onChangeText={setSearchTerm}
+      RightAccessory={searchTerm !== "" ? SearchRightAccessory : undefined}
+    />
   )
 }

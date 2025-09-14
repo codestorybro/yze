@@ -1,11 +1,8 @@
 import { useEffect } from "react"
-import { ViewStyle } from "react-native"
 
 import { LoggedScreenWrapper } from "@/components"
-import { HorizontalSlider } from "@/components/HorizontalSlider"
 import { useQuestion, useVote } from "@/store/vote"
-import { useAppTheme } from "@/theme/context"
-import { ThemedStyle } from "@/theme/types"
+import { SelectableAvatars } from "@/components/SelectableAvatars"
 
 const mockedUsers = [
   {
@@ -33,6 +30,7 @@ const mockedUsers = [
     name: "Charlie Davis",
     avatarUri: "https://avatar.iran.liara.run/public/39",
   },
+  { id: "13", name: "No Avatar User", avatarUri: "" },
   {
     id: "6",
     name: "David Wilson",
@@ -53,16 +51,47 @@ const mockedUsers = [
     name: "Grace Lee",
     avatarUri: "https://avatar.iran.liara.run/public/36",
   },
+  {
+    id: "10",
+    name: "Hannah White",
+    avatarUri: "https://avatar.iran.liara.run/public/12",
+  },
+  { id: "14", name: "No Avatar User 2" },
+  {
+    id: "11",
+    name: "Ian Harris",
+    avatarUri: "https://avatar.iran.liara.run/public/27",
+  },
+  {
+    id: "12",
+    name: "Jack Clark",
+    avatarUri: "https://avatar.iran.liara.run/public/23",
+  },
+  { id: "15", name: "No Avatar User 3" },
+  {
+    id: "16",
+    name: "Tony Williams",
+    avatarUri: "https://avatar.iran.liara.run/public/16",
+  },
+  {
+    id: "17",
+    name: "Stephen Clark",
+    avatarUri: "https://avatar.iran.liara.run/public/17",
+  },
+  {
+    id: "18",
+    name: "Johny Bravo",
+    avatarUri: "https://avatar.iran.liara.run/public/23",
+  },
 ]
 
 const mockedQuestion = {
-  howMuchPick: 3,
-  text: "Who is your favorite?",
-  attribute: "Charisma",
+  id: "1",
+  text: "Who helped you with a difficult task today?",
+  attributesInfluence: ["Charisma", "Kindness"],
 }
 
 export default function Voting() {
-  const { themed } = useAppTheme()
   const { question, setQuestion } = useQuestion()
   const { selectedUsers, setIsVoted } = useVote()
 
@@ -78,12 +107,8 @@ export default function Voting() {
   if (!question) return null
 
   return (
-    <LoggedScreenWrapper contentContainerStyle={themed($container)}>
-      <HorizontalSlider users={mockedUsers} question={question} onSubmit={onSubmit} />
+    <LoggedScreenWrapper>
+      <SelectableAvatars onSubmit={onSubmit} users={mockedUsers} question={question} />
     </LoggedScreenWrapper>
   )
 }
-
-const $container: ThemedStyle<ViewStyle> = () => ({
-  marginHorizontal: 0,
-})

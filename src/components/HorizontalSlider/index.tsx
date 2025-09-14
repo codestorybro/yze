@@ -28,7 +28,7 @@ import { useBottomSheet } from "@/utils/useBottomSheet"
 
 import { Avatar } from "./Avatar"
 // import { BackdropAvatar } from "./BackdropAvatar"
-import { UserSearchBar } from "./UserSearchBar"
+import { UserSearchBar } from "../UserSearchBar"
 import Ticker from "../Ticker"
 
 type Props = {

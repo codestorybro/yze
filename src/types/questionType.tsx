@@ -1,5 +1,5 @@
 export type QuestionType = {
-  howMuchPick: number
+  id: string
   text: string
-  attribute: string
+  attributesInfluence: string[]
 }

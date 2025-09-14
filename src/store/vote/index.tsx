@@ -36,10 +36,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       return
     }
 
-    if (question && list.length >= question.howMuchPick) {
-      throw new Error("You have already selected the maximum number of users")
-    }
-
     setSelectedUsers([...list, user])
   }
 
