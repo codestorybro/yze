@@ -70,6 +70,6 @@ const $tabBarContainer: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   alignItems: "center",
   paddingTop: spacing.lg,
   paddingBottom: spacing.xxxs,
-  borderTopLeftRadius: spacing.xl,
-  borderTopRightRadius: spacing.xl,
+  borderTopWidth: 0.5,
+  borderColor: colors.border,
 })

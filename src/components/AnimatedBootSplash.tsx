@@ -15,8 +15,6 @@ export const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
   const { container, logo } = BootSplash.useHideAnimation({
     manifest: require("../../assets/bootsplash/manifest.json"),
     logo: require("../../assets/bootsplash/logo.png"),
-    statusBarTranslucent: true,
-    navigationBarTranslucent: true,
 
     animate: () => {
       const { height } = Dimensions.get("window")

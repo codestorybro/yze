@@ -15,7 +15,7 @@ import { $styles } from "@/theme/styles"
 
 import { Text, TextProps } from "./Text"
 
-type Presets = "default" | "reversed"
+type Presets = "default"
 
 interface CardProps extends TouchableOpacityProps {
   /**
@@ -257,13 +257,8 @@ export function Card(props: CardProps) {
 
 const $containerBase: ThemedStyle<ViewStyle> = (theme) => ({
   borderRadius: theme.spacing.md,
-  padding: theme.spacing.xs,
-  borderWidth: 1,
-  shadowColor: theme.colors.palette.neutral800,
-  shadowOffset: { width: 0, height: 12 },
-  shadowOpacity: 0.08,
-  shadowRadius: 12.81,
-  elevation: 16,
+  paddingVertical: theme.spacing.xs,
+  paddingHorizontal: theme.spacing.lg,
   minHeight: 96,
 })
 
@@ -284,31 +279,19 @@ const $containerPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
     $styles.row,
     $containerBase,
     (theme) => ({
-      backgroundColor: theme.colors.palette.neutral100,
-      borderColor: theme.colors.palette.neutral300,
-    }),
-  ],
-  reversed: [
-    $styles.row,
-    $containerBase,
-    (theme) => ({
-      backgroundColor: theme.colors.palette.neutral800,
-      borderColor: theme.colors.palette.neutral500,
+      backgroundColor: theme.colors.tabBarBackground,
     }),
   ],
 }
 
 const $headingPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
   default: [],
-  reversed: [(theme) => ({ color: theme.colors.palette.neutral100 })],
 }
 
 const $contentPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
   default: [],
-  reversed: [(theme) => ({ color: theme.colors.palette.neutral100 })],
 }
 
 const $footerPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
   default: [],
-  reversed: [(theme) => ({ color: theme.colors.palette.neutral100 })],
 }

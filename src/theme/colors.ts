@@ -56,7 +56,7 @@ export const colors = {
   background: palette.neutral100,
   tabBarBackground: palette.neutral100,
   disabled: palette.neutral400,
-  border: palette.neutral400,
+  border: palette.neutral300,
   tint: palette.primary500,
   tintInactive: palette.neutral300,
   separator: palette.neutral300,
