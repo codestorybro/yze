@@ -1,4 +1,4 @@
-import { ViewStyle } from "react-native"
+import { Platform, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { useAppTheme } from "@/theme/context"
@@ -12,13 +12,14 @@ export function LoggedScreenWrapper({ contentContainerStyle, children, ...props 
     theme: { spacing },
   } = useAppTheme()
   const { top, bottom } = useSafeAreaInsets()
+  const paddingBottom = Platform.OS === "ios" ? bottom : spacing.xxxxl
 
   return (
     <Screen
       preset="scroll"
       contentContainerStyle={[
         themed($container),
-        { top: top + spacing.xl, paddingBottom: bottom + spacing.xxxl },
+        { top: top + spacing.xl, paddingBottom },
         contentContainerStyle,
       ]}
       {...props}

@@ -1,5 +1,5 @@
 import { ComponentProps, useEffect } from "react"
-import { TextStyle, ViewStyle } from "react-native"
+import { ViewStyle } from "react-native"
 import { PlatformPressable } from "@react-navigation/elements"
 import Animated, {
   interpolate,
@@ -31,22 +31,14 @@ export function TabBarButton({ routeName, color, label, isFocused, ...props }: T
     })
   }, [scale, isFocused])
 
-  const animatedTextStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(scale.value, [0, 1], [1, 0])
-
-    return { opacity }
-  })
-
   const animatedIconStyle = useAnimatedStyle(() => {
-    const scaleValue = interpolate(scale.value, [0, 1], [1, 1.2])
+    const scaleValue = interpolate(scale.value, [0, 1], [1, 1.3])
 
-    const top = interpolate(scale.value, [0, 1], [0, 7])
-
-    return { transform: [{ scale: scaleValue }], top }
+    return { transform: [{ scale: scaleValue }] }
   })
 
   return (
-    <PlatformPressable style={themed($tabBarItem)} {...props}>
+    <PlatformPressable pressOpacity={1} style={themed($tabBarItem)} {...props}>
       <Animated.View style={animatedIconStyle}>
         <SvgIcon
           pathData={SvgIconPaths[routeName as keyof typeof SvgIconPaths]}
@@ -54,9 +46,6 @@ export function TabBarButton({ routeName, color, label, isFocused, ...props }: T
           size={24}
         />
       </Animated.View>
-      <Animated.Text style={[themed($tabBarItemText), { color }, animatedTextStyle]}>
-        {label}
-      </Animated.Text>
     </PlatformPressable>
   )
 }
@@ -65,8 +54,4 @@ const $tabBarItem: ThemedStyle<ViewStyle> = () => ({
   flex: 1,
   justifyContent: "center",
   alignItems: "center",
-})
-
-const $tabBarItemText: ThemedStyle<TextStyle> = () => ({
-  fontSize: 12,
 })

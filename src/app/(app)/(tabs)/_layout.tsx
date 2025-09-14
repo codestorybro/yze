@@ -16,28 +16,10 @@ export default function TabLayout() {
   }
 
   return (
-    <Tabs
-      screenOptions={{ headerShown: false, animation: "fade" }}
-      tabBar={(props) => <TabBar {...props} />}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          tabBarLabel: "Home",
-        }}
-      />
-      <Tabs.Screen
-        name="voting"
-        options={{
-          tabBarLabel: "Voting",
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          tabBarLabel: "Settings",
-        }}
-      />
+    <Tabs screenOptions={{ headerShown: false }} tabBar={(props) => <TabBar {...props} />}>
+      <Tabs.Screen name="index" />
+      <Tabs.Screen name="voting" />
+      <Tabs.Screen name="settings" />
     </Tabs>
   )
 }

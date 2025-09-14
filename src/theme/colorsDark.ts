@@ -7,7 +7,7 @@ export const palette = {
   neutral450: "#3A3D4A",
   neutral400: "#1E2230",
   neutral300: "#272B3C",
-  neutral200: "#13151D",
+  neutral200: "#1C1C1E",
   neutral100: "#000000",
 
   primary100: "#0D2C40",
@@ -55,7 +55,7 @@ export const colors = {
   textReversed: palette.neutral200,
   textDim: palette.neutral600,
   background: palette.neutral200,
-  tabBarBackground: palette.neutral300,
+  tabBarBackground: palette.neutral200,
   disabled: palette.neutral450,
   border: palette.neutral400,
   tint: palette.primary500,

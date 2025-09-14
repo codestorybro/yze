@@ -19,15 +19,12 @@ import Animated, {
   withTiming,
   interpolateColor,
 } from "react-native-reanimated"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { palette as lightPalette } from "@/theme/colors"
 import { palette as darkPalette } from "@/theme/colorsDark"
 import { useAppTheme } from "@/theme/context"
 import { $styles } from "@/theme/styles"
 import { ExtendedEdge, useSafeAreaInsetsStyle } from "@/utils/useSafeAreaInsetsStyle"
-
-export const DEFAULT_BOTTOM_OFFSET = 150
 
 interface BaseScreenProps {
   /**
@@ -200,12 +197,11 @@ function ScreenWithScrolling(props: ScreenProps) {
   const {
     children,
     keyboardShouldPersistTaps = "handled",
-    keyboardBottomOffset = DEFAULT_BOTTOM_OFFSET,
+    keyboardBottomOffset,
     contentContainerStyle,
     ScrollViewProps,
     style,
   } = props as ScrollScreenProps
-  const { bottom } = useSafeAreaInsets()
   const ref = useRef<ScrollView>(null)
 
   const { scrollEnabled, onContentSizeChange, onLayout } = useAutoPreset(props as AutoScreenProps)
@@ -232,9 +228,6 @@ function ScreenWithScrolling(props: ScreenProps) {
         $innerStyle,
         ScrollViewProps?.contentContainerStyle,
         contentContainerStyle,
-        Platform.OS === "android" && {
-          paddingBottom: bottom + DEFAULT_BOTTOM_OFFSET,
-        },
       ]}
     >
       {children}
@@ -273,7 +266,7 @@ export function Screen(props: ScreenProps) {
       backgroundColor: interpolateColor(
         progress.value,
         [0, 1],
-        [lightPalette.neutral200, darkPalette.neutral200],
+        [lightPalette.neutral200, darkPalette.neutral100],
       ),
     }
   })
