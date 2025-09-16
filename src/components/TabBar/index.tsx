@@ -63,7 +63,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   )
 }
 
-const $tabBarContainer: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
+const $tabBarContainer: ThemedStyle<ViewStyle> = ({ colors }) => ({
   flexDirection: "row",
   backgroundColor: colors.tabBarBackground,
   justifyContent: "space-between",
