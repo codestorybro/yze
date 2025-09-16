@@ -1,5 +1,5 @@
-import React from "react"
-import { StyleSheet, ViewStyle, View, ScrollView, Platform } from "react-native"
+import React, { useRef } from "react"
+import { StyleSheet, ViewStyle, View, Platform, FlatList } from "react-native"
 import { UserType } from "@/types/userType"
 import { Text, Card, Button, SvgIcon } from "@/components"
 import { ThemedStyle } from "@/theme/types"
@@ -22,6 +22,7 @@ export const VotingList: React.FC<Props> = ({ users, onSubmit, question }) => {
     themed,
     theme: { spacing, colors },
   } = useAppTheme()
+  const listRef = useRef<FlatList>(null)
   const { selectedUsers, resetUsers, isVoted, voteForUser } = useVote()
   const { searchTerm, setSearchTerm } = useSearch()
   const { openSheet, closeSheet } = useBottomSheet()
@@ -35,6 +36,7 @@ export const VotingList: React.FC<Props> = ({ users, onSubmit, question }) => {
   const handleResetButtonPress = () => {
     setSearchTerm("")
     resetUsers()
+    listRef.current?.scrollToOffset({ offset: 0, animated: true })
   }
 
   const handleSubmitButtonPress = () => {
@@ -60,33 +62,44 @@ export const VotingList: React.FC<Props> = ({ users, onSubmit, question }) => {
     })
   }
 
+  const filtered = users.filter((user) => user.name.includes(searchTerm))
+  const dataResult = filtered.length
+    ? filtered
+    : [
+        {
+          id: "0",
+          name: "No Results",
+          avatarUri: require("../../../assets/images/placeholder.png"),
+        },
+      ]
+
   return (
     <>
-      <ScrollView
+      <FlatList
+        ref={listRef}
+        data={dataResult}
+        keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
         style={{ paddingTop: spacing.md, marginTop: -spacing.md }}
-      >
-        <View style={{ paddingBottom }}>
-          {users.map((u) => {
-            const isSelected = !!selectedUsers?.find((su) => su.id === u.id)
-            const isSelectedStyle = isSelected
-              ? {
-                  backgroundColor: colors.palette.primaryTransparent10,
-                  borderColor: colors.primary,
-                }
-              : {}
+        contentContainerStyle={{ paddingBottom }}
+        renderItem={({ item: u }) => {
+          const isSelected = !!selectedUsers?.find((su) => su.id === u.id)
+          const isSelectedStyle = isSelected
+            ? {
+                backgroundColor: colors.palette.primaryTransparent10,
+                borderColor: colors.primary,
+              }
+            : {}
 
-            return (
-              <Card
-                onPress={() => voteForUser(u)}
-                style={[themed($selectedCardStyle), isSelectedStyle]}
-                key={u.id}
-                ContentComponent={<CardContent user={u} />}
-              />
-            )
-          })}
-        </View>
-      </ScrollView>
+          return (
+            <Card
+              onPress={() => voteForUser(u)}
+              style={[themed($selectedCardStyle), isSelectedStyle]}
+              ContentComponent={<CardContent user={u} />}
+            />
+          )
+        }}
+      />
       <View style={[themed($actionButtonsContentWrapper), { bottom: actionsPaddingBottom }]}>
         {isVoted ? (
           <Button disabled preset="no-border" style={styles.votedButton}>
