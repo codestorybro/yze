@@ -1,10 +1,9 @@
 import { useEffect } from "react"
-import { ScrollView, View, ViewStyle } from "react-native"
+import { ViewStyle } from "react-native"
 
 import { LoggedScreenWrapper } from "@/components"
 import { useQuestion, useVote } from "@/store/vote"
-import { SelectableAvatars } from "@/components/SelectableAvatars"
-import { Platform } from "react-native"
+import { VotingList } from "@/components"
 import { UserSearchBar } from "@/components/UserSearchBar"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useAppTheme } from "@/theme/context"
@@ -100,13 +99,11 @@ const mockedQuestion = {
 export default function Voting() {
   const { question, setQuestion } = useQuestion()
   const { selectedUsers, setIsVoted } = useVote()
-  const { top, bottom } = useSafeAreaInsets()
+  const { top } = useSafeAreaInsets()
   const {
     themed,
     theme: { spacing },
   } = useAppTheme()
-
-  const paddingBottom = Platform.OS === "ios" ? bottom + spacing.md : spacing.xxxxl
 
   const onSubmit = () => {
     setIsVoted(true)
@@ -121,9 +118,9 @@ export default function Voting() {
 
   return (
     <>
-      <UserSearchBar style={[themed($searchBarWrapper), { top: top + spacing.xxs }]} />
-      <LoggedScreenWrapper contentContainerStyle={{ top: top + spacing.xxxl, paddingBottom }}>
-        <SelectableAvatars onSubmit={onSubmit} users={mockedUsers} question={question} />
+      <UserSearchBar style={[themed($searchBarWrapper), { top: top + spacing.xs }]} />
+      <LoggedScreenWrapper preset="fixed" contentContainerStyle={{ top: top + spacing.xxxl }}>
+        <VotingList onSubmit={onSubmit} users={mockedUsers} question={question} />
       </LoggedScreenWrapper>
     </>
   )

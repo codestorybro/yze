@@ -259,7 +259,8 @@ const $containerBase: ThemedStyle<ViewStyle> = (theme) => ({
   borderRadius: theme.spacing.md,
   paddingVertical: theme.spacing.xs,
   paddingHorizontal: theme.spacing.md,
-  minHeight: 144,
+  borderColor: theme.colors.tabBarBackground,
+  borderWidth: 1,
 })
 
 const $alignmentWrapper: ViewStyle = {

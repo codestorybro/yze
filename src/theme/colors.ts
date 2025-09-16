@@ -16,6 +16,8 @@ export const palette = {
   primary500: "#1da1f2",
   primary600: "#157BC1",
 
+  primaryTransparent10: "rgba(29, 161, 242, 0.1)",
+
   secondary100: "#FFF3E6",
   secondary200: "#FFD1A8",
   secondary300: "#FFA566",
@@ -46,6 +48,10 @@ export const palette = {
   modalBackdrop: "rgba(0, 0, 0, 0.5)",
   transparent: "rgba(0, 0, 0, 0)",
   transparentPressed: "rgba(0, 0, 0, 0.05)",
+
+  green400: "#6fbf73",
+  green500: "#4caf50",
+  green600: "#357a38",
 } as const
 
 export const colors = {
@@ -64,7 +70,7 @@ export const colors = {
   errorPressed: palette.angry600,
   errorBackground: palette.angry100,
   inputBackground: palette.neutral300,
-
+  confirmation: palette.green500,
   primary: palette.primary500,
   primaryPressed: palette.primary600,
   secondary: palette.secondary500,
