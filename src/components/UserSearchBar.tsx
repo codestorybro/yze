@@ -5,7 +5,7 @@ import { PressableIcon, TextField, TextFieldAccessoryProps, width } from "@/comp
 import { useSearch } from "@/store/vote"
 import { useAppTheme } from "@/theme/context"
 
-export function UserSearchBar() {
+export function UserSearchBar({ style }: { style?: ViewStyle[] | ViewStyle }) {
   const { searchTerm, setSearchTerm } = useSearch()
   const {
     theme: { colors },
@@ -28,11 +28,13 @@ export function UserSearchBar() {
   )
 
   return (
-    <TextField
-      placeholder="Search user..."
-      value={searchTerm}
-      onChangeText={setSearchTerm}
-      RightAccessory={searchTerm !== "" ? SearchRightAccessory : undefined}
-    />
+    <View style={style}>
+      <TextField
+        placeholder="Search user..."
+        value={searchTerm}
+        onChangeText={setSearchTerm}
+        RightAccessory={searchTerm !== "" ? SearchRightAccessory : undefined}
+      />
+    </View>
   )
 }

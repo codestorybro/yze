@@ -1,8 +1,14 @@
 import { useEffect } from "react"
+import { ScrollView, View, ViewStyle } from "react-native"
 
 import { LoggedScreenWrapper } from "@/components"
 import { useQuestion, useVote } from "@/store/vote"
 import { SelectableAvatars } from "@/components/SelectableAvatars"
+import { Platform } from "react-native"
+import { UserSearchBar } from "@/components/UserSearchBar"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { useAppTheme } from "@/theme/context"
+import { ThemedStyle } from "@/theme/types"
 
 const mockedUsers = [
   {
@@ -30,7 +36,7 @@ const mockedUsers = [
     name: "Charlie Davis",
     avatarUri: "https://avatar.iran.liara.run/public/39",
   },
-  { id: "13", name: "No Avatar User", avatarUri: "" },
+  { id: "13", name: "No avataro alvaro", avatarUri: "" },
   {
     id: "6",
     name: "David Wilson",
@@ -56,7 +62,7 @@ const mockedUsers = [
     name: "Hannah White",
     avatarUri: "https://avatar.iran.liara.run/public/12",
   },
-  { id: "14", name: "No Avatar User 2" },
+  { id: "14", name: "Blah bala" },
   {
     id: "11",
     name: "Ian Harris",
@@ -67,7 +73,7 @@ const mockedUsers = [
     name: "Jack Clark",
     avatarUri: "https://avatar.iran.liara.run/public/23",
   },
-  { id: "15", name: "No Avatar User 3" },
+  { id: "15", name: "Lorem ipsum" },
   {
     id: "16",
     name: "Tony Williams",
@@ -94,6 +100,13 @@ const mockedQuestion = {
 export default function Voting() {
   const { question, setQuestion } = useQuestion()
   const { selectedUsers, setIsVoted } = useVote()
+  const { top, bottom } = useSafeAreaInsets()
+  const {
+    themed,
+    theme: { spacing },
+  } = useAppTheme()
+
+  const paddingBottom = Platform.OS === "ios" ? bottom + spacing.md : spacing.xxxxl
 
   const onSubmit = () => {
     setIsVoted(true)
@@ -107,8 +120,19 @@ export default function Voting() {
   if (!question) return null
 
   return (
-    <LoggedScreenWrapper>
-      <SelectableAvatars onSubmit={onSubmit} users={mockedUsers} question={question} />
-    </LoggedScreenWrapper>
+    <>
+      <UserSearchBar style={[themed($searchBarWrapper), { top: top + spacing.xxs }]} />
+      <LoggedScreenWrapper contentContainerStyle={{ top: top + spacing.xxxl, paddingBottom }}>
+        <SelectableAvatars onSubmit={onSubmit} users={mockedUsers} question={question} />
+      </LoggedScreenWrapper>
+    </>
   )
 }
+
+const $searchBarWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  position: "absolute",
+  left: 0,
+  right: 0,
+  zIndex: 1,
+  marginHorizontal: spacing.lg,
+})

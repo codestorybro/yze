@@ -50,8 +50,10 @@ export function TabBarButton({ routeName, color, label, isFocused, ...props }: T
   )
 }
 
-const $tabBarItem: ThemedStyle<ViewStyle> = () => ({
+const $tabBarItem: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   flex: 1,
   justifyContent: "center",
   alignItems: "center",
+  paddingTop: spacing.lg,
+  paddingBottom: spacing.xxxs,
 })

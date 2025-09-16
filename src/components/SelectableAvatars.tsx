@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { View, TouchableOpacity, StyleSheet, ViewStyle, TextStyle } from "react-native"
+import { TouchableOpacity, StyleSheet, ViewStyle } from "react-native"
 import { MotiView, AnimatePresence } from "moti"
 import { UserType } from "@/types/userType"
 import { Text, Card, SkeletonImage, Button } from "@/components"
@@ -8,7 +8,6 @@ import { useAppTheme } from "@/theme/context"
 import { useSearch, useVote } from "@/store/vote"
 import { useBottomSheet } from "@/utils/useBottomSheet"
 import { QuestionType } from "@/types/questionType"
-import { UserSearchBar } from "./UserSearchBar"
 
 type Props = {
   users: UserType[]
@@ -108,49 +107,28 @@ export const SelectableAvatars: React.FC<Props> = ({ users, onSubmit, question }
 
   return (
     <>
-      <UserSearchBar />
-      <Card
-        style={themed($cardStyle)}
-        ContentComponent={
-          <View style={styles.grid}>{available.map((u) => renderAvatar(u, "available"))}</View>
-        }
-      />
-      <Card
-        style={themed($cardStyle)}
-        HeadingComponent={
-          <View>
-            <Text>Selected Users</Text>
-          </View>
-        }
-        ContentComponent={
-          <View style={styles.grid}>
-            {(selectedUsers ?? []).map((u) => renderAvatar(u, "selected"))}
-          </View>
-        }
-      />
-      {isVoted ? (
-        <Text preset="subheading" style={themed($alreadyVotedText)}>
-          Nice, you have already voted today!
-        </Text>
-      ) : (
-        <>
-          <Button
-            onPress={handleResetButtonPress}
-            preset="reverse"
-            disabled={isVoted || !selectedUsers || selectedUsers?.length === 0}
-            style={themed($button)}
-          >
-            Reset
-          </Button>
-          <Button
-            disabled={isVoted || !selectedUsers || selectedUsers?.length === 0}
-            onPress={handleSubmitButtonPress}
-            style={themed($button)}
-          >
-            Submit
-          </Button>
-        </>
-      )}
+      {users.map((u) => (
+        <Card
+          style={themed($selectedCardStyle)}
+          key={u.id}
+          ContentComponent={<Text>{u.name}</Text>}
+        />
+      ))}
+      <Button
+        onPress={handleResetButtonPress}
+        preset="reverse"
+        disabled={isVoted || !selectedUsers || selectedUsers?.length === 0}
+        style={themed($button)}
+      >
+        Reset
+      </Button>
+      <Button
+        disabled={isVoted || !selectedUsers || selectedUsers?.length === 0}
+        onPress={handleSubmitButtonPress}
+        style={themed($button)}
+      >
+        {isVoted ? "Voted already!" : "Submit"}
+      </Button>
     </>
   )
 }
@@ -159,12 +137,7 @@ const $button: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   marginVertical: spacing.xxs,
 })
 
-const $alreadyVotedText: ThemedStyle<TextStyle> = ({ spacing }) => ({
-  marginHorizontal: spacing.xl,
-  textAlign: "center",
-})
-
-const $cardStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+const $selectedCardStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   marginVertical: spacing.xs,
 })
 

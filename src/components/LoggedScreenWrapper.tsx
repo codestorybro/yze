@@ -12,7 +12,7 @@ export function LoggedScreenWrapper({ contentContainerStyle, children, ...props 
     theme: { spacing },
   } = useAppTheme()
   const { top, bottom } = useSafeAreaInsets()
-  const paddingBottom = Platform.OS === "ios" ? bottom : spacing.xxxxl
+  const paddingBottom = Platform.OS === "ios" ? bottom + spacing.md : spacing.xxxxl
 
   return (
     <Screen
