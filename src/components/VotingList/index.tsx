@@ -1,5 +1,5 @@
 import React, { useRef } from "react"
-import { StyleSheet, ViewStyle, View, Platform, FlatList } from "react-native"
+import { StyleSheet, ViewStyle, View, FlatList } from "react-native"
 import { UserType } from "@/types/userType"
 import { Text, Card, Button, SvgIcon } from "@/components"
 import { ThemedStyle } from "@/theme/types"
@@ -27,8 +27,6 @@ export const VotingList: React.FC<Props> = ({ users, onSubmit, question }) => {
   const { searchTerm, setSearchTerm } = useSearch()
   const { openSheet, closeSheet } = useBottomSheet()
   const { bottom } = useSafeAreaInsets()
-  const actionsPaddingBottom =
-    Platform.OS === "ios" ? bottom + spacing.xxxxl + spacing.xl : spacing.xxxxl + spacing.lg
   const isButtonDisabled = isVoted || !selectedUsers || selectedUsers?.length === 0
 
   const handleResetButtonPress = () => {
@@ -72,7 +70,7 @@ export const VotingList: React.FC<Props> = ({ users, onSubmit, question }) => {
       ]
 
   return (
-    <>
+    <View style={styles.wrapper}>
       <FlatList
         ref={listRef}
         data={dataResult}
@@ -94,14 +92,14 @@ export const VotingList: React.FC<Props> = ({ users, onSubmit, question }) => {
               style={[
                 themed($cardStyle),
                 isSelectedStyle,
-                i === dataResult.length - 1 && { marginBottom: spacing.lg },
+                i === dataResult.length - 1 && { marginBottom: bottom + spacing.xxxxl },
               ]}
               ContentComponent={<CardContent user={u} />}
             />
           )
         }}
       />
-      <View style={[themed($actionButtonsContentWrapper), { bottom: actionsPaddingBottom }]}>
+      <View style={[themed($actionButtonsContentWrapper), { bottom }]}>
         {isVoted ? (
           <Button disabled preset="no-border" style={styles.votedButton}>
             <Text preset="bold">Already voted, nice!</Text>
@@ -129,7 +127,7 @@ export const VotingList: React.FC<Props> = ({ users, onSubmit, question }) => {
           </>
         )}
       </View>
-    </>
+    </View>
   )
 }
 
@@ -157,6 +155,9 @@ const styles = StyleSheet.create({
   },
   votedButton: {
     marginHorizontal: "auto",
+  },
+  wrapper: {
+    position: "relative",
   },
 })
 

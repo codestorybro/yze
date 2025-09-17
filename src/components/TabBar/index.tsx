@@ -1,4 +1,4 @@
-import { Platform, View, ViewStyle } from "react-native"
+import { View, ViewStyle } from "react-native"
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
 import { useLinkBuilder } from "@react-navigation/native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
@@ -9,6 +9,18 @@ import { ThemedStyle } from "@/theme/types"
 import { TabBarButton } from "./TabBarButton"
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+  const currentRoute = state.routes[state.index]
+  const options = descriptors[currentRoute.key].options
+
+  if (
+    options?.tabBarStyle &&
+    typeof options.tabBarStyle === "object" &&
+    "display" in options.tabBarStyle &&
+    (options.tabBarStyle as ViewStyle).display === "none"
+  ) {
+    return null
+  }
+
   const { buildHref } = useLinkBuilder()
   const { bottom } = useSafeAreaInsets()
   const {

@@ -18,7 +18,7 @@ export default function TabLayout() {
   return (
     <Tabs screenOptions={{ headerShown: false }} tabBar={(props) => <TabBar {...props} />}>
       <Tabs.Screen name="index" />
-      <Tabs.Screen name="voting" />
+      <Tabs.Screen name="voting" options={{ tabBarStyle: { display: "none" } }} />
       <Tabs.Screen name="settings" />
     </Tabs>
   )
