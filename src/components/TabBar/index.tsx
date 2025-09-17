@@ -17,15 +17,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   } = useAppTheme()
 
   return (
-    <View
-      style={[
-        themed($tabBarContainer),
-        Platform.OS === "android" && {
-          marginBottom: bottom,
-        },
-        { bottom },
-      ]}
-    >
+    <View style={[themed($tabBarContainer), { paddingBottom: bottom }]}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key]
         const label = (options.tabBarLabel as string) ?? ""

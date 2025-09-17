@@ -27,8 +27,6 @@ export const VotingList: React.FC<Props> = ({ users, onSubmit, question }) => {
   const { searchTerm, setSearchTerm } = useSearch()
   const { openSheet, closeSheet } = useBottomSheet()
   const { bottom } = useSafeAreaInsets()
-  const paddingBottom =
-    Platform.OS === "ios" ? bottom + spacing.xxxxl + spacing.xxl : spacing.xxxxl + spacing.md
   const actionsPaddingBottom =
     Platform.OS === "ios" ? bottom + spacing.xxxxl + spacing.xl : spacing.xxxxl + spacing.lg
   const isButtonDisabled = isVoted || !selectedUsers || selectedUsers?.length === 0
@@ -81,7 +79,6 @@ export const VotingList: React.FC<Props> = ({ users, onSubmit, question }) => {
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
         style={{ paddingTop: spacing.md, marginTop: -spacing.md }}
-        contentContainerStyle={{ paddingBottom }}
         renderItem={({ item: u }) => {
           const isSelected = !!selectedUsers?.find((su) => su.id === u.id)
           const isSelectedStyle = isSelected
@@ -94,7 +91,7 @@ export const VotingList: React.FC<Props> = ({ users, onSubmit, question }) => {
           return (
             <Card
               onPress={() => voteForUser(u)}
-              style={[themed($selectedCardStyle), isSelectedStyle]}
+              style={[themed($cardStyle), isSelectedStyle]}
               ContentComponent={<CardContent user={u} />}
             />
           )
@@ -146,7 +143,7 @@ const $actionButtonsContentWrapper: ThemedStyle<ViewStyle> = ({ spacing, colors 
   borderColor: colors.border,
 })
 
-const $selectedCardStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+const $cardStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   marginVertical: spacing.xs,
 })
 

@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { ViewStyle } from "react-native"
+import { Platform, ViewStyle } from "react-native"
 
 import { LoggedScreenWrapper } from "@/components"
 import { useQuestion, useVote } from "@/store/vote"
@@ -105,6 +105,9 @@ export default function Voting() {
     theme: { spacing },
   } = useAppTheme()
 
+  const bottomSpacingStyle =
+    Platform.OS === "ios" ? { paddingBottom: top + spacing.xxxl } : { bottom: top + spacing.xxxl }
+
   const onSubmit = () => {
     setIsVoted(true)
     console.log(selectedUsers)
@@ -119,7 +122,10 @@ export default function Voting() {
   return (
     <>
       <UserSearchBar style={[themed($searchBarWrapper), { top: top + spacing.xs }]} />
-      <LoggedScreenWrapper preset="fixed" contentContainerStyle={{ top: top + spacing.xxxl }}>
+      <LoggedScreenWrapper
+        preset="fixed"
+        contentContainerStyle={{ top: top + spacing.xxxl, ...bottomSpacingStyle }}
+      >
         <VotingList onSubmit={onSubmit} users={mockedUsers} question={question} />
       </LoggedScreenWrapper>
     </>

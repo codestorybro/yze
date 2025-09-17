@@ -6,7 +6,12 @@ import { ThemedStyle } from "@/theme/types"
 
 import { Screen, ScreenProps } from "./Screen"
 
-export function LoggedScreenWrapper({ contentContainerStyle, children, ...props }: ScreenProps) {
+export function LoggedScreenWrapper({
+  contentContainerStyle,
+  children,
+  preset = "scroll",
+  ...props
+}: ScreenProps) {
   const {
     themed,
     theme: { spacing },
@@ -15,8 +20,7 @@ export function LoggedScreenWrapper({ contentContainerStyle, children, ...props 
 
   return (
     <Screen
-      preset="scroll"
-      safeAreaEdges={["bottom"]}
+      preset={preset}
       contentContainerStyle={[themed($container), { top: top + spacing.sm }, contentContainerStyle]}
       {...props}
     >
