@@ -35,5 +35,5 @@ const $tabBarItem: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   flex: 1,
   justifyContent: "center",
   alignItems: "center",
-  paddingVertical: spacing.md,
+  paddingVertical: spacing.sm,
 })

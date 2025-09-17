@@ -79,7 +79,7 @@ export const VotingList: React.FC<Props> = ({ users, onSubmit, question }) => {
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
         style={{ paddingTop: spacing.md, marginTop: -spacing.md }}
-        renderItem={({ item: u }) => {
+        renderItem={({ item: u, index: i }) => {
           const isSelected = !!selectedUsers?.find((su) => su.id === u.id)
           const isSelectedStyle = isSelected
             ? {
@@ -91,7 +91,11 @@ export const VotingList: React.FC<Props> = ({ users, onSubmit, question }) => {
           return (
             <Card
               onPress={() => voteForUser(u)}
-              style={[themed($cardStyle), isSelectedStyle]}
+              style={[
+                themed($cardStyle),
+                isSelectedStyle,
+                i === dataResult.length - 1 && { marginBottom: spacing.lg },
+              ]}
               ContentComponent={<CardContent user={u} />}
             />
           )
