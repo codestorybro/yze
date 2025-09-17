@@ -1,13 +1,15 @@
 import { useEffect } from "react"
-import { ViewStyle } from "react-native"
+import { View, ViewStyle } from "react-native"
 
-import { LoggedScreenWrapper } from "@/components"
+import { Button, LoggedScreenWrapper, SvgIcon, Text } from "@/components"
 import { useQuestion, useVote } from "@/store/vote"
 import { VotingList } from "@/components"
 import { UserSearchBar } from "@/components/UserSearchBar"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
+import { router } from "expo-router"
+import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
 
 const mockedUsers = [
   {
@@ -102,7 +104,7 @@ export default function Voting() {
   const { top } = useSafeAreaInsets()
   const {
     themed,
-    theme: { spacing },
+    theme: { spacing, colors },
   } = useAppTheme()
 
   const onSubmit = () => {
@@ -118,16 +120,38 @@ export default function Voting() {
 
   return (
     <>
-      <UserSearchBar style={[themed($searchBarWrapper), { top: top + spacing.xs }]} />
+      <View style={[themed($titleWrapper), { top: top + spacing.md }]}>
+        <Button preset="reverse" onPress={() => router.back()} style={{ width: 56, height: 56 }}>
+          <SvgIcon pathData={SvgIconPaths.back} color={colors.primary} size={25} />
+        </Button>
+        <Text preset="subheading" style={{ marginTop: spacing.sm }}>
+          {question.text}
+        </Text>
+      </View>
+      <UserSearchBar style={[themed($searchBarWrapper), { top: top + spacing.xxxxl }]} />
       <LoggedScreenWrapper
         preset="fixed"
-        contentContainerStyle={{ top: top + spacing.xxxl, paddingBottom: top + spacing.xxxl }}
+        contentContainerStyle={{
+          top: top + spacing.xxxxl + spacing.lg,
+          paddingBottom: top + spacing.xxxxl + spacing.lg,
+        }}
       >
         <VotingList onSubmit={onSubmit} users={mockedUsers} question={question} />
       </LoggedScreenWrapper>
     </>
   )
 }
+
+const $titleWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  position: "absolute",
+  left: 0,
+  right: 0,
+  zIndex: 1,
+  marginHorizontal: spacing.lg,
+  flexDirection: "row",
+  alignItems: "center",
+  gap: spacing.md,
+})
 
 const $searchBarWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   position: "absolute",
