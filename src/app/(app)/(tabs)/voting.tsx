@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react"
 import { FlatList, View, ViewStyle, StyleSheet, Platform } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
-import { Button, LoggedScreenWrapper, SvgIcon, Text } from "@/components"
+import { Button, KeyboardShiftView, LoggedScreenWrapper, SvgIcon, Text } from "@/components"
 import { useQuestion, useSearch, useVote } from "@/store/vote"
 import { VotingList } from "@/components"
 import { UserSearchBar } from "@/components/UserSearchBar"
@@ -181,7 +181,7 @@ export default function Voting() {
         <VotingList listRef={listRef} onSubmit={onSubmit} users={mockedUsers} question={question} />
       </LoggedScreenWrapper>
 
-      <View style={[themed($actionContentWrapper), { bottom }]}>
+      <KeyboardShiftView style={[themed($actionContentWrapper), { bottom }]}>
         <View style={themed($searchBarWrapper)}>
           <UserSearchBar />
         </View>
@@ -192,7 +192,7 @@ export default function Voting() {
             <SvgIcon pathData={SvgIconPaths.check} color={colors.textReversed} />
           </Button>
         )}
-      </View>
+      </KeyboardShiftView>
     </View>
   )
 }
