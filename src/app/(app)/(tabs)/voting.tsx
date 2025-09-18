@@ -1,15 +1,16 @@
-import { useEffect } from "react"
-import { View, ViewStyle } from "react-native"
+import { useEffect, useRef } from "react"
+import { FlatList, View, ViewStyle, StyleSheet } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { Button, LoggedScreenWrapper, SvgIcon, Text } from "@/components"
-import { useQuestion, useVote } from "@/store/vote"
+import { useQuestion, useSearch, useVote } from "@/store/vote"
 import { VotingList } from "@/components"
 import { UserSearchBar } from "@/components/UserSearchBar"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 import { router } from "expo-router"
 import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
+import { useBottomSheet } from "@/utils/useBottomSheet"
 
 const mockedUsers = [
   {
@@ -99,13 +100,47 @@ const mockedQuestion = {
 }
 
 export default function Voting() {
+  const listRef = useRef<FlatList>(null)
   const { question, setQuestion } = useQuestion()
-  const { selectedUsers, setIsVoted } = useVote()
-  const { top } = useSafeAreaInsets()
+  const { selectedUsers, setIsVoted, resetUsers, isVoted } = useVote()
+  const { top, bottom } = useSafeAreaInsets()
+  const { setSearchTerm } = useSearch()
+  const { openSheet, closeSheet } = useBottomSheet()
   const {
     themed,
-    theme: { spacing, colors },
+    theme: { colors },
   } = useAppTheme()
+
+  const isButtonDisabled = isVoted || !selectedUsers || selectedUsers?.length === 0
+
+  const handleResetButtonPress = () => {
+    setSearchTerm("")
+    resetUsers()
+    listRef.current?.scrollToOffset({ offset: 0, animated: true })
+  }
+
+  const handleSubmitButtonPress = () => {
+    openSheet({
+      title: "Are you sure?",
+      description: "This action cannot be undone.",
+      actionSection: (
+        <>
+          <Button
+            style={styles.flex}
+            onPress={() => {
+              onSubmit()
+              closeSheet()
+            }}
+          >
+            Continue
+          </Button>
+          <Button preset="error" style={styles.flex} onPress={closeSheet}>
+            Cancel
+          </Button>
+        </>
+      ),
+    })
+  }
 
   const onSubmit = () => {
     setIsVoted(true)
@@ -119,44 +154,93 @@ export default function Voting() {
   if (!question) return null
 
   return (
-    <>
-      <View style={[themed($titleWrapper), { top: top + spacing.md }]}>
+    <View style={{ flex: 1, paddingTop: top, paddingBottom: bottom }}>
+      <View style={themed($titleWrapper)}>
         <Button preset="reverse" onPress={() => router.back()} style={{ width: 56, height: 56 }}>
           <SvgIcon pathData={SvgIconPaths.back} color={colors.primary} size={25} />
         </Button>
-        <Text preset="subheading" style={{ marginTop: spacing.sm }}>
+        <Text preset="subheading" style={{ flexShrink: 1 }}>
           {question.text}
         </Text>
       </View>
-      <UserSearchBar style={[themed($searchBarWrapper), { top: top + spacing.xxxxl }]} />
-      <LoggedScreenWrapper
-        preset="fixed"
-        contentContainerStyle={{
-          top: top + spacing.xxxxl + spacing.lg,
-          paddingBottom: top + spacing.xxxxl + spacing.lg,
-        }}
-      >
-        <VotingList onSubmit={onSubmit} users={mockedUsers} question={question} />
+
+      <View style={themed($searchBarWrapper)}>
+        <UserSearchBar />
+      </View>
+
+      <LoggedScreenWrapper preset="fixed">
+        <VotingList listRef={listRef} onSubmit={onSubmit} users={mockedUsers} question={question} />
       </LoggedScreenWrapper>
-    </>
+
+      <View style={[themed($actionButtonsContentWrapper), { bottom }]}>
+        {isVoted ? (
+          <Button disabled preset="no-border" style={styles.votedButton}>
+            <Text preset="bold">Already voted, nice!</Text>
+          </Button>
+        ) : (
+          <>
+            <Button
+              preset="no-border"
+              disabled={isButtonDisabled}
+              onPress={handleSubmitButtonPress}
+              style={themed($button)}
+            >
+              {isVoted ? (
+                "Voted already!"
+              ) : (
+                <SvgIcon
+                  pathData={SvgIconPaths.check}
+                  color={isButtonDisabled ? colors.disabled : colors.confirmation}
+                />
+              )}
+            </Button>
+            <Button preset="no-border" onPress={handleResetButtonPress} style={themed($button)}>
+              <SvgIcon pathData={SvgIconPaths.reset} color={colors.secondary} />
+            </Button>
+          </>
+        )}
+      </View>
+    </View>
   )
 }
 
 const $titleWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  position: "absolute",
-  left: 0,
-  right: 0,
-  zIndex: 1,
-  marginHorizontal: spacing.lg,
   flexDirection: "row",
   alignItems: "center",
   gap: spacing.md,
+  marginHorizontal: spacing.lg,
+  marginBottom: spacing.md,
 })
 
 const $searchBarWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  marginHorizontal: spacing.lg,
+  marginBottom: spacing.lg,
+})
+
+const $button: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  flex: 1,
+  marginVertical: spacing.xxs,
+})
+
+const $actionButtonsContentWrapper: ThemedStyle<ViewStyle> = ({ spacing, colors }) => ({
   position: "absolute",
+  marginHorizontal: spacing.xxxl,
   left: 0,
   right: 0,
-  zIndex: 1,
-  marginHorizontal: spacing.lg,
+  borderRadius: spacing.xl,
+  flexDirection: "row",
+  justifyContent: "space-between",
+  backgroundColor: colors.tabBarBackground,
+  paddingHorizontal: spacing.xxs,
+  borderWidth: 1,
+  borderColor: colors.border,
+})
+
+const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
+  votedButton: {
+    marginHorizontal: "auto",
+  },
 })
