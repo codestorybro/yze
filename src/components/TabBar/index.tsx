@@ -1,4 +1,4 @@
-import { View, ViewStyle } from "react-native"
+import { Platform, View, ViewStyle } from "react-native"
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
 import { useLinkBuilder } from "@react-navigation/native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
@@ -72,6 +72,9 @@ const $tabBarContainer: ThemedStyle<ViewStyle> = ({ colors }) => ({
   backgroundColor: colors.tabBarBackground,
   justifyContent: "space-between",
   alignItems: "center",
-  borderTopWidth: 0.5,
-  borderColor: colors.border,
+
+  boxShadow: Platform.select({
+    ios: "0px -2px 16px rgba(0,0,0,0.1)",
+    android: "0px -2px 16px rgba(0,0,0,0.1)",
+  }),
 })

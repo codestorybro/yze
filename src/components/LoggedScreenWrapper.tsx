@@ -21,7 +21,11 @@ export function LoggedScreenWrapper({
   return (
     <Screen
       preset={preset}
-      contentContainerStyle={[themed($container), { top: top + spacing.sm }, contentContainerStyle]}
+      contentContainerStyle={[
+        themed($container),
+        { top: preset === "fixed" ? 0 : top + spacing.sm },
+        contentContainerStyle,
+      ]}
       {...props}
     >
       {children}

@@ -1,5 +1,5 @@
 import React from "react"
-import { StyleSheet, ViewStyle, View, FlatList } from "react-native"
+import { ViewStyle, FlatList } from "react-native"
 import { UserType } from "@/types/userType"
 import { Card } from "@/components"
 import { ThemedStyle } from "@/theme/types"
@@ -37,47 +37,39 @@ export const VotingList: React.FC<Props> = ({ users, listRef }) => {
       ]
 
   return (
-    <View style={styles.wrapper}>
-      <FlatList
-        ref={listRef}
-        data={dataResult}
-        keyExtractor={(item) => item.id.toString()}
-        showsVerticalScrollIndicator={false}
-        style={{ paddingTop: spacing.xl }}
-        renderItem={({ item: u, index: i }) => {
-          const isSelected = !!selectedUsers?.find((su) => su.id === u.id)
-          const isSelectedStyle = isSelected
-            ? {
-                backgroundColor: colors.palette.primaryTransparent10,
-                borderColor: colors.primary,
-              }
-            : {}
+    <FlatList
+      ref={listRef}
+      data={dataResult}
+      keyExtractor={(item) => item.id.toString()}
+      showsVerticalScrollIndicator={false}
+      renderItem={({ item: u, index: i }) => {
+        const isSelected = !!selectedUsers?.find((su) => su.id === u.id)
+        const isSelectedStyle = isSelected
+          ? {
+              backgroundColor: colors.palette.primaryTransparent10,
+              borderColor: colors.primary,
+            }
+          : {}
 
-          return (
-            <Card
-              onPress={() => voteForUser(u)}
-              style={[
-                themed($cardStyle),
-                isSelectedStyle,
-                i === dataResult.length - 1 && {
-                  marginBottom: bottom + spacing.xxxxl + spacing.sm,
-                },
-              ]}
-              ContentComponent={<CardContent user={u} />}
-            />
-          )
-        }}
-      />
-    </View>
+        return (
+          <Card
+            onPress={() => voteForUser(u)}
+            style={[
+              themed($cardStyle),
+              isSelectedStyle,
+              i === 0 && { marginTop: spacing.sm },
+              i === dataResult.length - 1 && {
+                marginBottom: bottom + spacing.xxxl,
+              },
+            ]}
+            ContentComponent={<CardContent user={u} />}
+          />
+        )
+      }}
+    />
   )
 }
 
 const $cardStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  marginVertical: spacing.xs,
-})
-
-const styles = StyleSheet.create({
-  wrapper: {
-    position: "relative",
-  },
+  marginBottom: spacing.xs,
 })
