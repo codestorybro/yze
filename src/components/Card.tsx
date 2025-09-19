@@ -259,7 +259,7 @@ const $containerBase: ThemedStyle<ViewStyle> = (theme) => ({
   borderRadius: theme.spacing.md,
   paddingVertical: theme.spacing.xs,
   paddingHorizontal: theme.spacing.md,
-  borderColor: theme.colors.tabBarBackground,
+  borderColor: theme.colors.cardBackground,
   borderWidth: 1,
 })
 
@@ -280,7 +280,7 @@ const $containerPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
     $styles.row,
     $containerBase,
     (theme) => ({
-      backgroundColor: theme.colors.tabBarBackground,
+      backgroundColor: theme.colors.cardBackground,
     }),
   ],
 }

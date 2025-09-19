@@ -76,7 +76,7 @@ export function BottomSheet({ isOpen, toggleSheet, duration = 500, children, scr
 }
 
 const $sheetStyle: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
-  backgroundColor: colors.tabBarBackground,
+  backgroundColor: colors.cardBackground,
   borderTopLeftRadius: 24,
   borderTopRightRadius: 24,
   bottom: 0,

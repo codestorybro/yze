@@ -60,9 +60,9 @@ export function DateRangePicker() {
   }
 
   const calendarTheme = {
-    backgroundColor: colors.tabBarBackground,
+    backgroundColor: colors.cardBackground,
     todayTextColor: colors.secondary,
-    calendarBackground: colors.tabBarBackground,
+    calendarBackground: colors.cardBackground,
     dayTextColor: colors.text,
     monthTextColor: colors.text,
     arrowColor: colors.primary,
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
 })
 
 const $calendarStyles: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  backgroundColor: colors.tabBarBackground,
+  backgroundColor: colors.cardBackground,
   height: 350,
 })
 

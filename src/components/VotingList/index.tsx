@@ -57,7 +57,7 @@ export const VotingList: React.FC<Props> = ({ users, listRef }) => {
             style={[
               themed($cardStyle),
               isSelectedStyle,
-              i === 0 && { marginTop: spacing.sm },
+              i === 0 && { marginTop: spacing.xl },
               i === dataResult.length - 1 && {
                 marginBottom: bottom + spacing.xxxl,
               },

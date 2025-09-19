@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import { FlatList, View, ViewStyle, StyleSheet, Platform } from "react-native"
+import { FlatList, View, ViewStyle, StyleSheet } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { Button, KeyboardShiftView, LoggedScreenWrapper, SvgIcon, Text } from "@/components"
@@ -11,6 +11,7 @@ import { ThemedStyle } from "@/theme/types"
 import { router } from "expo-router"
 import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
 import { useBottomSheet } from "@/utils/useBottomSheet"
+import { GradientSeparator } from "@/components/TabBar/GradientSeparator"
 
 const mockedUsers = [
   {
@@ -165,7 +166,7 @@ export default function Voting() {
 
   return (
     <View style={styles.flex}>
-      <View style={[themed($titleWrapper), { paddingTop: top }]}>
+      <GradientSeparator style={[themed($titleWrapper), { paddingTop: top }]}>
         <Button preset="no-border" onPress={() => router.back()} style={themed($button)}>
           <SvgIcon pathData={SvgIconPaths.back} color={colors.primary} />
         </Button>
@@ -175,7 +176,7 @@ export default function Voting() {
         <Button preset="no-border" onPress={handleResetButtonPress} style={themed($button)}>
           <SvgIcon pathData={SvgIconPaths.reset} color={colors.secondary} />
         </Button>
-      </View>
+      </GradientSeparator>
 
       <LoggedScreenWrapper preset="fixed">
         <VotingList listRef={listRef} onSubmit={onSubmit} users={mockedUsers} question={question} />
@@ -205,11 +206,6 @@ const $titleWrapper: ThemedStyle<ViewStyle> = ({ spacing, colors }) => ({
   paddingBottom: spacing.xxs,
   backgroundColor: colors.tabBarBackground,
   zIndex: 1,
-
-  boxShadow: Platform.select({
-    ios: "0px 2px 16px rgba(0,0,0,0.1)",
-    android: "0px 2px 16px rgba(0,0,0,0.1)",
-  }),
 })
 
 const $searchBarWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({

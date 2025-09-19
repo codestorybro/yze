@@ -1,4 +1,4 @@
-import { Platform, View, ViewStyle } from "react-native"
+import { ViewStyle } from "react-native"
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
 import { useLinkBuilder } from "@react-navigation/native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
@@ -7,6 +7,7 @@ import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 
 import { TabBarButton } from "./TabBarButton"
+import { GradientSeparator } from "./GradientSeparator"
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const currentRoute = state.routes[state.index]
@@ -29,7 +30,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   } = useAppTheme()
 
   return (
-    <View style={[themed($tabBarContainer), { paddingBottom: bottom }]}>
+    <GradientSeparator style={[themed($tabBarContainer), { paddingBottom: bottom }]} fromTop>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key]
         const label = (options.tabBarLabel as string) ?? ""
@@ -63,7 +64,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
           />
         )
       })}
-    </View>
+    </GradientSeparator>
   )
 }
 
@@ -72,9 +73,4 @@ const $tabBarContainer: ThemedStyle<ViewStyle> = ({ colors }) => ({
   backgroundColor: colors.tabBarBackground,
   justifyContent: "space-between",
   alignItems: "center",
-
-  boxShadow: Platform.select({
-    ios: "0px -2px 16px rgba(0,0,0,0.1)",
-    android: "0px -2px 16px rgba(0,0,0,0.1)",
-  }),
 })
