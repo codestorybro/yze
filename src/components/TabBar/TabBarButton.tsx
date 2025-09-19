@@ -1,4 +1,4 @@
-import { ComponentProps } from "react"
+import { ComponentProps, useState } from "react"
 import { ViewStyle } from "react-native"
 import { PlatformPressable } from "@react-navigation/elements"
 
@@ -16,15 +16,26 @@ type TabBarButtonProps = Omit<ComponentProps<typeof PlatformPressable>, "childre
 }
 
 export function TabBarButton({ routeName, color, label, isFocused, ...props }: TabBarButtonProps) {
-  const { themed } = useAppTheme()
+  const {
+    themed,
+    theme: { colors },
+  } = useAppTheme()
+  const [isPressed, setIsPressed] = useState(false)
+
+  const active = isFocused || isPressed
+  const localColor = isFocused ? color : active ? colors.primary : colors.text
 
   return (
-    <PlatformPressable pressOpacity={1} style={themed($tabBarItem)} {...props}>
+    <PlatformPressable
+      pressOpacity={1}
+      style={themed($tabBarItem)}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
+      {...props}
+    >
       <SvgIcon
-        pathData={
-          SvgIconPaths[`${routeName}${isFocused ? "_full" : ""}` as keyof typeof SvgIconPaths]
-        }
-        color={color}
+        pathData={SvgIconPaths[`${routeName}${active ? "_full" : ""}` as keyof typeof SvgIconPaths]}
+        color={localColor}
         size={25}
       />
     </PlatformPressable>

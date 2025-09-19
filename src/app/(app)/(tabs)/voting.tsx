@@ -168,13 +168,13 @@ export default function Voting() {
     <View style={styles.flex}>
       <GradientSeparator style={[themed($titleWrapper), { paddingTop: top }]}>
         <Button preset="no-border" onPress={() => router.back()} style={themed($button)}>
-          <SvgIcon pathData={SvgIconPaths.back} color={colors.primary} />
+          <SvgIcon pathData={SvgIconPaths.back} color={colors.text} />
         </Button>
         <Text preset="subheading" style={{ flexShrink: 1, textAlign: "center" }}>
           {question.text}
         </Text>
         <Button preset="no-border" onPress={handleResetButtonPress} style={themed($button)}>
-          <SvgIcon pathData={SvgIconPaths.reset} color={colors.secondary} />
+          <SvgIcon pathData={SvgIconPaths.reset} color={colors.primary} />
         </Button>
       </GradientSeparator>
 
