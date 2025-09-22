@@ -23,7 +23,7 @@ export function LoggedScreenWrapper({
       preset={preset}
       contentContainerStyle={[
         themed($container),
-        { top: preset === "fixed" ? 0 : top + spacing.sm },
+        preset !== "fixed" && { paddingTop: top + spacing.sm },
         contentContainerStyle,
       ]}
       {...props}
