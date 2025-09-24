@@ -1,13 +1,15 @@
 import { ComponentType, useMemo } from "react"
 import { View, ViewStyle } from "react-native"
 
-import { PressableIcon, TextField, TextFieldAccessoryProps, width } from "@/components"
+import { PressableIcon, TextField, TextFieldAccessoryProps } from "@/components"
 import { useSearch } from "@/store/vote"
 import { useAppTheme } from "@/theme/context"
+import { ThemedStyle } from "@/theme/types"
 
-export function UserSearchBar({ style }: { style?: ViewStyle[] | ViewStyle }) {
+export function UserSearchBar() {
   const { searchTerm, setSearchTerm } = useSearch()
   const {
+    themed,
     theme: { colors },
   } = useAppTheme()
 
@@ -28,13 +30,12 @@ export function UserSearchBar({ style }: { style?: ViewStyle[] | ViewStyle }) {
   )
 
   return (
-    <View style={style}>
-      <TextField
-        placeholder="Search user..."
-        value={searchTerm}
-        onChangeText={setSearchTerm}
-        RightAccessory={searchTerm !== "" ? SearchRightAccessory : undefined}
-      />
-    </View>
+    <TextField
+      placeholder="Search user..."
+      value={searchTerm}
+      onChangeText={setSearchTerm}
+      RightAccessory={searchTerm !== "" ? SearchRightAccessory : undefined}
+      withShadow
+    />
   )
 }

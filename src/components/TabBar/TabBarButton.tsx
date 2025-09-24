@@ -1,18 +1,19 @@
 import { ComponentProps, useState } from "react"
 import { ViewStyle } from "react-native"
-import { PlatformPressable } from "@react-navigation/elements"
 
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 
 import { SvgIcon } from "../SvgIcon"
 import { SvgIconPaths } from "../SvgIcon/svgsPaths"
+import { Button } from "@/components"
 
-type TabBarButtonProps = Omit<ComponentProps<typeof PlatformPressable>, "children"> & {
+type TabBarButtonProps = Omit<ComponentProps<typeof Button>, "children"> & {
   label: string
   routeName: string
   color: string
   isFocused?: boolean
+  href?: string
 }
 
 export function TabBarButton({ routeName, color, label, isFocused, ...props }: TabBarButtonProps) {
@@ -22,29 +23,31 @@ export function TabBarButton({ routeName, color, label, isFocused, ...props }: T
   } = useAppTheme()
   const [isPressed, setIsPressed] = useState(false)
 
-  const active = isFocused || isPressed
-  const localColor = isFocused ? color : active ? colors.primary : colors.text
+  const active = isFocused
+  const localColor = isFocused || isPressed ? color : active ? colors.primary : colors.text
 
   return (
-    <PlatformPressable
-      pressOpacity={1}
-      style={themed($tabBarItem)}
+    <Button
+      preset="no-border"
+      style={[
+        themed($tabBarItem),
+        isFocused && { backgroundColor: colors.palette.transparentPressed },
+      ]}
       onPressIn={() => setIsPressed(true)}
       onPressOut={() => setIsPressed(false)}
       {...props}
     >
       <SvgIcon
-        pathData={SvgIconPaths[`${routeName}${active ? "_full" : ""}` as keyof typeof SvgIconPaths]}
+        pathData={
+          SvgIconPaths[`${routeName}${isFocused ? "_full" : ""}` as keyof typeof SvgIconPaths]
+        }
         color={localColor}
         size={25}
       />
-    </PlatformPressable>
+    </Button>
   )
 }
 
-const $tabBarItem: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+const $tabBarItem: ThemedStyle<ViewStyle> = () => ({
   flex: 1,
-  justifyContent: "center",
-  alignItems: "center",
-  paddingVertical: spacing.sm,
 })

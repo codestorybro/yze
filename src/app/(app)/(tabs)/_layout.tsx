@@ -6,8 +6,12 @@ import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs"
 import { TabBar } from "@/components"
 import { useUser } from "@/store/auth"
 import isNewIos from "@/constants/isNewIos"
+import { useAppTheme } from "@/theme/context"
 
 export default function TabLayout() {
+  const {
+    theme: { colors },
+  } = useAppTheme()
   const { user, isLoading } = useUser()
 
   if (isLoading) {
@@ -21,7 +25,7 @@ export default function TabLayout() {
   // Use native tabs on iOS (for Liquid Glass effect), and custom tab bar on Android
   if (isNewIos)
     return (
-      <NativeTabs>
+      <NativeTabs tintColor={colors.primary}>
         <NativeTabs.Trigger name="index">
           <Icon sf="house.fill" />
           <Label hidden />
@@ -40,8 +44,8 @@ export default function TabLayout() {
   return (
     <Tabs screenOptions={{ headerShown: false }} tabBar={(props) => <TabBar {...props} />}>
       <Tabs.Screen name="index" />
-      <Tabs.Screen name="search" options={{ tabBarStyle: { display: "none" } }} />
       <Tabs.Screen name="settings" />
+      <Tabs.Screen name="search" options={{ tabBarStyle: { display: "none" } }} />
     </Tabs>
   )
 }

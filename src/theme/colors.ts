@@ -42,6 +42,7 @@ export const palette = {
   overlay50: "rgba(25, 16, 21, 0.5)",
 
   justBlack: "#000000",
+  shadowColor: "rgba(0, 0, 0, 0.1)",
   justGold: "#FFD700",
   justSilver: "#C0C0C0",
   justBronze: "#CD7F32",

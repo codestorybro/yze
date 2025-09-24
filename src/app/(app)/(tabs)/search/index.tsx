@@ -3,15 +3,15 @@ import { View, ViewStyle, StyleSheet } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { Button, KeyboardShiftView, LoggedScreenWrapper, SvgIcon, Text } from "@/components"
-import { useQuestion, useSearch, useVote } from "@/store/vote"
+import { useQuestion, useVote } from "@/store/vote"
 import { VotingList } from "@/components"
 import { UserSearchBar } from "@/components/UserSearchBar"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
-import { useBottomSheet } from "@/utils/useBottomSheet"
 import { GradientSeparator } from "@/components/TabBar/GradientSeparator"
 import isNewIos from "@/constants/isNewIos"
+import { router } from "expo-router"
 
 const mockedUsers = [
   {
@@ -102,49 +102,12 @@ const mockedQuestion = {
 
 export default function Voting() {
   const { question, setQuestion } = useQuestion()
-  const { selectedUsers, setIsVoted, isVoted } = useVote()
+  const { selectedUsers, setIsVoted } = useVote()
   const { top, bottom } = useSafeAreaInsets()
-  const { setSearchTerm } = useSearch()
-  const { openSheet, closeSheet } = useBottomSheet()
   const {
     themed,
     theme: { colors },
   } = useAppTheme()
-
-  const noUsersSelected = !selectedUsers || selectedUsers?.length === 0
-
-  const handleSubmitButtonPress = () => {
-    const titleDescription = noUsersSelected
-      ? {
-          title: "No one was chosen!",
-          description: "Maybe there is someone worth voting for?",
-        }
-      : {
-          title: "Are you sure?",
-          description: "This action cannot be undone.",
-        }
-
-    openSheet({
-      title: titleDescription.title,
-      description: titleDescription.description,
-      actionSection: (
-        <>
-          <Button
-            style={styles.flex}
-            onPress={() => {
-              onSubmit()
-              closeSheet()
-            }}
-          >
-            Confirm
-          </Button>
-          <Button preset="error" style={styles.flex} onPress={closeSheet}>
-            Back to voting
-          </Button>
-        </>
-      ),
-    })
-  }
 
   const onSubmit = () => {
     setIsVoted(true)
@@ -171,16 +134,12 @@ export default function Voting() {
 
       {!isNewIos && (
         <KeyboardShiftView style={[themed($actionContentWrapper), { bottom }]}>
+          <Button preset="floating" onPress={() => router.back()}>
+            <SvgIcon pathData={SvgIconPaths.index} color={colors.text} />
+          </Button>
           <View style={themed($searchBarWrapper)}>
             <UserSearchBar />
           </View>
-          {isVoted ? (
-            <Text preset="bold">Already voted, nice!</Text>
-          ) : (
-            <Button onPress={handleSubmitButtonPress}>
-              <SvgIcon pathData={SvgIconPaths.check} color={colors.textReversed} />
-            </Button>
-          )}
         </KeyboardShiftView>
       )}
     </View>
@@ -198,16 +157,13 @@ const $titleWrapper: ThemedStyle<ViewStyle> = ({ spacing, colors }) => ({
 })
 
 const $searchBarWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  flex: 8,
+  flex: 1,
 })
-
-const $button: ThemedStyle<ViewStyle> = ({ spacing }) => ({})
 
 const $actionContentWrapper: ThemedStyle<ViewStyle> = ({ spacing, colors }) => ({
   position: "absolute",
-  marginHorizontal: spacing.md,
-  left: 0,
-  right: 0,
+  marginHorizontal: spacing.lg + spacing.xxxs,
+
   gap: spacing.xs,
   flexDirection: "row",
   alignItems: "center",

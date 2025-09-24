@@ -14,7 +14,7 @@ import type { ThemedStyle, ThemedStyleArray } from "@/theme/types"
 
 import { Text, TextProps } from "./Text"
 
-type Presets = "default" | "secondary" | "error" | "reverse" | "no-border"
+type Presets = "default" | "secondary" | "error" | "reverse" | "no-border" | "floating"
 
 export interface ButtonAccessoryProps {
   style: StyleProp<any>
@@ -238,6 +238,14 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
       backgroundColor: colors.palette.transparent,
     }),
   ],
+  "floating": [
+    $styles.row,
+    $baseViewStyle,
+    ({ colors }) => ({
+      backgroundColor: colors.background,
+      boxShadow: `0px 0px 12px ${colors.palette.shadowColor}`,
+    }),
+  ],
 }
 
 const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
@@ -246,6 +254,7 @@ const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
   "error": [$baseTextStyle],
   "reverse": [$baseTextStyle, ({ colors }) => ({ color: colors.primary })],
   "no-border": [$baseTextStyle, ({ colors }) => ({ color: colors.primary })],
+  "floating": [$baseTextStyle, ({ colors }) => ({ color: colors.text })],
 }
 
 const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
@@ -254,6 +263,7 @@ const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
   "error": ({ colors }) => ({ backgroundColor: colors.errorPressed }),
   "reverse": ({ colors }) => ({ backgroundColor: colors.palette.transparentPressed }),
   "no-border": ({ colors }) => ({ backgroundColor: colors.palette.transparentPressed }),
+  "floating": ({ colors }) => ({ backgroundColor: colors.inputBackground }),
 }
 
 const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
@@ -262,6 +272,7 @@ const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
   "error": () => ({ opacity: 0.9 }),
   "reverse": () => ({ opacity: 0.9 }),
   "no-border": () => ({ opacity: 0.9 }),
+  "floating": () => ({ opacity: 0.9 }),
 }
 
 const $disabledViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
@@ -273,6 +284,7 @@ const $disabledViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
     backgroundColor: colors.palette.transparentPressed,
   }),
   "no-border": ({ colors }) => ({ backgroundColor: colors.palette.transparent }),
+  "floating": ({ colors }) => ({ backgroundColor: colors.disabled }),
 }
 
 const $disabledTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
@@ -281,4 +293,5 @@ const $disabledTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
   "error": ({ colors }) => ({ color: colors.textDim }),
   "reverse": ({ colors }) => ({ color: colors.textDim }),
   "no-border": ({ colors }) => ({ color: colors.disabled }),
+  "floating": ({ colors }) => ({ color: colors.textDim }),
 }

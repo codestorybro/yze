@@ -102,6 +102,8 @@ export interface TextFieldProps extends Omit<TextInputProps, "ref"> {
    * Note: It is a good idea to memoize this.
    */
   LeftAccessory?: ComponentType<TextFieldAccessoryProps>
+
+  withShadow?: boolean
 }
 
 /**
@@ -201,35 +203,37 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
         />
       )}
 
-      <View style={themed($inputWrapperStyles)}>
-        {!!LeftAccessory && (
-          <LeftAccessory
-            style={themed($leftAccessoryStyle)}
-            status={status}
-            editable={!disabled}
-            multiline={TextInputProps.multiline ?? false}
-          />
-        )}
+      <View style={[props.withShadow && themed($shadowWrapperStyle)]}>
+        <View style={themed($inputWrapperStyles)}>
+          {!!LeftAccessory && (
+            <LeftAccessory
+              style={themed($leftAccessoryStyle)}
+              status={status}
+              editable={!disabled}
+              multiline={TextInputProps.multiline ?? false}
+            />
+          )}
 
-        <TextInput
-          ref={input}
-          underlineColorAndroid={colors.palette.transparent}
-          textAlignVertical={TextInputProps.multiline ? "top" : "center"}
-          placeholder={placeholderContent}
-          placeholderTextColor={colors.textDim}
-          {...TextInputProps}
-          editable={!disabled}
-          style={themed($inputStyles)}
-        />
-
-        {!!RightAccessory && (
-          <RightAccessory
-            style={themed($rightAccessoryStyle)}
-            status={status}
+          <TextInput
+            ref={input}
+            underlineColorAndroid={colors.palette.transparent}
+            textAlignVertical={TextInputProps.multiline ? "top" : "center"}
+            placeholder={placeholderContent}
+            placeholderTextColor={colors.textDim}
+            {...TextInputProps}
             editable={!disabled}
-            multiline={TextInputProps.multiline ?? false}
+            style={themed($inputStyles)}
           />
-        )}
+
+          {!!RightAccessory && (
+            <RightAccessory
+              style={themed($rightAccessoryStyle)}
+              status={status}
+              editable={!disabled}
+              multiline={TextInputProps.multiline ?? false}
+            />
+          )}
+        </View>
       </View>
 
       {!!(helper || helperTx) && (
@@ -252,7 +256,7 @@ const $labelStyle: ThemedStyle<TextStyle> = ({ spacing }) => ({
 
 const $inputWrapperStyle: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   alignItems: "flex-start",
-  borderRadius: spacing.md,
+  borderRadius: spacing.xxxl,
   backgroundColor: colors.inputBackground,
   overflow: "hidden",
   borderWidth: 1,
@@ -265,11 +269,11 @@ const $inputStyle: ThemedStyle<TextStyle> = ({ colors, typography, spacing }) =>
   fontFamily: typography.primary.normal,
   color: colors.text,
   fontSize: 16,
-  height: 36,
+  height: 28,
   // https://github.com/facebook/react-native/issues/21720#issuecomment-532642093
   paddingVertical: 0,
   paddingHorizontal: 0,
-  marginVertical: spacing.xs,
+  marginVertical: spacing.sm,
   marginHorizontal: spacing.sm,
   paddingLeft: spacing.xs,
 })
@@ -294,4 +298,9 @@ const $leftAccessoryStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   height: 40,
   justifyContent: "center",
   alignItems: "center",
+})
+
+const $shadowWrapperStyle: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
+  boxShadow: `0px 0px 12px ${colors.palette.shadowColor}`,
+  borderRadius: spacing.xxxl,
 })
