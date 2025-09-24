@@ -5,6 +5,7 @@ import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 
 import { Screen, ScreenProps } from "./Screen"
+import isNewIos from "@/constants/isNewIos"
 
 export function LoggedScreenWrapper({
   contentContainerStyle,
@@ -23,7 +24,8 @@ export function LoggedScreenWrapper({
       preset={preset}
       contentContainerStyle={[
         themed($container),
-        preset !== "fixed" && { paddingTop: top + spacing.sm },
+        preset !== "fixed" && !isNewIos && { paddingTop: top },
+        preset !== "fixed" && { paddingBottom: spacing.lg },
         contentContainerStyle,
       ]}
       {...props}

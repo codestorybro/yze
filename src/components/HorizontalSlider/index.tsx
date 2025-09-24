@@ -49,7 +49,7 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
     themed,
     theme: { colors, spacing },
   } = useAppTheme()
-  const { voteForUser, selectedUsers, resetUsers, isVoted } = useVote()
+  const { voteForUser, selectedUsers, isVoted } = useVote()
   const { searchTerm, setSearchTerm } = useSearch()
   const flatListRef = useRef<FlatList>(null)
 
@@ -111,7 +111,6 @@ export function HorizontalSlider({ users, question, onSubmit }: Props) {
 
   const handleResetButtonPress = () => {
     setSearchTerm("")
-    resetUsers()
     flatListRef.current?.scrollToOffset({ offset: 0, animated: true })
   }
 

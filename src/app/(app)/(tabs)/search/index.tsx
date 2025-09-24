@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react"
-import { FlatList, View, ViewStyle, StyleSheet } from "react-native"
+import { useEffect } from "react"
+import { View, ViewStyle, StyleSheet } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { Button, KeyboardShiftView, LoggedScreenWrapper, SvgIcon, Text } from "@/components"
@@ -8,10 +8,10 @@ import { VotingList } from "@/components"
 import { UserSearchBar } from "@/components/UserSearchBar"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
-import { router } from "expo-router"
 import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
 import { useBottomSheet } from "@/utils/useBottomSheet"
 import { GradientSeparator } from "@/components/TabBar/GradientSeparator"
+import isNewIos from "@/constants/isNewIos"
 
 const mockedUsers = [
   {
@@ -101,9 +101,8 @@ const mockedQuestion = {
 }
 
 export default function Voting() {
-  const listRef = useRef<FlatList>(null)
   const { question, setQuestion } = useQuestion()
-  const { selectedUsers, setIsVoted, resetUsers, isVoted } = useVote()
+  const { selectedUsers, setIsVoted, isVoted } = useVote()
   const { top, bottom } = useSafeAreaInsets()
   const { setSearchTerm } = useSearch()
   const { openSheet, closeSheet } = useBottomSheet()
@@ -113,12 +112,6 @@ export default function Voting() {
   } = useAppTheme()
 
   const noUsersSelected = !selectedUsers || selectedUsers?.length === 0
-
-  const handleResetButtonPress = () => {
-    setSearchTerm("")
-    resetUsers()
-    listRef.current?.scrollToOffset({ offset: 0, animated: true })
-  }
 
   const handleSubmitButtonPress = () => {
     const titleDescription = noUsersSelected
@@ -167,33 +160,29 @@ export default function Voting() {
   return (
     <View style={styles.flex}>
       <GradientSeparator style={[themed($titleWrapper), { paddingTop: top }]}>
-        <Button preset="no-border" onPress={() => router.back()} style={themed($button)}>
-          <SvgIcon pathData={SvgIconPaths.back} color={colors.text} />
-        </Button>
         <Text preset="subheading" style={{ flexShrink: 1, textAlign: "center" }}>
-          {question.text}
+          Who do you want to appreciate today?
         </Text>
-        <Button preset="no-border" onPress={handleResetButtonPress} style={themed($button)}>
-          <SvgIcon pathData={SvgIconPaths.reset} color={colors.primary} />
-        </Button>
       </GradientSeparator>
 
       <LoggedScreenWrapper preset="fixed">
-        <VotingList listRef={listRef} onSubmit={onSubmit} users={mockedUsers} question={question} />
+        <VotingList onSubmit={onSubmit} users={mockedUsers} question={question} />
       </LoggedScreenWrapper>
 
-      <KeyboardShiftView style={[themed($actionContentWrapper), { bottom }]}>
-        <View style={themed($searchBarWrapper)}>
-          <UserSearchBar />
-        </View>
-        {isVoted ? (
-          <Text preset="bold">Already voted, nice!</Text>
-        ) : (
-          <Button onPress={handleSubmitButtonPress}>
-            <SvgIcon pathData={SvgIconPaths.check} color={colors.textReversed} />
-          </Button>
-        )}
-      </KeyboardShiftView>
+      {!isNewIos && (
+        <KeyboardShiftView style={[themed($actionContentWrapper), { bottom }]}>
+          <View style={themed($searchBarWrapper)}>
+            <UserSearchBar />
+          </View>
+          {isVoted ? (
+            <Text preset="bold">Already voted, nice!</Text>
+          ) : (
+            <Button onPress={handleSubmitButtonPress}>
+              <SvgIcon pathData={SvgIconPaths.check} color={colors.textReversed} />
+            </Button>
+          )}
+        </KeyboardShiftView>
+      )}
     </View>
   )
 }

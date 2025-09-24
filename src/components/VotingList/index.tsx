@@ -8,15 +8,15 @@ import { useSearch, useVote } from "@/store/vote"
 import { QuestionType } from "@/types/questionType"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { CardContent } from "./CardContent"
+import isNewIos from "@/constants/isNewIos"
 
 type Props = {
   users: UserType[]
   question: QuestionType
   onSubmit: () => void
-  listRef: React.RefObject<FlatList<any> | null>
 }
 
-export const VotingList: React.FC<Props> = ({ users, listRef }) => {
+export const VotingList: React.FC<Props> = ({ users }) => {
   const {
     themed,
     theme: { spacing, colors },
@@ -38,7 +38,6 @@ export const VotingList: React.FC<Props> = ({ users, listRef }) => {
 
   return (
     <FlatList
-      ref={listRef}
       data={dataResult}
       keyExtractor={(item) => item.id.toString()}
       showsVerticalScrollIndicator={false}
@@ -58,9 +57,10 @@ export const VotingList: React.FC<Props> = ({ users, listRef }) => {
               themed($cardStyle),
               isSelectedStyle,
               i === 0 && { marginTop: spacing.xl },
-              i === dataResult.length - 1 && {
-                marginBottom: bottom + spacing.xxxl,
-              },
+              !isNewIos &&
+                i === dataResult.length - 1 && {
+                  marginBottom: bottom + spacing.xxxl,
+                },
             ]}
             ContentComponent={<CardContent user={u} />}
           />

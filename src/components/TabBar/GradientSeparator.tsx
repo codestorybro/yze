@@ -13,7 +13,7 @@ type Props = {
 export function GradientSeparator({
   children,
   style,
-  separatorHeight = 25,
+  separatorHeight = 26,
   fromTop = false,
 }: Props) {
   const {
