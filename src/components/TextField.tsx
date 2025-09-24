@@ -102,8 +102,6 @@ export interface TextFieldProps extends Omit<TextInputProps, "ref"> {
    * Note: It is a good idea to memoize this.
    */
   LeftAccessory?: ComponentType<TextFieldAccessoryProps>
-
-  withShadow?: boolean
 }
 
 /**
@@ -203,7 +201,7 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
         />
       )}
 
-      <View style={[props.withShadow && themed($shadowWrapperStyle)]}>
+      <View style={themed($shadowWrapperStyle)}>
         <View style={themed($inputWrapperStyles)}>
           {!!LeftAccessory && (
             <LeftAccessory

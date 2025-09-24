@@ -35,7 +35,6 @@ export function UserSearchBar() {
       value={searchTerm}
       onChangeText={setSearchTerm}
       RightAccessory={searchTerm !== "" ? SearchRightAccessory : undefined}
-      withShadow
     />
   )
 }

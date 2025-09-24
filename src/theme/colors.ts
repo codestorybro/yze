@@ -71,7 +71,7 @@ export const colors = {
   error: palette.angry500,
   errorPressed: palette.angry600,
   errorBackground: palette.angry100,
-  inputBackground: palette.neutral300,
+  inputBackground: palette.neutral100,
   confirmation: palette.green500,
   primary: palette.primary500,
   primaryPressed: palette.primary600,
