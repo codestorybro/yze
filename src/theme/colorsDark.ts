@@ -10,6 +10,8 @@ export const palette = {
   neutral200: "#1C1C1E",
   neutral100: "#000000",
 
+  floatingButtonPressed: "#282829",
+
   primary100: "#0D2C40",
   primary200: "#134A6B",
   primary300: "#1A72A4",
@@ -62,7 +64,9 @@ export const colors = {
   textReversed: palette.neutral200,
   textDim: palette.neutral600,
   background: palette.neutral200,
-  tabBarBackground: palette.neutral100,
+  tabBarBackground: palette.neutral200,
+  topBarBackground: palette.neutral100,
+  floatingButtonPressed: palette.floatingButtonPressed,
   cardBackground: palette.neutral200,
   disabled: palette.neutral450,
   border: palette.neutral300,
@@ -72,7 +76,7 @@ export const colors = {
   error: palette.angry500,
   errorPressed: palette.angry400,
   errorBackground: palette.angry100,
-  inputBackground: palette.neutral400,
+  inputBackground: palette.neutral200,
   confirmation: palette.green400,
   primary: palette.primary500,
   primaryPressed: palette.primary600,

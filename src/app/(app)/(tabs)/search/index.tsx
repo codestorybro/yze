@@ -152,7 +152,7 @@ const $titleWrapper: ThemedStyle<ViewStyle> = ({ spacing, colors }) => ({
   gap: spacing.xxs,
   paddingHorizontal: spacing.sm,
   paddingBottom: spacing.xxs,
-  backgroundColor: colors.tabBarBackground,
+  backgroundColor: colors.topBarBackground,
   zIndex: 1,
 })
 

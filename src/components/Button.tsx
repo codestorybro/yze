@@ -243,6 +243,8 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
     $baseViewStyle,
     ({ colors }) => ({
       backgroundColor: colors.background,
+      borderWidth: 1,
+      borderColor: colors.border,
       boxShadow: `0px 0px 12px ${colors.palette.shadowColor}`,
     }),
   ],
@@ -263,7 +265,7 @@ const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
   "error": ({ colors }) => ({ backgroundColor: colors.errorPressed }),
   "reverse": ({ colors }) => ({ backgroundColor: colors.palette.transparentPressed }),
   "no-border": ({ colors }) => ({ backgroundColor: colors.palette.transparentPressed }),
-  "floating": ({ colors }) => ({ backgroundColor: colors.palette.neutral200 }),
+  "floating": ({ colors }) => ({ backgroundColor: colors.floatingButtonPressed }),
 }
 
 const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
