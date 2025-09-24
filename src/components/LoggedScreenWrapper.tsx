@@ -17,15 +17,16 @@ export function LoggedScreenWrapper({
     themed,
     theme: { spacing },
   } = useAppTheme()
-  const { top } = useSafeAreaInsets()
+  const { top, bottom } = useSafeAreaInsets()
 
   return (
     <Screen
       preset={preset}
       contentContainerStyle={[
         themed($container),
-        preset !== "fixed" && !isNewIos && { paddingTop: top },
         preset !== "fixed" && { paddingBottom: spacing.lg },
+        preset !== "fixed" &&
+          !isNewIos && { paddingTop: top, paddingBottom: bottom + spacing.xxxxl },
         contentContainerStyle,
       ]}
       {...props}
