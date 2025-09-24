@@ -42,7 +42,7 @@ export function TabBarButton({ routeName, color, label, isFocused, ...props }: T
           SvgIconPaths[`${routeName}${isFocused ? "_full" : ""}` as keyof typeof SvgIconPaths]
         }
         color={localColor}
-        size={25}
+        size={32}
       />
     </Button>
   )

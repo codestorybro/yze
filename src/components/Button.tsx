@@ -263,7 +263,7 @@ const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
   "error": ({ colors }) => ({ backgroundColor: colors.errorPressed }),
   "reverse": ({ colors }) => ({ backgroundColor: colors.palette.transparentPressed }),
   "no-border": ({ colors }) => ({ backgroundColor: colors.palette.transparentPressed }),
-  "floating": ({ colors }) => ({ backgroundColor: colors.inputBackground }),
+  "floating": ({ colors }) => ({ backgroundColor: colors.palette.neutral200 }),
 }
 
 const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
