@@ -41,6 +41,7 @@ export const VotingList: React.FC<Props> = ({ users }) => {
       data={dataResult}
       keyExtractor={(item) => item.id.toString()}
       showsVerticalScrollIndicator={false}
+      style={{ minHeight: "100%" }}
       renderItem={({ item: u, index: i }) => {
         const isSelected = !!selectedUsers?.find((su) => su.id === u.id)
         const isSelectedStyle = isSelected
