@@ -1,9 +1,8 @@
+import { BottomSheetContext } from "@/components/BottomSheetProvider"
 import { useContext } from "react"
 
-import { BottomSheetContext } from "@/components/BottomSheet/BottomSheetProvider"
-
-export function useBottomSheet() {
+export const useBottomSheet = () => {
   const ctx = useContext(BottomSheetContext)
-  if (!ctx) throw new Error("useBottomSheet must be used inside BottomSheetProvider")
+  if (!ctx) throw new Error("useBottomSheet must be used within BottomSheetProvider")
   return ctx
 }

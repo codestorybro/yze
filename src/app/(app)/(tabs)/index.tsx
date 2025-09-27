@@ -67,13 +67,7 @@ export default function Index() {
       >
         {user?.name}
       </Animated.Text>
-      <Button
-        onPress={() =>
-          openSheet({ type: "custom", content: <DateRangePicker />, scrollable: true })
-        }
-      >
-        Select date range
-      </Button>
+      <Button onPress={() => openSheet(<DateRangePicker />)}>Select date range</Button>
       <AttributeLeaderboard attributes={mockedAttributes} />
     </LoggedScreenWrapper>
   )

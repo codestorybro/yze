@@ -124,7 +124,7 @@ export default function Voting() {
     <View style={styles.flex}>
       <GradientSeparator style={[themed($titleWrapper), { paddingTop: top }]}>
         <Text preset="subheading" style={{ flexShrink: 1, textAlign: "center" }}>
-          Who do you want to appreciate today?
+          Who do you want to appreciate?
         </Text>
       </GradientSeparator>
 

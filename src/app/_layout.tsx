@@ -6,13 +6,14 @@ import { KeyboardProvider } from "react-native-keyboard-controller"
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 
 import { AnimatedBootSplash } from "@/components/AnimatedBootSplash"
-import { BottomSheetProvider } from "@/components/BottomSheet/BottomSheetProvider"
+import { BottomSheetProvider } from "@/components/BottomSheetProvider"
 import { initI18n } from "@/i18n"
 import { AuthProvider } from "@/store/auth"
 import { AppStoreProvider } from "@/store/vote"
 import { ThemeProvider } from "@/theme/context"
 import { customFontsToLoad } from "@/theme/typography"
 import { loadDateFnsLocale } from "@/utils/formatDate"
+import { GestureHandlerRootView } from "react-native-gesture-handler"
 
 const queryClient = new QueryClient()
 
@@ -45,31 +46,33 @@ export default function Root() {
   }, [fontsLoaded, isI18nInitialized])
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <ThemeProvider>
-          <KeyboardProvider>
-            <AuthProvider>
-              <AppStoreProvider>
-                <BottomSheetProvider>
-                  {appIsReady ? (
-                    <>
-                      <Slot />
-                      {showSplash && (
-                        <AnimatedBootSplash
-                          onAnimationEnd={() => {
-                            setShowSplash(false)
-                          }}
-                        />
-                      )}
-                    </>
-                  ) : null}
-                </BottomSheetProvider>
-              </AppStoreProvider>
-            </AuthProvider>
-          </KeyboardProvider>
-        </ThemeProvider>
-      </SafeAreaProvider>
-    </QueryClientProvider>
+    <GestureHandlerRootView>
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+          <ThemeProvider>
+            <KeyboardProvider>
+              <AuthProvider>
+                <AppStoreProvider>
+                  <BottomSheetProvider>
+                    {appIsReady ? (
+                      <>
+                        <Slot />
+                        {showSplash && (
+                          <AnimatedBootSplash
+                            onAnimationEnd={() => {
+                              setShowSplash(false)
+                            }}
+                          />
+                        )}
+                      </>
+                    ) : null}
+                  </BottomSheetProvider>
+                </AppStoreProvider>
+              </AuthProvider>
+            </KeyboardProvider>
+          </ThemeProvider>
+        </SafeAreaProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   )
 }
