@@ -21,12 +21,12 @@ const mockedAttributes = [
   {
     id: "creator",
     label: "Twórca",
-    score: 20,
+    score: 30,
   },
   {
     id: "anchor",
     label: "Kotwica",
-    score: 0,
+    score: 20,
   },
 ]
 
