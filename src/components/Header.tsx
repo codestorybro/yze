@@ -296,7 +296,7 @@ const $actionTextContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 })
 
 const $actionText: ThemedStyle<TextStyle> = ({ colors }) => ({
-  color: colors.tint,
+  color: colors.primary,
 })
 
 const $actionIconContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({

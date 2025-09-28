@@ -193,7 +193,6 @@ function SwitchAccessibilityLabel(props: SwitchInputProps & { role: "on" | "off"
   const color = (function () {
     if (disabled) return colors.switchKnobDisabled
     if (status === "error") return colors.error
-    if (!on) return innerStyle?.backgroundColor || colors.secondary
     return detailStyle?.backgroundColor || colors.default
   })()
 
