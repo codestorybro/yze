@@ -13,10 +13,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
-import { GroupType } from "@/types/groupType"
 
 import { Button } from "../Button"
 import { CarouselItem } from "./CarouselItem"
+import { GroupType } from "@/types/groupType"
 
 const { width } = Dimensions.get("window")
 

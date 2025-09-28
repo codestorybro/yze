@@ -2,12 +2,11 @@ import { ComponentType, useMemo } from "react"
 import { View, ViewStyle } from "react-native"
 
 import { PressableIcon, TextField, TextFieldAccessoryProps } from "@/components"
-import { useSearch } from "@/store/vote"
+import { useGroup } from "@/store/group"
 import { useAppTheme } from "@/theme/context"
-import { ThemedStyle } from "@/theme/types"
 
 export function UserSearchBar() {
-  const { searchTerm, setSearchTerm } = useSearch()
+  const { searchUserTerm, setSearchUserTerm } = useGroup()
   const {
     themed,
     theme: { colors },
@@ -22,19 +21,19 @@ export function UserSearchBar() {
             color={colors.palette.neutral800}
             containerStyle={props.style as ViewStyle}
             size={20}
-            onPress={() => setSearchTerm("")}
+            onPress={() => setSearchUserTerm("")}
           />
         )
       },
-    [setSearchTerm, colors.palette.neutral800],
+    [setSearchUserTerm, colors.palette.neutral800],
   )
 
   return (
     <TextField
       placeholder="Search user..."
-      value={searchTerm}
-      onChangeText={setSearchTerm}
-      RightAccessory={searchTerm !== "" ? SearchRightAccessory : undefined}
+      value={searchUserTerm}
+      onChangeText={setSearchUserTerm}
+      RightAccessory={searchUserTerm !== "" ? SearchRightAccessory : undefined}
     />
   )
 }

@@ -6,10 +6,10 @@ import { KeyboardProvider } from "react-native-keyboard-controller"
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 
 import { AnimatedBootSplash } from "@/components/AnimatedBootSplash"
-import { BottomSheetProvider } from "@/components/BottomSheetProvider"
+import { BottomSheetProvider } from "@/store/bottomSheet"
 import { initI18n } from "@/i18n"
 import { AuthProvider } from "@/store/auth"
-import { AppStoreProvider } from "@/store/vote"
+import { GroupStoreProvider } from "@/store/group"
 import { ThemeProvider } from "@/theme/context"
 import { customFontsToLoad } from "@/theme/typography"
 import { loadDateFnsLocale } from "@/utils/formatDate"
@@ -52,7 +52,7 @@ export default function Root() {
           <ThemeProvider>
             <KeyboardProvider>
               <AuthProvider>
-                <AppStoreProvider>
+                <GroupStoreProvider>
                   <BottomSheetProvider>
                     {appIsReady ? (
                       <>
@@ -67,7 +67,7 @@ export default function Root() {
                       </>
                     ) : null}
                   </BottomSheetProvider>
-                </AppStoreProvider>
+                </GroupStoreProvider>
               </AuthProvider>
             </KeyboardProvider>
           </ThemeProvider>

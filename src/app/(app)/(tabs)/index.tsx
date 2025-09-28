@@ -6,7 +6,7 @@ import AttributeLeaderboard from "@/components/AttributeLeaderboard"
 import { useUser } from "@/store/auth"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
-import { useBottomSheet } from "@/utils/useBottomSheet"
+import { useBottomSheet } from "@/store/bottomSheet"
 
 const mockedAttributes = [
   {

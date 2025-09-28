@@ -3,8 +3,8 @@ import { View, ViewStyle, StyleSheet } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { Button, KeyboardShiftView, LoggedScreenWrapper, SvgIcon, Text } from "@/components"
-import { useQuestion, useVote } from "@/store/vote"
-import { VotingList } from "@/components"
+import { useGroup } from "@/store/group"
+import { UsersList } from "@/components"
 import { UserSearchBar } from "@/components/UserSearchBar"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
@@ -94,31 +94,19 @@ const mockedUsers = [
   },
 ]
 
-const mockedQuestion = {
-  id: "1",
-  text: "Who helped you with a difficult task today?",
-  attributesInfluence: ["Charisma", "Kindness"],
-}
-
 export default function Voting() {
-  const { question, setQuestion } = useQuestion()
-  const { selectedUsers, setIsVoted } = useVote()
+  const { membersList, setMembersList } = useGroup()
   const { top, bottom } = useSafeAreaInsets()
   const {
     themed,
     theme: { colors },
   } = useAppTheme()
 
-  const onSubmit = () => {
-    setIsVoted(true)
-    console.log(selectedUsers)
-  }
-
   useEffect(() => {
-    setQuestion(mockedQuestion)
+    setMembersList(mockedUsers)
   }, [])
 
-  if (!question) return null
+  if (!membersList) return null
 
   return (
     <View style={styles.flex}>
@@ -129,7 +117,7 @@ export default function Voting() {
       </GradientSeparator>
 
       <LoggedScreenWrapper preset="fixed">
-        <VotingList onSubmit={onSubmit} users={mockedUsers} question={question} />
+        <UsersList users={membersList} />
       </LoggedScreenWrapper>
 
       {!isNewIos && (

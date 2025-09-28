@@ -1,5 +1,13 @@
-import React, { createContext, useCallback, useMemo, useRef, useState, ReactNode } from "react"
-import { StyleSheet, ViewStyle } from "react-native"
+import React, {
+  createContext,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  ReactNode,
+  useContext,
+} from "react"
+import { ViewStyle } from "react-native"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from "@gorhom/bottom-sheet"
 import { ThemedStyle } from "@/theme/types"
@@ -10,7 +18,7 @@ type BottomSheetContextType = {
   closeSheet: () => void
 }
 
-export const BottomSheetContext = createContext<BottomSheetContextType | undefined>(undefined)
+const BottomSheetContext = createContext<BottomSheetContextType | undefined>(undefined)
 
 export function BottomSheetProvider({ children }: { children: ReactNode }) {
   const sheetRef = useRef<BottomSheet>(null)
@@ -66,3 +74,9 @@ const $contentContainerStyle: ThemedStyle<ViewStyle> = ({ colors, spacing }) => 
 const $indicatorStyle: ThemedStyle<ViewStyle> = ({ colors }) => ({
   backgroundColor: colors.text,
 })
+
+export const useBottomSheet = () => {
+  const ctx = useContext(BottomSheetContext)
+  if (!ctx) throw new Error("useBottomSheet must be used within BottomSheetProvider")
+  return ctx
+}

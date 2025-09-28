@@ -12,7 +12,7 @@ type Props = {
   user: UserType
 }
 
-export function CardContent({ user }: Props) {
+export function UserListCard({ user }: Props) {
   const { themed } = useAppTheme()
 
   return (

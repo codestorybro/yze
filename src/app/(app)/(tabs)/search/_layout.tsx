@@ -1,9 +1,9 @@
 import isNewIos from "@/constants/isNewIos"
-import { useSearch } from "@/store/vote"
+import { useGroup } from "@/store/group"
 import { Stack } from "expo-router"
 
 export default function SearchLayout() {
-  const { setSearchTerm } = useSearch()
+  const { setSearchUserTerm } = useGroup()
 
   if (isNewIos)
     return (
@@ -17,7 +17,7 @@ export default function SearchLayout() {
               placement: "automatic",
               placeholder: "",
               onChangeText: ({ nativeEvent }) => {
-                setSearchTerm(nativeEvent.text)
+                setSearchUserTerm(nativeEvent.text)
               },
             },
           }}
