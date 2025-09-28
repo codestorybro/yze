@@ -1,37 +1,31 @@
-import { StyleSheet, TextStyle } from "react-native"
+import { StyleSheet, TextStyle, ViewStyle } from "react-native"
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated"
 
-import { Button, DateRangePicker, LoggedScreenWrapper, SkeletonImage } from "@/components"
-import AttributeLeaderboard from "@/components/AttributeLeaderboard"
+import { ElementsList, LoggedScreenWrapper, SkeletonImage } from "@/components"
 import { useUser } from "@/store/auth"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
-import { useBottomSheet } from "@/store/bottomSheet"
+import { normalizeAttributes } from "@/utils/normalizeAttributes"
 
 const mockedAttributes = [
   {
-    id: "relations",
-    name: "Towarzyskość i relacje",
-    score: 50,
-  },
-  {
-    id: "energy",
-    name: "Energia i nastawienie",
+    id: "spark",
+    label: "Iskra",
     score: 3,
   },
   {
-    id: "mind",
-    name: "Umysł i działanie",
+    id: "connector",
+    label: "Łącznik",
     score: 10,
   },
   {
-    id: "social",
-    name: "Postawa społeczna",
+    id: "creator",
+    label: "Twórca",
     score: 20,
   },
   {
-    id: "creativity",
-    name: "Kreatywność i vibe",
+    id: "anchor",
+    label: "Kotwica",
     score: 0,
   },
 ]
@@ -39,18 +33,19 @@ const mockedAttributes = [
 const _avatarSize = 150
 
 export default function Index() {
-  const { openSheet } = useBottomSheet()
   const { themed } = useAppTheme()
   const { user } = useUser()
   const avatarUri = user?.avatarUri
     ? { uri: user.avatarUri }
-    : require("../../../../assets/images/placeholder.png")
+    : require("../../../../assets/images/user.png")
+
+  const normalizedAttributes = normalizeAttributes(mockedAttributes)
 
   return (
     <LoggedScreenWrapper>
       <Animated.View
         entering={FadeInUp.delay(200).duration(1000).springify()}
-        style={styles.avatarWrapper}
+        style={themed($avatarWrapper)}
       >
         <SkeletonImage
           size={_avatarSize}
@@ -67,27 +62,27 @@ export default function Index() {
       >
         {user?.name}
       </Animated.Text>
-      <Button onPress={() => openSheet(<DateRangePicker />)}>Select date range</Button>
-      <AttributeLeaderboard attributes={mockedAttributes} />
+      <ElementsList items={normalizedAttributes} />
     </LoggedScreenWrapper>
   )
 }
 
-const $nameText: ThemedStyle<TextStyle> = ({ colors }) => ({
+const $nameText: ThemedStyle<TextStyle> = ({ colors, spacing }) => ({
   color: colors.text,
-  fontSize: 18,
+  fontSize: spacing.md,
   fontWeight: "bold",
-  marginBottom: 32,
+  marginBottom: spacing.xl,
   textAlign: "center",
+})
+
+const $avatarWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  alignItems: "center",
+  marginBottom: spacing.xs,
 })
 
 const styles = StyleSheet.create({
   avatar: {
     alignSelf: "center",
     justifyContent: "center",
-  },
-  avatarWrapper: {
-    alignItems: "center",
-    marginBottom: 8,
   },
 })

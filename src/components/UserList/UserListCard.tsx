@@ -27,9 +27,7 @@ export function UserListCard({ user }: Props) {
         <SkeletonImage
           size={_imageSize}
           source={
-            user.avatarUri
-              ? { uri: user.avatarUri }
-              : require("../../../assets/images/placeholder.png")
+            user.avatarUri ? { uri: user.avatarUri } : require("../../../assets/images/user.png")
           }
           height={_imageSize}
           width={_imageSize}

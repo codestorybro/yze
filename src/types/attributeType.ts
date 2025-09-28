@@ -1,5 +1,5 @@
 export type AttributeType = {
   id: string
-  name: string
+  label: string
   score: number
 }

@@ -28,7 +28,7 @@ export const UsersList: React.FC<Props> = ({ users }) => {
         {
           id: "0",
           name: "No Results",
-          avatarUri: require("../../../assets/images/placeholder.png"),
+          avatarUri: require("../../../assets/images/user.png"),
         },
       ]
 

@@ -259,8 +259,6 @@ const $containerBase: ThemedStyle<ViewStyle> = (theme) => ({
   borderRadius: theme.spacing.md,
   paddingVertical: theme.spacing.xs,
   paddingHorizontal: theme.spacing.md,
-  borderColor: theme.colors.cardBackground,
-  borderWidth: 1,
 })
 
 const $alignmentWrapper: ViewStyle = {

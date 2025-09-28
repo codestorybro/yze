@@ -28,7 +28,6 @@ type Props = {
   attribute: AttributeType & {
     widthPercent: number
     rank: number | null
-    rankImage: ImageSourcePropType | null
     attributeImage: ImageSourcePropType | null
   }
   index: number
@@ -85,7 +84,6 @@ export function SingleAttribute({ attribute, index, onFinish, anim }: Props) {
   return (
     <View style={styles.outerContainer}>
       <Animated.View style={[attributeTitleWrapperStylez, styles.attributeTitleWrapper]}>
-        {attribute.rankImage && <SkeletonImage size={32} source={attribute.rankImage} />}
         <Text style={themed($attributeTitle)}>{attribute.name}</Text>
       </Animated.View>
       <Animated.View

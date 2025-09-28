@@ -9,7 +9,9 @@ export const colors = {
 
   floatingButtonPressed: "#e7e5e5",
 
-  separator: "#e7e5e5",
+  separator: "#f2f2f3",
+
+  touchHighlight: "#e8e8e8",
 
   border: "#F2F1F6",
 
