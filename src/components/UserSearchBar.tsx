@@ -18,14 +18,14 @@ export function UserSearchBar() {
         return (
           <PressableIcon
             icon="x"
-            color={colors.palette.neutral800}
+            color={colors.defaultReversed}
             containerStyle={props.style as ViewStyle}
             size={20}
             onPress={() => setSearchUserTerm("")}
           />
         )
       },
-    [setSearchUserTerm, colors.palette.neutral800],
+    [setSearchUserTerm, colors.defaultReversed],
   )
 
   return (

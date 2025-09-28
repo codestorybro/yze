@@ -29,10 +29,7 @@ export function TabBarButton({ routeName, color, label, isFocused, ...props }: T
   return (
     <Button
       preset="no-border"
-      style={[
-        themed($tabBarItem),
-        isFocused && { backgroundColor: colors.palette.transparentPressed },
-      ]}
+      style={[themed($tabBarItem), isFocused && { backgroundColor: colors.transparentPressed }]}
       onPressIn={() => setIsPressed(true)}
       onPressOut={() => setIsPressed(false)}
       {...props}

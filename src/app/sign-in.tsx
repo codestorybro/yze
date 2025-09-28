@@ -78,14 +78,13 @@ export default function SignIn() {
         return (
           <PressableIcon
             icon={isAuthPasswordHidden ? "view" : "hidden"}
-            color={colors.palette.neutral800}
             containerStyle={props.style as ViewStyle}
             size={20}
             onPress={() => setIsAuthPasswordHidden(!isAuthPasswordHidden)}
           />
         )
       },
-    [isAuthPasswordHidden, colors.palette.neutral800],
+    [isAuthPasswordHidden],
   )
 
   return (

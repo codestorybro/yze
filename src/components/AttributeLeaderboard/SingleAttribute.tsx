@@ -43,9 +43,9 @@ export function SingleAttribute({ attribute, index, onFinish, anim }: Props) {
   } = useAppTheme()
 
   const rankColors: Record<number, string> = {
-    1: colors.palette.justGold,
-    2: colors.palette.justSilver,
-    3: colors.palette.justBronze,
+    1: colors.primary,
+    2: colors.primary,
+    3: colors.primary,
   }
 
   const _anim = useDerivedValue(() => {

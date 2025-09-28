@@ -7,6 +7,7 @@ import { Switch } from "@/components/Toggle/Switch"
 import { useAuth } from "@/store/auth"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
+import { Toggle } from "@/components/Toggle/Toggle"
 
 export default function Settings() {
   const { setThemeContextOverride, themeContext } = useAppTheme()

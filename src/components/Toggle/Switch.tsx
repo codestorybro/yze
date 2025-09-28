@@ -86,13 +86,13 @@ function SwitchInput(props: SwitchInputProps) {
   )
 
   const offBackgroundColor = [
-    disabled && colors.palette.neutral400,
+    disabled && colors.disabled,
     status === "error" && colors.errorBackground,
-    colors.palette.neutral300,
+    colors.switchBackground,
   ].filter(Boolean)[0]
 
   const onBackgroundColor = [
-    disabled && colors.palette.transparent,
+    disabled && colors.transparent,
     status === "error" && colors.errorBackground,
     colors.primary,
   ].filter(Boolean)[0]
@@ -102,15 +102,15 @@ function SwitchInput(props: SwitchInputProps) {
       return [
         $detailStyleOverride?.backgroundColor,
         status === "error" && colors.error,
-        disabled && colors.palette.neutral600,
-        colors.palette.neutral100,
+        disabled && colors.switchKnobDisabled,
+        colors.justWhite,
       ].filter(Boolean)[0]
     } else {
       return [
         $innerStyleOverride?.backgroundColor,
-        disabled && colors.palette.neutral600,
+        disabled && colors.switchKnobDisabled,
         status === "error" && colors.error,
-        colors.palette.neutral200,
+        colors.justWhite,
       ].filter(Boolean)[0]
     }
   })()
@@ -191,10 +191,10 @@ function SwitchAccessibilityLabel(props: SwitchInputProps & { role: "on" | "off"
   ]
 
   const color = (function () {
-    if (disabled) return colors.palette.neutral600
+    if (disabled) return colors.switchKnobDisabled
     if (status === "error") return colors.error
-    if (!on) return innerStyle?.backgroundColor || colors.palette.secondary500
-    return detailStyle?.backgroundColor || colors.palette.neutral100
+    if (!on) return innerStyle?.backgroundColor || colors.secondary
+    return detailStyle?.backgroundColor || colors.default
   })()
 
   return (
@@ -226,7 +226,7 @@ const $inputOuter: StyleProp<ViewStyle> = [
 ]
 
 const $switchInner: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  borderColor: colors.palette.transparent,
+  borderColor: colors.transparent,
   position: "absolute",
   paddingStart: 4,
   paddingEnd: 4,

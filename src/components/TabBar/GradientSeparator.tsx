@@ -27,8 +27,8 @@ export function GradientSeparator({
         <LinearGradient
           colors={
             themeContext === "dark"
-              ? [colors.palette.transparent, colors.palette.justBlack]
-              : [colors.palette.transparent, "rgba(0,0,0,0.15)"]
+              ? [colors.transparent, colors.justBlack]
+              : [colors.transparent, "rgba(0,0,0,0.15)"]
           }
           style={{
             position: "absolute",
@@ -46,8 +46,8 @@ export function GradientSeparator({
         <LinearGradient
           colors={
             themeContext === "dark"
-              ? [colors.palette.justBlack, colors.palette.transparent]
-              : ["rgba(0,0,0,0.15)", colors.palette.transparent]
+              ? [colors.justBlack, colors.transparent]
+              : ["rgba(0,0,0,0.15)", colors.transparent]
           }
           style={{
             position: "absolute",

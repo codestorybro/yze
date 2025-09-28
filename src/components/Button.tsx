@@ -226,7 +226,7 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
     $styles.row,
     $baseViewStyle,
     ({ colors }) => ({
-      backgroundColor: colors.palette.transparent,
+      backgroundColor: colors.transparent,
       borderColor: colors.primary,
       borderWidth: 1,
     }),
@@ -235,7 +235,7 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
     $styles.row,
     $baseViewStyle,
     ({ colors }) => ({
-      backgroundColor: colors.palette.transparent,
+      backgroundColor: colors.transparent,
     }),
   ],
   "floating": [
@@ -245,7 +245,7 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
       backgroundColor: colors.background,
       borderWidth: 1,
       borderColor: colors.border,
-      boxShadow: `0px 0px 12px ${colors.palette.shadowColor}`,
+      boxShadow: `0px 0px 12px ${colors.shadow}`,
     }),
   ],
 }
@@ -263,8 +263,8 @@ const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
   "default": ({ colors }) => ({ backgroundColor: colors.primaryPressed }),
   "secondary": ({ colors }) => ({ backgroundColor: colors.secondaryPressed }),
   "error": ({ colors }) => ({ backgroundColor: colors.errorPressed }),
-  "reverse": ({ colors }) => ({ backgroundColor: colors.palette.transparentPressed }),
-  "no-border": ({ colors }) => ({ backgroundColor: colors.palette.transparentPressed }),
+  "reverse": ({ colors }) => ({ backgroundColor: colors.transparentPressed }),
+  "no-border": ({ colors }) => ({ backgroundColor: colors.transparentPressed }),
   "floating": ({ colors }) => ({ backgroundColor: colors.floatingButtonPressed }),
 }
 
@@ -283,9 +283,9 @@ const $disabledViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
   "error": ({ colors }) => ({ backgroundColor: colors.disabled }),
   "reverse": ({ colors }) => ({
     borderColor: colors.disabled,
-    backgroundColor: colors.palette.transparentPressed,
+    backgroundColor: colors.transparentPressed,
   }),
-  "no-border": ({ colors }) => ({ backgroundColor: colors.palette.transparent }),
+  "no-border": ({ colors }) => ({ backgroundColor: colors.transparent }),
   "floating": ({ colors }) => ({ backgroundColor: colors.disabled }),
 }
 

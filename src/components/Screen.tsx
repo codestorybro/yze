@@ -20,8 +20,8 @@ import Animated, {
   interpolateColor,
 } from "react-native-reanimated"
 
-import { palette as lightPalette } from "@/theme/colors"
-import { palette as darkPalette } from "@/theme/colorsDark"
+import { colors as lightColors } from "@/theme/colors"
+import { colors as darkColors } from "@/theme/colorsDark"
 import { useAppTheme } from "@/theme/context"
 import { $styles } from "@/theme/styles"
 import { ExtendedEdge, useSafeAreaInsetsStyle } from "@/utils/useSafeAreaInsetsStyle"
@@ -266,7 +266,7 @@ export function Screen(props: ScreenProps) {
       backgroundColor: interpolateColor(
         progress.value,
         [0, 1],
-        [lightPalette.neutral200, darkPalette.neutral100],
+        [lightColors.mainBackground, darkColors.mainBackground],
       ),
     }
   })

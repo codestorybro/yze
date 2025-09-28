@@ -214,7 +214,7 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
 
           <TextInput
             ref={input}
-            underlineColorAndroid={colors.palette.transparent}
+            underlineColorAndroid={colors.transparent}
             textAlignVertical={TextInputProps.multiline ? "top" : "center"}
             placeholder={placeholderContent}
             placeholderTextColor={colors.textDim}
@@ -299,6 +299,6 @@ const $leftAccessoryStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 })
 
 const $shadowWrapperStyle: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
-  boxShadow: `0px 0px 12px ${colors.palette.shadowColor}`,
+  boxShadow: `0px 0px 12px ${colors.shadow}`,
   borderRadius: spacing.xxxl,
 })

@@ -120,7 +120,7 @@ export function EmptyState(props: EmptyStateProps) {
   const {
     theme,
     themed,
-    theme: { spacing },
+    theme: { spacing, colors },
   } = useAppTheme()
 
   const EmptyStatePresets = {
@@ -197,7 +197,7 @@ export function EmptyState(props: EmptyStateProps) {
           source={imageSource}
           {...ImageProps}
           style={$imageStyles}
-          tintColor={theme.colors.palette.neutral900}
+          tintColor={colors.defaultReversed}
         />
       )}
 

@@ -80,5 +80,5 @@ const $tabBarContainer: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   borderWidth: 1,
   borderColor: colors.border,
 
-  boxShadow: `0px 0px 12px ${colors.palette.shadowColor}`,
+  boxShadow: `0px 0px 12px ${colors.shadow}`,
 })

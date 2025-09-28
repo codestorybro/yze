@@ -82,7 +82,7 @@ export function CircularSlider({ onConfirm, items }: Props) {
 
 const $container: ThemedStyle<ViewStyle> = ({ colors }) => ({
   justifyContent: "flex-end",
-  backgroundColor: colors.palette.justBlack,
+  backgroundColor: colors.justBlack,
   flex: 1,
 })
 
