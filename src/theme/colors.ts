@@ -41,6 +41,11 @@ export const colors = {
   topBarBackground: "#FFFFFF",
   mainBackground: "#F2F1F6",
 
+  attributeAnchor: "#5C6BC0",
+  attributeConnector: "#4ABDAC",
+  attributeCreator: "#F4B400",
+  attributeSpark: "#E25A53",
+
   justWhite: "#FFFFFF",
   justBlack: "#000000",
   transparent: "rgba(0,0,0,0)",

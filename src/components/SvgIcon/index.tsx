@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native"
 import Svg, { Path } from "react-native-svg"
 
-import { colors } from "@/theme/colors"
+import { useAppTheme } from "@/theme/context"
 
 type Props = {
   pathData?: string
@@ -11,6 +11,9 @@ type Props = {
 }
 
 export const SvgIcon = (props: Props) => {
+  const {
+    theme: { colors },
+  } = useAppTheme()
   const { color = colors.text, pathData, size, containerStyle } = props
 
   return (

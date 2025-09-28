@@ -14,6 +14,7 @@ type SingleElementProps = {
   isLastElement?: boolean
   onFinish?: (() => void) | null
   index: number
+  svgIconColor?: string
 }
 
 const _stagger = 150
@@ -27,6 +28,7 @@ const ElementsItem: React.FC<SingleElementProps> = ({
   onPress,
   index,
   onFinish,
+  svgIconColor,
 }) => {
   const {
     themed,
@@ -59,7 +61,7 @@ const ElementsItem: React.FC<SingleElementProps> = ({
             })}
         >
           <View style={styles.iconWrapper}>
-            <SvgIcon pathData={SvgIconPaths[svgIconPath]} size={_iconSize} />
+            <SvgIcon pathData={SvgIconPaths[svgIconPath]} size={_iconSize} color={svgIconColor} />
           </View>
           <View style={styles.contentWrapper}>{content}</View>
         </Animated.View>
@@ -78,6 +80,7 @@ type Props = {
   items: {
     id: string
     svgIconPath: keyof typeof SvgIconPaths
+    svgIconColor?: string
     content: ReactNode
     onPress?: () => void
   }[]
@@ -99,6 +102,7 @@ export const ElementsList: React.FC<Props> = ({ items }) => {
               svgIconPath={item.svgIconPath}
               content={item.content}
               onPress={item.onPress}
+              svgIconColor={item.svgIconColor}
               onFinish={
                 i === items.length - 1
                   ? () => {
