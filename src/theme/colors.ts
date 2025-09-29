@@ -50,7 +50,7 @@ export const colors = {
 
   justWhite: "#FFFFFF",
   justBlack: "#000000",
-  transparent: "rgba(0,0,0,0)",
+  transparent: "rgba(255,255,255,0)",
   shadow: "rgba(0, 0, 0, 0.1)",
   transparentPressed: "rgba(0, 0, 0, 0.05)",
 } as const
