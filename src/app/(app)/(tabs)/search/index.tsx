@@ -111,7 +111,12 @@ export default function Voting() {
   return (
     <View style={styles.flex}>
       <GradientSeparator style={[themed($titleWrapper), { paddingTop: top }]}>
-        <Text preset="subheading" style={{ flexShrink: 1, textAlign: "center" }}>
+        <Text
+          preset="subheading"
+          style={{
+            margin: "auto",
+          }}
+        >
           Who do you want to appreciate?
         </Text>
       </GradientSeparator>
@@ -140,8 +145,11 @@ const $titleWrapper: ThemedStyle<ViewStyle> = ({ spacing, colors }) => ({
   gap: spacing.xxs,
   paddingHorizontal: spacing.sm,
   paddingBottom: spacing.xxs,
-  backgroundColor: colors.topBarBackground,
+  backgroundColor: colors.transparent,
   zIndex: 1,
+  position: "absolute",
+  left: 0,
+  right: 0,
 })
 
 const $searchBarWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({

@@ -21,7 +21,7 @@ export const UsersList: React.FC<Props> = ({ users }) => {
     theme: { spacing },
   } = useAppTheme()
   const { searchUserTerm } = useGroup()
-  const { bottom } = useSafeAreaInsets()
+  const { bottom, top } = useSafeAreaInsets()
 
   const filtered = users.filter((user) => user.name.includes(searchUserTerm))
 
@@ -36,7 +36,7 @@ export const UsersList: React.FC<Props> = ({ users }) => {
           onPress={() => console.log("User pressed!")}
           style={[
             themed($cardStyle),
-            i === 0 && { marginTop: spacing.xl },
+            !isNewIos && i === 0 && { marginTop: top * 2.2 },
             !isNewIos &&
               i === filtered.length - 1 && {
                 marginBottom: bottom + spacing.xxxl,

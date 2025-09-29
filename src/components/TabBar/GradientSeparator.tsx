@@ -1,64 +1,36 @@
 import React from "react"
-import { View, StyleProp, ViewStyle } from "react-native"
+import { View, StyleProp, ViewStyle, StyleSheet } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { useAppTheme } from "@/theme/context"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 type Props = {
   children: React.ReactNode
   style?: StyleProp<ViewStyle>
-  separatorHeight?: number
-  fromTop?: boolean
 }
 
-export function GradientSeparator({
-  children,
-  style,
-  separatorHeight = 26,
-  fromTop = false,
-}: Props) {
+export function GradientSeparator({ children, style }: Props) {
   const {
     theme: { colors },
-    themeContext,
   } = useAppTheme()
+  const { top } = useSafeAreaInsets()
 
   return (
-    <View style={[{ position: "relative" }, style]}>
-      {fromTop && (
-        <LinearGradient
-          colors={
-            themeContext === "dark"
-              ? [colors.transparent, colors.justBlack]
-              : [colors.transparent, "rgba(0,0,0,0.15)"]
-          }
-          style={{
-            position: "absolute",
-            top: -separatorHeight,
-            left: 0,
-            right: 0,
-            height: separatorHeight,
-          }}
-        />
-      )}
-
+    <View style={style}>
+      <LinearGradient
+        pointerEvents="none"
+        colors={[colors.mainBackground, colors.mainBackground, colors.transparent]}
+        style={[styles.fade, { top: 0, height: top * 2.3 }]}
+      />
       {children}
-
-      {!fromTop && (
-        <LinearGradient
-          colors={
-            themeContext === "dark"
-              ? [colors.justBlack, colors.transparent]
-              : ["rgba(0,0,0,0.15)", colors.transparent]
-          }
-          style={{
-            position: "absolute",
-            bottom: -separatorHeight,
-            left: 0,
-            right: 0,
-            height: separatorHeight,
-          }}
-          pointerEvents="none"
-        />
-      )}
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  fade: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+  },
+})
