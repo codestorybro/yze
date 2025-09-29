@@ -30,7 +30,10 @@ type Props = {
 }
 
 export function SingleAttribute({ attribute, index, onFinish, anim, color, maxScore }: Props) {
-  const { themed } = useAppTheme()
+  const {
+    themed,
+    theme: { spacing },
+  } = useAppTheme()
   const [maxBarWidth, setMaxBarWidth] = useState(0)
 
   const _anim = useDerivedValue(() => {
@@ -52,7 +55,10 @@ export function SingleAttribute({ attribute, index, onFinish, anim, color, maxSc
   })
 
   return (
-    <View onLayout={(e) => setMaxBarWidth(e.nativeEvent.layout.width)}>
+    <View
+      onLayout={(e) => setMaxBarWidth(e.nativeEvent.layout.width - spacing.sm)}
+      style={{ flex: 1 }}
+    >
       <Animated.View style={styles.attributeTitleWrapper}>
         <Text style={themed($attributeTitle)}>{attribute.label}</Text>
       </Animated.View>

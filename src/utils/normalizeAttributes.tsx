@@ -1,10 +1,14 @@
-import { SingleAttribute, Text } from "@/components"
+import { SingleAttribute, SvgIcon, Text } from "@/components"
 import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
 import { useAppTheme } from "@/theme/context"
 import { AttributeType } from "@/types/attributeType"
+import { View } from "react-native"
 import { useSharedValue } from "react-native-reanimated"
 
 export const normalizeAttributes = (attributes: AttributeType[]) => {
+  const {
+    theme: { colors },
+  } = useAppTheme()
   const _anim = useSharedValue(0)
   const maxScore = Math.max(...attributes.map((attr) => attr.score))
 
@@ -14,20 +18,27 @@ export const normalizeAttributes = (attributes: AttributeType[]) => {
       svgIconPath: singleAttribute.id as keyof typeof SvgIconPaths,
       svgIconColor: color,
       content: (
-        <SingleAttribute
-          color={color}
-          attribute={{ ...singleAttribute }}
-          index={index}
-          anim={_anim}
-          maxScore={maxScore}
-          onFinish={
-            index === attributes.length - 1
-              ? () => {
-                  _anim.value = 1
-                }
-              : null
-          }
-        />
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <SingleAttribute
+            color={color}
+            attribute={{ ...singleAttribute }}
+            index={index}
+            anim={_anim}
+            maxScore={maxScore}
+            onFinish={
+              index === attributes.length - 1
+                ? () => {
+                    _anim.value = 1
+                  }
+                : null
+            }
+          />
+          <SvgIcon
+            pathData={SvgIconPaths.right_arrow}
+            size={16}
+            color={colors.attributeArrowRight}
+          />
+        </View>
       ),
       onPress: () => {
         console.log(singleAttribute.id)

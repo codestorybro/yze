@@ -19,7 +19,6 @@ type SingleElementProps = {
 
 const _stagger = 150
 const _iconSize = 32
-const _gap = 12
 
 const ElementsItem: React.FC<SingleElementProps> = ({
   svgIconPath,
@@ -60,14 +59,14 @@ const ElementsItem: React.FC<SingleElementProps> = ({
               }
             })}
         >
-          <View style={styles.iconWrapper}>
+          <View style={themed($iconWrapper)}>
             <SvgIcon pathData={SvgIconPaths[svgIconPath]} size={_iconSize} color={svgIconColor} />
           </View>
           <View style={styles.contentWrapper}>{content}</View>
         </Animated.View>
 
         {!isLastElement && (
-          <View style={styles.separatorContainer}>
+          <View style={themed($separatorContainer)}>
             <View style={themed($separatorStyle)} />
           </View>
         )}
@@ -125,6 +124,18 @@ const $separatorStyle: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   marginRight: spacing.md,
 })
 
+const $iconWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  width: spacing.xl,
+  alignItems: "flex-start",
+  justifyContent: "center",
+  marginRight: spacing.sm,
+})
+
+const $separatorContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  flexDirection: "row",
+  marginLeft: _iconSize + spacing.sm + 16,
+})
+
 const styles = StyleSheet.create({
   cardContainer: {
     paddingVertical: 0,
@@ -139,18 +150,8 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 16,
   },
-  iconWrapper: {
-    width: 32,
-    alignItems: "flex-start",
-    justifyContent: "center",
-    marginRight: _gap,
-  },
   contentWrapper: {
     flex: 1,
     justifyContent: "center",
-  },
-  separatorContainer: {
-    flexDirection: "row",
-    marginLeft: _iconSize + _gap + 16,
   },
 })

@@ -11,6 +11,8 @@ export const colors = {
 
   separator: "#f2f2f3",
 
+  attributeArrowRight: "#6E7078",
+
   touchHighlight: "#e8e8e8",
 
   border: "#F2F1F6",
