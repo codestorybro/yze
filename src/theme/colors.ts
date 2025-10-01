@@ -43,10 +43,10 @@ export const colors = {
   topBarBackground: "#FFFFFF",
   mainBackground: "#F2F1F6",
 
-  attributeAnchor: "#5C6BC0",
-  attributeConnector: "#4ABDAC",
+  attributeGuru: "#5C6BC0",
+  attributeBuddy: "#4ABDAC",
   attributeCreator: "#F4B400",
-  attributeSpark: "#E25A53",
+  attributeFlash: "#E25A53",
 
   justWhite: "#FFFFFF",
   justBlack: "#000000",

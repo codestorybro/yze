@@ -54,14 +54,14 @@ const selectColorBasedOnAttribute = (attributeId: string) => {
   } = useAppTheme()
 
   switch (attributeId) {
-    case "connector":
-      return colors.attributeConnector
+    case "buddy":
+      return colors.attributeBuddy
     case "creator":
       return colors.attributeCreator
-    case "spark":
-      return colors.attributeSpark
-    case "anchor":
-      return colors.attributeAnchor
+    case "flash":
+      return colors.attributeFlash
+    case "guru":
+      return colors.attributeGuru
     default:
       return colors.text
   }

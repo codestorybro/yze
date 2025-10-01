@@ -9,13 +9,13 @@ import { normalizeAttributes } from "@/utils/normalizeAttributes"
 
 const mockedAttributes = [
   {
-    id: "spark",
-    label: "Spark",
+    id: "flash",
+    label: "Flash",
     score: 3,
   },
   {
-    id: "connector",
-    label: "Connector",
+    id: "buddy",
+    label: "Buddy",
     score: 10,
   },
   {
@@ -24,8 +24,8 @@ const mockedAttributes = [
     score: 30,
   },
   {
-    id: "anchor",
-    label: "Anchor",
+    id: "guru",
+    label: "Guru",
     score: 20,
   },
 ]
