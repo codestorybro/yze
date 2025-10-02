@@ -1,6 +1,11 @@
 import { ReactNode, useEffect } from "react"
 import { Keyboard, KeyboardEvent, Platform, StyleProp, ViewProps, ViewStyle } from "react-native"
-import Animated, { useAnimatedStyle, useSharedValue, withTiming, WithTimingConfig } from "react-native-reanimated"
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  WithTimingConfig,
+} from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const AnimatedView = Animated.View

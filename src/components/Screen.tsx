@@ -22,10 +22,7 @@ import { colors as darkColors } from "@/theme/colorsDark"
 import { useAppTheme } from "@/theme/context"
 import { $styles } from "@/theme/styles"
 import { ExtendedEdge, useSafeAreaInsetsStyle } from "@/utils/useSafeAreaInsetsStyle"
-import {
-  KeyboardResponsiveView,
-  KeyboardResponsiveViewProps,
-} from "./KeyboardResponsiveView"
+import { KeyboardResponsiveView, KeyboardResponsiveViewProps } from "./KeyboardResponsiveView"
 
 interface BaseScreenProps {
   /**
