@@ -2,6 +2,7 @@ import React from "react"
 import { ViewStyle, FlatList, Image } from "react-native"
 import { UserType } from "@/types/userType"
 import { Card } from "@/components"
+import { translate } from "@/i18n/translate"
 import { ThemedStyle } from "@/theme/types"
 import { useAppTheme } from "@/theme/context"
 import { useGroup } from "@/store/group"
@@ -52,7 +53,8 @@ export const UsersList: React.FC<Props> = ({ users }) => {
             <UserListCard
               user={{
                 id: "0",
-                name: "No Results",
+                name: translate("search:noResults"),
+                email: "",
                 avatarUri: noResultsImage,
               }}
             />

@@ -16,23 +16,11 @@ export const loadDateFnsLocale = () => {
     case "en":
       dateFnsLocale = require("date-fns/locale/en-US").default
       break
-    case "ar":
-      dateFnsLocale = require("date-fns/locale/ar").default
+    case "pl":
+      dateFnsLocale = require("date-fns/locale/pl").default
       break
-    case "ko":
-      dateFnsLocale = require("date-fns/locale/ko").default
-      break
-    case "es":
-      dateFnsLocale = require("date-fns/locale/es").default
-      break
-    case "fr":
-      dateFnsLocale = require("date-fns/locale/fr").default
-      break
-    case "hi":
-      dateFnsLocale = require("date-fns/locale/hi").default
-      break
-    case "ja":
-      dateFnsLocale = require("date-fns/locale/ja").default
+    case "de":
+      dateFnsLocale = require("date-fns/locale/de").default
       break
     default:
       dateFnsLocale = require("date-fns/locale/en-US").default

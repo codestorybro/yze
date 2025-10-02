@@ -195,7 +195,7 @@ export default function SignIn() {
             <Animated.View entering={FadeInDown.delay(600).duration(1000).springify()}>
               <Button
                 testID="login-button"
-                tx="loginScreen:tapToLogIn"
+                tx="loginScreen:login"
                 style={themed($tapButton)}
                 onPress={handleSubmit(onSubmit)}
               />

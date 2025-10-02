@@ -116,9 +116,8 @@ export default function Voting() {
           style={{
             margin: "auto",
           }}
-        >
-          Who do you want to appreciate?
-        </Text>
+          tx="search:whoToAppreciate"
+        />
       </GradientSeparator>
 
       <LoggedScreenWrapper preset="fixed">

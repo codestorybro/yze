@@ -39,15 +39,17 @@ export const useNormalizeAttributes = (attributes: AttributeType[]) => {
   }, [attributes])
 
   const handleOnPress = useCallback(
-    (attributeId: string) => {
+    (attribute: AttributeType) => {
       openSheet(
         <View style={{ padding: 16 }}>
           <Text preset="heading" style={{ marginBottom: 8 }}>
-            {attributeId.charAt(0).toUpperCase() + attributeId.slice(1)}
+            {attribute.label}
           </Text>
-          <Text preset="subheading">
-            Detailed information about the {attributeId} attribute goes here.
-          </Text>
+          <Text
+            preset="subheading"
+            tx="attributes:detailsPlaceholder"
+            txOptions={{ attributeName: attribute.id }}
+          />
         </View>,
       )
     },
@@ -100,7 +102,7 @@ export const useNormalizeAttributes = (attributes: AttributeType[]) => {
               <SvgIcon pathData={SvgIconPaths.right_arrow} size={16} color={attributeArrowRight} />
             </View>
           ),
-          onPress: () => handleOnPress(singleAttribute.id),
+          onPress: () => handleOnPress(singleAttribute),
         }
       }),
     [anim, attributeArrowRight, attributes, handleOnPress, maxScore, selectColorBasedOnAttribute],

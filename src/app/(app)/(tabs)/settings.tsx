@@ -29,11 +29,7 @@ export default function Settings() {
 
       <Card
         style={themed($option)}
-        HeadingComponent={
-          <Text preset="bold" size="lg">
-            User Settings
-          </Text>
-        }
+        HeadingComponent={<Text preset="bold" size="lg" tx="settingsScreen:userSettings" />}
         ContentComponent={
           <Switch
             value={themeContext === "dark"}
@@ -47,11 +43,7 @@ export default function Settings() {
 
       <Card
         style={themed($option)}
-        HeadingComponent={
-          <Text preset="bold" size="lg">
-            Group Settings
-          </Text>
-        }
+        HeadingComponent={<Text preset="bold" size="lg" tx="settingsScreen:manageGroup" />}
       />
 
       <Button tx="common:logOut" onPress={signOut} preset="error" style={themed($option)} />
