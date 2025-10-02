@@ -19,6 +19,7 @@ const fakeUser: UserType = {
   id: "1",
   email: "example@example.com",
   name: "John Doe",
+  avatarUri: "https://i.pravatar.cc/150?img=3",
 }
 
 export function AuthProvider({ children }: PropsWithChildren) {

@@ -5,30 +5,9 @@ import { ElementsList, LoggedScreenWrapper, SkeletonImage } from "@/components"
 import { useUser } from "@/store/auth"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
-import { normalizeAttributes } from "@/utils/normalizeAttributes"
-
-const mockedAttributes = [
-  {
-    id: "flash",
-    label: "Flash",
-    score: 3,
-  },
-  {
-    id: "buddy",
-    label: "Buddy",
-    score: 10,
-  },
-  {
-    id: "creator",
-    label: "Creator",
-    score: 30,
-  },
-  {
-    id: "guru",
-    label: "Guru",
-    score: 20,
-  },
-]
+import { useNormalizeAttributes } from "@/utils/useNormalizeAttributes"
+import { useQuery } from "@tanstack/react-query"
+import { fetchAttributes } from "@/utils/fetchAttributes"
 
 const _avatarSize = 150
 
@@ -38,8 +17,13 @@ export default function Index() {
   const avatarUri = user?.avatarUri
     ? { uri: user.avatarUri }
     : require("../../../../assets/images/user.png")
+  const { data } = useQuery({
+    queryKey: ["user-attributes"],
+    queryFn: fetchAttributes,
+    enabled: !!user,
+  })
 
-  const normalizedAttributes = normalizeAttributes(mockedAttributes)
+  const normalizedAttributes = useNormalizeAttributes(data ?? [])
 
   return (
     <LoggedScreenWrapper>
@@ -62,7 +46,7 @@ export default function Index() {
       >
         {user?.name}
       </Animated.Text>
-      <ElementsList items={normalizedAttributes} />
+      {normalizedAttributes.length > 0 && <ElementsList items={normalizedAttributes} />}
     </LoggedScreenWrapper>
   )
 }
