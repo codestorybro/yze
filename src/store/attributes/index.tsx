@@ -11,10 +11,7 @@ import {
 import { useUser } from "@/store/auth"
 import { AttributeType } from "@/types/attributeType"
 import { fetchAttributes } from "@/utils/fetchAttributes"
-import {
-  NormalizedAttribute,
-  useNormalizeAttributes,
-} from "@/utils/useNormalizeAttributes"
+import { NormalizedAttribute, useNormalizeAttributes } from "@/utils/useNormalizeAttributes"
 
 export type AttributesContextType = {
   attributes: AttributeType[]
