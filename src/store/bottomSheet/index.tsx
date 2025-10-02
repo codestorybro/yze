@@ -7,11 +7,12 @@ import React, {
   ReactNode,
   useContext,
 } from "react"
-import { ViewStyle } from "react-native"
+import { ViewStyle, StyleSheet, View } from "react-native"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from "@gorhom/bottom-sheet"
 import { ThemedStyle } from "@/theme/types"
 import { useAppTheme } from "@/theme/context"
+import { LinearGradient } from "expo-linear-gradient"
 
 type BottomSheetContextType = {
   openSheet: (content: ReactNode) => void
@@ -23,13 +24,16 @@ const BottomSheetContext = createContext<BottomSheetContextType | undefined>(und
 export function BottomSheetProvider({ children }: { children: ReactNode }) {
   const sheetRef = useRef<BottomSheet>(null)
   const [content, setContent] = useState<ReactNode>(null)
-  const { themed } = useAppTheme()
+  const {
+    themed,
+    theme: { colors, spacing },
+  } = useAppTheme()
 
-  const snapPoints = useMemo(() => ["40%", "80%"], [])
+  const snapPoints = useMemo(() => ["75%"], [])
 
   const openSheet = useCallback((content: ReactNode) => {
     setContent(content)
-    sheetRef.current?.snapToIndex(1)
+    sheetRef.current?.snapToIndex(0)
   }, [])
 
   const closeSheet = useCallback(() => {
@@ -57,9 +61,26 @@ export function BottomSheetProvider({ children }: { children: ReactNode }) {
           backgroundStyle={themed($contentContainerStyle)}
           handleIndicatorStyle={themed($indicatorStyle)}
         >
-          <BottomSheetScrollView contentContainerStyle={themed($contentContainerStyle)}>
-            {content}
-          </BottomSheetScrollView>
+          <View style={{ flex: 1 }}>
+            <BottomSheetScrollView
+              contentContainerStyle={themed($contentContainerStyle)}
+              showsVerticalScrollIndicator={false}
+            >
+              {content}
+            </BottomSheetScrollView>
+
+            <LinearGradient
+              pointerEvents="none"
+              colors={[colors.tabBarBackground, `${colors.tabBarBackground}00`]}
+              style={[styles.fade, { top: 0, height: spacing.xxl }]}
+            />
+
+            <LinearGradient
+              pointerEvents="none"
+              colors={[`${colors.tabBarBackground}00`, colors.tabBarBackground]}
+              style={[styles.fade, { bottom: 0, height: spacing.xxl }]}
+            />
+          </View>
         </BottomSheet>
       </GestureHandlerRootView>
     </BottomSheetContext.Provider>
@@ -73,6 +94,15 @@ const $contentContainerStyle: ThemedStyle<ViewStyle> = ({ colors, spacing }) => 
 
 const $indicatorStyle: ThemedStyle<ViewStyle> = ({ colors }) => ({
   backgroundColor: colors.text,
+})
+
+const styles = StyleSheet.create({
+  fade: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    zIndex: 10,
+  },
 })
 
 export const useBottomSheet = () => {

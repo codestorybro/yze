@@ -1,5 +1,6 @@
 import { SingleAttribute, SvgIcon, Text } from "@/components"
 import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
+import { useBottomSheet } from "@/store/bottomSheet"
 import { useAppTheme } from "@/theme/context"
 import { AttributeType } from "@/types/attributeType"
 import { View } from "react-native"
@@ -11,6 +12,20 @@ export const normalizeAttributes = (attributes: AttributeType[]) => {
   } = useAppTheme()
   const _anim = useSharedValue(0)
   const maxScore = Math.max(...attributes.map((attr) => attr.score))
+  const { openSheet } = useBottomSheet()
+
+  const handleOnPress = (attributeId: string) => {
+    openSheet(
+      <View style={{ padding: 16 }}>
+        <Text preset="heading" style={{ marginBottom: 8 }}>
+          {attributeId.charAt(0).toUpperCase() + attributeId.slice(1)}
+        </Text>
+        <Text preset="subheading">
+          Detailed information about the {attributeId} attribute goes here.
+        </Text>
+      </View>,
+    )
+  }
 
   return attributes.map((singleAttribute, index) => {
     const color = selectColorBasedOnAttribute(singleAttribute.id)
@@ -41,7 +56,7 @@ export const normalizeAttributes = (attributes: AttributeType[]) => {
         </View>
       ),
       onPress: () => {
-        console.log(singleAttribute.id)
+        handleOnPress(singleAttribute.id)
       },
       ...singleAttribute,
     }
