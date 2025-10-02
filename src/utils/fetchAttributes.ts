@@ -1,4 +1,6 @@
-export async function fetchAttributes() {
+import { AttributeType } from "@/types/attributeType"
+
+export async function fetchAttributes(): Promise<AttributeType[]> {
   // TODO: replace with real API call
 
   return [

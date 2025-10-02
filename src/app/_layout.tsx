@@ -6,9 +6,10 @@ import { KeyboardProvider } from "react-native-keyboard-controller"
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 
 import { AnimatedBootSplash } from "@/components/AnimatedBootSplash"
-import { BottomSheetProvider } from "@/store/bottomSheet"
 import { initI18n } from "@/i18n"
 import { AuthProvider } from "@/store/auth"
+import { AttributesProvider } from "@/store/attributes"
+import { BottomSheetProvider } from "@/store/bottomSheet"
 import { GroupStoreProvider } from "@/store/group"
 import { ThemeProvider } from "@/theme/context"
 import { customFontsToLoad } from "@/theme/typography"
@@ -54,18 +55,20 @@ export default function Root() {
               <AuthProvider>
                 <GroupStoreProvider>
                   <BottomSheetProvider>
-                    {appIsReady ? (
-                      <>
-                        <Slot />
-                        {showSplash && (
-                          <AnimatedBootSplash
-                            onAnimationEnd={() => {
-                              setShowSplash(false)
-                            }}
-                          />
-                        )}
-                      </>
-                    ) : null}
+                    <AttributesProvider>
+                      {appIsReady ? (
+                        <>
+                          <Slot />
+                          {showSplash && (
+                            <AnimatedBootSplash
+                              onAnimationEnd={() => {
+                                setShowSplash(false)
+                              }}
+                            />
+                          )}
+                        </>
+                      ) : null}
+                    </AttributesProvider>
                   </BottomSheetProvider>
                 </GroupStoreProvider>
               </AuthProvider>

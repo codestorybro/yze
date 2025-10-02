@@ -3,27 +3,19 @@ import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated"
 
 import { ElementsList, LoggedScreenWrapper, SkeletonImage } from "@/components"
 import { useUser } from "@/store/auth"
+import { useAttributes } from "@/store/attributes"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
-import { useNormalizeAttributes } from "@/utils/useNormalizeAttributes"
-import { useQuery } from "@tanstack/react-query"
-import { fetchAttributes } from "@/utils/fetchAttributes"
 
 const _avatarSize = 150
 
 export default function Index() {
   const { themed } = useAppTheme()
   const { user } = useUser()
+  const { normalizedAttributes } = useAttributes()
   const avatarUri = user?.avatarUri
     ? { uri: user.avatarUri }
     : require("../../../../assets/images/user.png")
-  const { data } = useQuery({
-    queryKey: ["user-attributes"],
-    queryFn: fetchAttributes,
-    enabled: !!user,
-  })
-
-  const normalizedAttributes = useNormalizeAttributes(data ?? [])
 
   return (
     <LoggedScreenWrapper>
