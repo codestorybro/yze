@@ -1,9 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from "react"
 import {
-  KeyboardAvoidingView,
-  KeyboardAvoidingViewProps,
   LayoutChangeEvent,
-  Platform,
   ScrollView,
   ScrollViewProps,
   StyleProp,
@@ -25,6 +22,10 @@ import { colors as darkColors } from "@/theme/colorsDark"
 import { useAppTheme } from "@/theme/context"
 import { $styles } from "@/theme/styles"
 import { ExtendedEdge, useSafeAreaInsetsStyle } from "@/utils/useSafeAreaInsetsStyle"
+import {
+  KeyboardResponsiveView,
+  KeyboardResponsiveViewProps,
+} from "./KeyboardResponsiveView"
 
 interface BaseScreenProps {
   /**
@@ -60,9 +61,9 @@ interface BaseScreenProps {
    */
   SystemBarsProps?: SystemBarsProps
   /**
-   * Pass any additional props directly to the KeyboardAvoidingView component.
+   * Pass any additional props directly to the KeyboardResponsiveView component.
    */
-  KeyboardAvoidingViewProps?: KeyboardAvoidingViewProps
+  KeyboardAvoidingViewProps?: Omit<KeyboardResponsiveViewProps, "children">
   /**
    * Disable the keyboard avoiding view.
    */
@@ -95,8 +96,6 @@ interface AutoScreenProps extends Omit<ScrollScreenProps, "preset"> {
 }
 
 export type ScreenProps = ScrollScreenProps | FixedScreenProps | AutoScreenProps
-
-const isIos = Platform.OS === "ios"
 
 type ScreenPreset = "fixed" | "scroll" | "auto"
 
@@ -278,28 +277,40 @@ export function Screen(props: ScreenProps) {
         {...SystemBarsProps}
       />
 
-      {props.disableKeyboardAvoidingView ? (
-        <View style={[$styles.flex1, KeyboardAvoidingViewProps?.style]}>
-          {isNonScrolling(props.preset) ? (
-            <ScreenWithoutScrolling {...props} />
-          ) : (
-            <ScreenWithScrolling {...props} />
-          )}
-        </View>
-      ) : (
-        <KeyboardAvoidingView
-          behavior={isIos ? "padding" : "height"}
-          keyboardVerticalOffset={keyboardOffset}
-          {...KeyboardAvoidingViewProps}
-          style={[$styles.flex1, KeyboardAvoidingViewProps?.style]}
-        >
-          {isNonScrolling(props.preset) ? (
-            <ScreenWithoutScrolling {...props} />
-          ) : (
-            <ScreenWithScrolling {...props} />
-          )}
-        </KeyboardAvoidingView>
-      )}
+      {(() => {
+        const {
+          style: keyboardResponsiveStyle,
+          enabled: keyboardEnabledProp,
+          keyboardOffset: keyboardOffsetProp,
+          animationConfig: keyboardAnimationConfig,
+          ...keyboardResponsiveRest
+        } = KeyboardAvoidingViewProps ?? {}
+
+        const keyboardEnabled = keyboardEnabledProp ?? true
+        const resolvedKeyboardOffset = keyboardOffsetProp ?? keyboardOffset
+
+        const content = isNonScrolling(props.preset) ? (
+          <ScreenWithoutScrolling {...props} />
+        ) : (
+          <ScreenWithScrolling {...props} />
+        )
+
+        if (props.disableKeyboardAvoidingView || !keyboardEnabled) {
+          return <View style={[$styles.flex1, keyboardResponsiveStyle]}>{content}</View>
+        }
+
+        return (
+          <KeyboardResponsiveView
+            enabled={keyboardEnabled}
+            keyboardOffset={resolvedKeyboardOffset}
+            animationConfig={keyboardAnimationConfig}
+            style={[$styles.flex1, keyboardResponsiveStyle]}
+            {...keyboardResponsiveRest}
+          >
+            {content}
+          </KeyboardResponsiveView>
+        )
+      })()}
     </Animated.View>
   )
 }

@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { View, ViewStyle, StyleSheet } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
-import { Button, KeyboardShiftView, LoggedScreenWrapper, SvgIcon, Text } from "@/components"
+import { Button, KeyboardResponsiveView, LoggedScreenWrapper, SvgIcon, Text } from "@/components"
 import { useGroup } from "@/store/group"
 import { UsersList } from "@/components"
 import { UserSearchBar } from "@/components/UserSearchBar"
@@ -99,7 +99,7 @@ export default function Voting() {
   const { top, bottom } = useSafeAreaInsets()
   const {
     themed,
-    theme: { colors },
+    theme: { colors, spacing },
   } = useAppTheme()
 
   useEffect(() => {
@@ -120,19 +120,22 @@ export default function Voting() {
         />
       </GradientSeparator>
 
-      <LoggedScreenWrapper preset="fixed">
+      <LoggedScreenWrapper preset="fixed" disableKeyboardAvoidingView>
         <UsersList users={membersList} />
       </LoggedScreenWrapper>
 
       {!isNewIos && (
-        <KeyboardShiftView style={[themed($actionContentWrapper), { bottom }]}>
+        <KeyboardResponsiveView
+          style={[themed($actionContentWrapper), { bottom }]}
+          extraShift={spacing.lg}
+        >
           <Button preset="floating" onPress={() => router.back()}>
             <SvgIcon pathData={SvgIconPaths.index} color={colors.text} />
           </Button>
           <View style={themed($searchBarWrapper)}>
             <UserSearchBar />
           </View>
-        </KeyboardShiftView>
+        </KeyboardResponsiveView>
       )}
     </View>
   )

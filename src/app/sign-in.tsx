@@ -6,8 +6,6 @@ import {
   View,
   Pressable,
   StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
   TextStyle,
   Keyboard,
 } from "react-native"
@@ -22,6 +20,7 @@ import {
   TextField,
   TextFieldAccessoryProps,
   Text,
+  KeyboardResponsiveView,
 } from "@/components"
 import { AnimatedSvgIcon, AnimatedSvgIconRef } from "@/components/AnimatedSvgIcon"
 import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
@@ -58,7 +57,7 @@ export default function SignIn() {
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const {
     themed,
-    theme: { colors },
+    theme: { colors, spacing },
   } = useAppTheme()
 
   useEffect(() => {
@@ -113,105 +112,98 @@ export default function SignIn() {
       </View>
 
       <View onStartShouldSetResponder={() => true} onResponderRelease={Keyboard.dismiss}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={0}
-        >
-          <View style={themed($formContainer)}>
-            <Controller
-              name="email"
-              control={control}
-              rules={{
-                required: translate("loginScreen:emailRequired"),
-                maxLength: {
-                  value: 254,
-                  message: translate("loginScreen:emailTooLong"),
-                },
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: translate("loginScreen:emailInvalid"),
-                },
-              }}
-              render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-                <Animated.View entering={FadeInDown.delay(200).duration(1000).springify()}>
-                  <TextField
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    containerStyle={themed($textField)}
-                    autoCapitalize="none"
-                    autoComplete="email"
-                    autoCorrect={false}
-                    keyboardType="email-address"
-                    placeholderTx="loginScreen:emailFieldPlaceholder"
-                    helperTx={error?.message as TxKeyPath}
-                    status={errors.email ? "error" : undefined}
-                    onSubmitEditing={() => {
-                      withKeyboardDismiss(() => {
-                        authPasswordInput?.current?.focus()
-                      })
-                    }}
-                  />
-                </Animated.View>
-              )}
+        <KeyboardResponsiveView style={themed($formContainer)} keyboardOffset={spacing.xxs}>
+          <Controller
+            name="email"
+            control={control}
+            rules={{
+              required: translate("loginScreen:emailRequired"),
+              maxLength: {
+                value: 254,
+                message: translate("loginScreen:emailTooLong"),
+              },
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: translate("loginScreen:emailInvalid"),
+              },
+            }}
+            render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
+              <Animated.View entering={FadeInDown.delay(200).duration(1000).springify()}>
+                <TextField
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  containerStyle={themed($textField)}
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  autoCorrect={false}
+                  keyboardType="email-address"
+                  placeholderTx="loginScreen:emailFieldPlaceholder"
+                  helperTx={error?.message as TxKeyPath}
+                  status={errors.email ? "error" : undefined}
+                  onSubmitEditing={() => {
+                    authPasswordInput?.current?.focus()
+                  }}
+                />
+              </Animated.View>
+            )}
+          />
+
+          <Controller
+            name="password"
+            control={control}
+            rules={{
+              required: translate("loginScreen:passwordRequired"),
+              minLength: {
+                value: 8,
+                message: translate("loginScreen:passwordTooShort"),
+              },
+              maxLength: {
+                value: 128,
+                message: translate("loginScreen:passwordTooLong"),
+              },
+            }}
+            render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
+              <Animated.View entering={FadeInDown.delay(400).duration(1000).springify()}>
+                <TextField
+                  ref={authPasswordInput}
+                  value={value}
+                  onChangeText={onChange}
+                  containerStyle={themed($textField)}
+                  autoCapitalize="none"
+                  autoComplete="password"
+                  autoCorrect={false}
+                  secureTextEntry={isAuthPasswordHidden}
+                  placeholderTx="loginScreen:passwordFieldPlaceholder"
+                  RightAccessory={PasswordRightAccessory}
+                  onBlur={onBlur}
+                  helperTx={error?.message as TxKeyPath}
+                  status={errors.password ? "error" : undefined}
+                  onSubmitEditing={handleSubmit(onSubmit)}
+                />
+              </Animated.View>
+            )}
+          />
+
+          <Animated.View entering={FadeInDown.delay(600).duration(1000).springify()}>
+            <Button
+              testID="login-button"
+              tx="loginScreen:login"
+              style={themed($tapButton)}
+              onPress={handleSubmit(onSubmit)}
             />
+          </Animated.View>
 
-            <Controller
-              name="password"
-              control={control}
-              rules={{
-                required: translate("loginScreen:passwordRequired"),
-                minLength: {
-                  value: 8,
-                  message: translate("loginScreen:passwordTooShort"),
-                },
-                maxLength: {
-                  value: 128,
-                  message: translate("loginScreen:passwordTooLong"),
-                },
-              }}
-              render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-                <Animated.View entering={FadeInDown.delay(400).duration(1000).springify()}>
-                  <TextField
-                    ref={authPasswordInput}
-                    value={value}
-                    onChangeText={onChange}
-                    containerStyle={themed($textField)}
-                    autoCapitalize="none"
-                    autoComplete="password"
-                    autoCorrect={false}
-                    secureTextEntry={isAuthPasswordHidden}
-                    placeholderTx="loginScreen:passwordFieldPlaceholder"
-                    RightAccessory={PasswordRightAccessory}
-                    onBlur={onBlur}
-                    helperTx={error?.message as TxKeyPath}
-                    status={errors.password ? "error" : undefined}
-                    onSubmitEditing={handleSubmit(onSubmit)}
-                  />
-                </Animated.View>
-              )}
-            />
-
-            <Animated.View entering={FadeInDown.delay(600).duration(1000).springify()}>
-              <Button
-                testID="login-button"
-                tx="loginScreen:login"
-                style={themed($tapButton)}
-                onPress={handleSubmit(onSubmit)}
-              />
-            </Animated.View>
-
-            <Animated.View
-              entering={FadeInDown.delay(800).duration(1000).springify()}
-              style={themed($forgotPasswordContainer)}
-            >
-              <Text tx="loginScreen:dontHaveAnAccount" />
-              <Pressable onPress={() => console.log("Navigate to Sign Up")}>
-                <Text tx="loginScreen:signUp" preset="bold" style={themed($signUpText)} />
-              </Pressable>
-            </Animated.View>
-          </View>
-        </KeyboardAvoidingView>
+          <Animated.View
+            entering={FadeInDown.delay(800).duration(1000).springify()}
+            style={themed($forgotPasswordContainer)}
+          >
+            <Text tx="loginScreen:dontHaveAnAccount" />
+            <Pressable onPress={() => console.log("Navigate to Sign Up")}>
+              <Text tx="loginScreen:signUp" preset="bold" style={themed($signUpText)} />
+            </Pressable>
+          </Animated.View>
+        </KeyboardResponsiveView>
       </View>
     </Screen>
   )

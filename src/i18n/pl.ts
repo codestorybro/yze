@@ -22,6 +22,7 @@ const pl: Translations = {
   search: {
     whoToAppreciate: "Kogo chcesz dzisiaj docenić?",
     noResults: "Brak wyników",
+    searchForUser: "Szukaj użytkownika",
   },
   errorScreen: {
     title: "Coś poszło nie tak!",

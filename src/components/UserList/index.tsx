@@ -31,6 +31,9 @@ export const UsersList: React.FC<Props> = ({ users }) => {
       data={filtered}
       keyExtractor={(item) => item.id.toString()}
       showsVerticalScrollIndicator={false}
+      automaticallyAdjustKeyboardInsets={false}
+      contentInsetAdjustmentBehavior="never"
+      keyboardShouldPersistTaps="handled"
       style={{ minHeight: "100%" }}
       renderItem={({ item: u, index: i }) => (
         <Card
@@ -48,7 +51,7 @@ export const UsersList: React.FC<Props> = ({ users }) => {
       )}
       ListEmptyComponent={
         <Card
-          style={[themed($cardStyle), { marginTop: spacing.xl }]}
+          style={[themed($cardStyle), !isNewIos && { marginTop: top * 2.2 }]}
           ContentComponent={
             <UserListCard
               user={{
