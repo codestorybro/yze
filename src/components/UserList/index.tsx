@@ -56,7 +56,7 @@ export const UsersList: React.FC<Props> = ({ users }) => {
             <UserListCard
               user={{
                 id: "0",
-                name: translate("search:noResults"),
+                name: translate("searchScreen:noResults"),
                 email: "",
                 avatarUri: noResultsImage,
               }}

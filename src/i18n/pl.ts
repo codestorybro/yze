@@ -19,7 +19,7 @@ const pl: Translations = {
     passwordTooLong: "Hasło może mieć maksymalnie 128 znaków.",
     emailTooLong: "Email może mieć maksymalnie 254 znaki.",
   },
-  search: {
+  searchScreen: {
     whoToAppreciate: "Kogo chcesz dzisiaj docenić?",
     noResults: "Brak wyników",
     searchForUser: "Szukaj użytkownika",

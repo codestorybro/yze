@@ -4,6 +4,7 @@ import { View, ViewStyle } from "react-native"
 import { PressableIcon, TextField, TextFieldAccessoryProps } from "@/components"
 import { useGroup } from "@/store/group"
 import { useAppTheme } from "@/theme/context"
+import { translate } from "@/i18n/translate"
 
 export function UserSearchBar() {
   const { searchUserTerm, setSearchUserTerm } = useGroup()
@@ -30,7 +31,7 @@ export function UserSearchBar() {
 
   return (
     <TextField
-      placeholder="Search user..."
+      placeholder={translate("searchScreen:searchForUser")}
       value={searchUserTerm}
       onChangeText={setSearchUserTerm}
       RightAccessory={searchUserTerm !== "" ? SearchRightAccessory : undefined}

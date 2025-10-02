@@ -17,7 +17,7 @@ const en = {
     passwordTooLong: "Password must be at most 128 characters long.",
     emailTooLong: "Email must be at most 254 characters long.",
   },
-  search: {
+  searchScreen: {
     whoToAppreciate: "Who do you want to appreciate today?",
     noResults: "No Results",
     searchForUser: "Search for user",

@@ -1,4 +1,5 @@
 import isNewIos from "@/constants/isNewIos"
+import { translate } from "@/i18n/translate"
 import { useGroup } from "@/store/group"
 import { Stack } from "expo-router"
 
@@ -15,7 +16,7 @@ export default function SearchLayout() {
             headerTitle: "",
             headerSearchBarOptions: {
               placement: "automatic",
-              placeholder: "",
+              placeholder: translate("searchScreen:searchForUser"),
               onChangeText: ({ nativeEvent }) => {
                 setSearchUserTerm(nativeEvent.text)
               },

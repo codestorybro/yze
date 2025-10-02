@@ -116,7 +116,7 @@ export default function Voting() {
           style={{
             margin: "auto",
           }}
-          tx="search:whoToAppreciate"
+          tx="searchScreen:whoToAppreciate"
         />
       </GradientSeparator>
 
