@@ -1,7 +1,13 @@
-import { useState } from "react"
-import { Image, ImageProps, View, StyleSheet } from "react-native"
-import { Skeleton } from "moti/skeleton"
-import Animated from "react-native-reanimated"
+import { useEffect, useState } from "react"
+import { Image, ImageProps, StyleSheet, View } from "react-native"
+import Animated, {
+  Easing,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from "react-native-reanimated"
 
 import { useAppTheme } from "@/theme/context"
 
@@ -18,17 +24,41 @@ export const SkeletonImage: React.FC<SkeletonImageProps> = ({
 }) => {
   const { themeContext } = useAppTheme()
   const [loading, setLoading] = useState(true)
+  const shimmer = useSharedValue(0)
 
   const ImageComponent: any = animated ? Animated.Image : Image
 
+  useEffect(() => {
+    shimmer.value = withRepeat(
+      withTiming(1, {
+        duration: 900,
+        easing: Easing.inOut(Easing.ease),
+      }),
+      -1,
+      true,
+    )
+  }, [shimmer])
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(shimmer.value, [0, 1], [0.5, 1]),
+  }))
+
+  const skeletonColor = themeContext === "dark" ? "#3A3D4A" : "#E0E0E0"
+
   return (
-    <View style={[styles.container, { maxHeight: size, maxWidth: size }]}>
+  <View style={[styles.container, { maxHeight: size, maxWidth: size }]}> 
       {loading && (
-        <Skeleton
-          radius={size / 2}
-          height={size}
-          width={size}
-          colorMode={themeContext === "dark" ? "dark" : "light"}
+        <Animated.View
+          style={[
+            styles.skeleton,
+            {
+              height: size,
+              width: size,
+              borderRadius: size / 2,
+              backgroundColor: skeletonColor,
+            },
+            animatedStyle,
+          ]}
         />
       )}
       <ImageComponent
@@ -43,5 +73,12 @@ export const SkeletonImage: React.FC<SkeletonImageProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  skeleton: {
+    position: "absolute",
+    top: 0,
+    left: 0,
   },
 })
