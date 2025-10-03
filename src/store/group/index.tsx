@@ -8,6 +8,8 @@ type GroupContextType = {
   setGroupDetails: (group: GroupType | null) => void
   searchUserTerm: string
   setSearchUserTerm: (term: string) => void
+  isSearchBarFocused: boolean
+  setIsSearchBarFocused: (value: boolean) => void
   membersList: UserType[] | null
   setMembersList: (users: UserType[] | null) => void
 }
@@ -18,6 +20,7 @@ export function GroupStoreProvider({ children }: PropsWithChildren) {
   const [groupDetails, setGroupDetails] = useState<GroupType | null>(null)
   const [membersList, setMembersList] = useState<UserType[] | null>(null)
   const [searchUserTerm, setSearchUserTerm] = useState<string>("")
+  const [isSearchBarFocused, setIsSearchBarFocused] = useState<boolean>(false)
 
   return (
     <GroupContext.Provider
@@ -26,6 +29,8 @@ export function GroupStoreProvider({ children }: PropsWithChildren) {
         setGroupDetails,
         searchUserTerm,
         setSearchUserTerm,
+        isSearchBarFocused,
+        setIsSearchBarFocused,
         membersList,
         setMembersList,
       }}
@@ -46,5 +51,7 @@ export function useGroup() {
     setMembersList: ctx.setMembersList,
     searchUserTerm: ctx.searchUserTerm,
     setSearchUserTerm: ctx.setSearchUserTerm,
+    isSearchBarFocused: ctx.isSearchBarFocused,
+    setIsSearchBarFocused: ctx.setIsSearchBarFocused,
   }
 }

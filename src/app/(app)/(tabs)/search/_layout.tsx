@@ -4,7 +4,7 @@ import { useGroup } from "@/store/group"
 import { Stack } from "expo-router"
 
 export default function SearchLayout() {
-  const { setSearchUserTerm } = useGroup()
+  const { setSearchUserTerm, setIsSearchBarFocused } = useGroup()
 
   if (isNewIos)
     return (
@@ -19,6 +19,12 @@ export default function SearchLayout() {
               placeholder: translate("searchScreen:searchForUser"),
               onChangeText: ({ nativeEvent }) => {
                 setSearchUserTerm(nativeEvent.text)
+              },
+              onFocus: () => {
+                setIsSearchBarFocused(true)
+              },
+              onBlur: () => {
+                setIsSearchBarFocused(false)
               },
             },
           }}

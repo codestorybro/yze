@@ -18,7 +18,7 @@ export function UserListCard({ user }: Props) {
   return (
     <Animated.View
       entering={ZoomIn.duration(250)}
-      exiting={ZoomOut.duration(250)}
+      exiting={ZoomOut.duration(100)}
       style={themed($wrapper)}
     >
       <SkeletonImage
