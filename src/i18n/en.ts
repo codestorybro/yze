@@ -38,7 +38,6 @@ const en = {
   },
   settingsScreen: {
     darkMode: "Dark mode",
-    selectGroup: "Select group",
     userSettings: "User Settings",
     manageGroup: "Manage Group",
   },

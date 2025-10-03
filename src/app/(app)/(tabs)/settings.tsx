@@ -7,16 +7,11 @@ import { Switch } from "@/components/Toggle/Switch"
 import { useAuth } from "@/store/auth"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
-import { Toggle } from "@/components/Toggle/Toggle"
 
 export default function Settings() {
   const { setThemeContextOverride, themeContext } = useAppTheme()
   const { signOut } = useAuth()
   const { themed } = useAppTheme()
-
-  const onSelectGroup = useCallback(() => {
-    router.push("../group-selector")
-  }, [router])
 
   const toggleTheme = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
@@ -25,8 +20,6 @@ export default function Settings() {
 
   return (
     <LoggedScreenWrapper>
-      <Button tx="settingsScreen:selectGroup" onPress={onSelectGroup} />
-
       <Card
         style={themed($option)}
         HeadingComponent={<Text preset="bold" size="lg" tx="settingsScreen:userSettings" />}

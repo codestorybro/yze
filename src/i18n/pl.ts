@@ -41,7 +41,6 @@ const pl: Translations = {
   },
   settingsScreen: {
     darkMode: "Tryb ciemny",
-    selectGroup: "Wybierz grupę",
     userSettings: "Ustawienia użytkownika",
     manageGroup: "Zarządzaj grupą",
   },
