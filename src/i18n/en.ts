@@ -20,6 +20,7 @@ const en = {
   searchScreen: {
     whoToAppreciate: "Who do you want to appreciate today?",
     noResults: "No Results",
+    suggestion: "Check if the text is correct, or try searching with different phrases",
     searchForUser: "Search for user",
   },
   errorScreen: {

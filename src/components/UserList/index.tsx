@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { ViewStyle, FlatList, View, TextStyle } from "react-native"
+import { ViewStyle, FlatList, TextStyle, ImageStyle } from "react-native"
 import Animated, {
   Easing,
   SlideInLeft,
@@ -10,7 +10,7 @@ import Animated, {
 } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
-import { Card, Text } from "@/components"
+import { Card, SkeletonImage, Text } from "@/components"
 import isNewIos from "@/constants/isNewIos"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
@@ -22,6 +22,8 @@ import { UserListCard } from "./UserListCard"
 type Props = {
   users: UserType[]
 }
+
+const cryFace = require("@assets/images/cry.png")
 
 export const UsersList: React.FC<Props> = ({ users }) => {
   const {
@@ -103,12 +105,17 @@ export const UsersList: React.FC<Props> = ({ users }) => {
             !isNewIos && { marginTop: top * 2.2 },
           ]}
         >
-          <View style={themed($emptyIllustrationPlaceholder)} />
-          <Text preset="heading" style={themed($emptyHeading)} text="Brak rezultatów" />
+          <SkeletonImage
+            source={cryFace}
+            size={128}
+            style={themed($emptyIllustrationPlaceholder)}
+          />
+
+          <Text preset="heading" style={themed($emptyHeading)} tx="searchScreen:noResults" />
           <Text
             preset="subheading"
             style={themed($emptyDescription)}
-            text="Sprawdź czy tekst jest poprawny, lub spróbuj szukać po innych frazach"
+            tx="searchScreen:suggestion"
           />
         </Animated.View>
       }
@@ -131,12 +138,8 @@ const $emptyStateWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   gap: spacing.xs,
 })
 
-const $emptyIllustrationPlaceholder: ThemedStyle<ViewStyle> = ({ spacing, colors }) => ({
-  width: spacing.xxxl,
-  height: spacing.xxxl,
-  borderRadius: spacing.md,
-  backgroundColor: colors.separator,
-  marginBottom: spacing.sm,
+const $emptyIllustrationPlaceholder: ThemedStyle<ImageStyle> = ({ spacing }) => ({
+  marginTop: -spacing.lg,
 })
 
 const $emptyHeading: ThemedStyle<TextStyle> = ({ colors }) => ({
