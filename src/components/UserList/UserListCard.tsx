@@ -1,5 +1,4 @@
-import { ViewStyle } from "react-native"
-import Animated, { ZoomIn, ZoomOut } from "react-native-reanimated"
+import { View, ViewStyle } from "react-native"
 
 import { Text, SkeletonImage } from "@/components"
 import { useAppTheme } from "@/theme/context"
@@ -16,11 +15,7 @@ export function UserListCard({ user }: Props) {
   const { themed } = useAppTheme()
 
   return (
-    <Animated.View
-      entering={ZoomIn.duration(250)}
-      exiting={ZoomOut.duration(100)}
-      style={themed($wrapper)}
-    >
+    <View style={themed($wrapper)}>
       <SkeletonImage
         size={_imageSize}
         source={
@@ -31,7 +26,7 @@ export function UserListCard({ user }: Props) {
         style={{ borderRadius: _imageSize / 2 }}
       />
       <Text>{user.name}</Text>
-    </Animated.View>
+    </View>
   )
 }
 

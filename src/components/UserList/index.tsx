@@ -2,6 +2,8 @@ import React, { useEffect } from "react"
 import { ViewStyle, FlatList, View, TextStyle } from "react-native"
 import Animated, {
   Easing,
+  SlideInLeft,
+  SlideOutLeft,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -45,13 +47,21 @@ export const UsersList: React.FC<Props> = ({ users }) => {
     })
   }, [isSearchBarFocused, iosSearchInset, searchBarInset])
 
-  const animatedFirstItemStyle = useAnimatedStyle(() => {
+  const animatedHeaderSpacerStyle = useAnimatedStyle(() => {
+    if (!isNewIos || showEmptyState) return { height: 0 }
+
+    return {
+      height: searchBarInset.value,
+    }
+  }, [showEmptyState])
+
+  const animatedEmptyStateStyle = useAnimatedStyle(() => {
     if (!isNewIos) return {}
 
     return {
-      marginTop: searchBarInset.value + (showEmptyState ? baseTopInset : 0),
+      marginTop: baseTopInset + searchBarInset.value,
     }
-  }, [showEmptyState, baseTopInset])
+  }, [baseTopInset])
 
   const listContentStyle = showEmptyState ? themed($emptyListContent) : undefined
 
@@ -66,32 +76,29 @@ export const UsersList: React.FC<Props> = ({ users }) => {
       style={{ minHeight: "100%" }}
       contentContainerStyle={listContentStyle}
       scrollEnabled={!showEmptyState}
+      ListHeaderComponent={isNewIos ? <Animated.View style={animatedHeaderSpacerStyle} /> : null}
       renderItem={({ item: u, index: i }) => {
-        const card = (
-          <Card
-            onPress={() => console.log("User pressed!")}
-            style={[
-              themed($cardStyle),
-              !isNewIos && i === 0 && { marginTop: top * 2.2 },
-              !isNewIos &&
-                i === filtered.length - 1 && {
-                  marginBottom: bottom + spacing.xxxl,
-                },
-            ]}
-            ContentComponent={<UserListCard user={u} />}
-          />
+        return (
+          <Animated.View entering={SlideInLeft.duration(250)} exiting={SlideOutLeft.duration(250)}>
+            <Card
+              onPress={() => console.log("User pressed!")}
+              style={[
+                themed($cardStyle),
+                !isNewIos && i === 0 && { marginTop: top * 2.2 },
+                !isNewIos &&
+                  i === filtered.length - 1 && {
+                    marginBottom: bottom + spacing.xxxl,
+                  },
+              ]}
+              ContentComponent={<UserListCard user={u} />}
+            />
+          </Animated.View>
         )
-
-        if (isNewIos && i === 0) {
-          return <Animated.View style={animatedFirstItemStyle}>{card}</Animated.View>
-        }
-
-        return card
       }}
       ListEmptyComponent={
         <Animated.View
           style={[
-            animatedFirstItemStyle,
+            animatedEmptyStateStyle,
             themed($emptyStateWrapper),
             !isNewIos && { marginTop: top * 2.2 },
           ]}
