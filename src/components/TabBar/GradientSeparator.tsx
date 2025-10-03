@@ -3,6 +3,7 @@ import { View, StyleProp, ViewStyle, StyleSheet } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { useAppTheme } from "@/theme/context"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { useGroup } from "@/store/group"
 
 type Props = {
   children: React.ReactNode
@@ -14,15 +15,16 @@ export function GradientSeparator({ children, style }: Props) {
     theme: { colors },
   } = useAppTheme()
   const { top } = useSafeAreaInsets()
+  const { isSearchBarFocused } = useGroup()
 
   return (
     <View style={style}>
       <LinearGradient
         pointerEvents="none"
         colors={[colors.mainBackground, colors.mainBackground, colors.transparent]}
-        style={[styles.fade, { top: 0, height: top * 2.3 }]}
+        style={[styles.fade, { top: isSearchBarFocused ? -top : 0, height: top * 2.3 }]}
       />
-      {children}
+      {!isSearchBarFocused && children}
     </View>
   )
 }
