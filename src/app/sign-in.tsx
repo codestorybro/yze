@@ -98,7 +98,7 @@ export default function SignIn() {
         <AnimatedSvgIcon
           ref={logoIconRef}
           pathData={SvgIconPaths.logo}
-          color={colors.textReversed}
+          color={colors.mainBackground}
           size={128}
           slow
         />
