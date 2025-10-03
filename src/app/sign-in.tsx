@@ -67,7 +67,7 @@ export default function SignIn() {
   const onSubmit = async (data: FormData) => {
     withKeyboardDismiss(() => {
       signIn(data.email, data.password)
-      router.replace("/group-selector")
+      router.replace("/(app)/(tabs)")
     })
   }
 
