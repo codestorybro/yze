@@ -46,7 +46,7 @@ export const SkeletonImage: React.FC<SkeletonImageProps> = ({
   const skeletonColor = themeContext === "dark" ? "#3A3D4A" : "#E0E0E0"
 
   return (
-  <View style={[styles.container, { maxHeight: size, maxWidth: size }]}> 
+    <View style={[styles.container, { maxHeight: size, maxWidth: size }]}>
       {loading && (
         <Animated.View
           style={[
