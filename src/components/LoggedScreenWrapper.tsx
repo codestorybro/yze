@@ -37,7 +37,7 @@ export function LoggedScreenWrapper({
       <LinearGradient
         pointerEvents="none"
         colors={[colors.mainBackground, colors.transparent]}
-        style={[styles.fade, { top: 0, height: spacing.xxxl - spacing.xxs }]}
+        style={[styles.fade, { top: 0, height: spacing.xxxl }]}
       />
 
       <LinearGradient

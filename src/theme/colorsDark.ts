@@ -15,7 +15,7 @@ export const colors = {
 
   touchHighlight: "#2c2c2e",
 
-  border: "#272B3C",
+  border: "#38383B",
 
   error: "#D32F2F",
 
