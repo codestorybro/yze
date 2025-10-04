@@ -58,7 +58,6 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
             onPress={onPress}
             routeName={route.name}
             isFocused={isFocused}
-            color={isFocused ? colors.primary : colors.text}
             label={label}
           />
         )

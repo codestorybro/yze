@@ -1,4 +1,4 @@
-import { ComponentType } from "react"
+import { ComponentType, useCallback, useEffect, useMemo, useState } from "react"
 import {
   Pressable,
   PressableProps,
@@ -7,6 +7,7 @@ import {
   TextStyle,
   ViewStyle,
 } from "react-native"
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated"
 
 import { useAppTheme } from "@/theme/context"
 import { $styles } from "@/theme/styles"
@@ -14,7 +15,9 @@ import type { ThemedStyle, ThemedStyleArray } from "@/theme/types"
 
 import { Text, TextProps } from "./Text"
 
-type Presets = "default" | "error" | "reverse" | "no-border" | "floating"
+type Presets = "default" | "error" | "reverse" | "navigation" | "floating"
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 export interface ButtonAccessoryProps {
   style: StyleProp<any>
@@ -83,6 +86,10 @@ export interface ButtonProps extends PressableProps {
    * An optional style override for the disabled state
    */
   disabledStyle?: StyleProp<ViewStyle>
+  /**
+   * Disable the press scale animation when set to true.
+   */
+  disableAnimation?: boolean
 }
 
 /**
@@ -114,12 +121,109 @@ export function Button(props: ButtonProps) {
     LeftAccessory,
     disabled,
     disabledStyle: $disabledViewStyleOverride,
+    disableAnimation = false,
+    onPressIn,
+    onPressOut,
+    onHoverIn,
+    onHoverOut,
+    onFocus,
+    onBlur,
     ...rest
   } = props
 
-  const { themed } = useAppTheme()
-
   const preset: Presets = props.preset ?? "default"
+  const { themed } = useAppTheme()
+  const [isPressed, setIsPressed] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
+  const scale = useSharedValue(1)
+  const animationDisabled = disableAnimation || !!disabled
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }))
+
+  useEffect(() => {
+    if (animationDisabled) {
+      scale.value = 1
+    }
+  }, [animationDisabled, scale])
+
+  useEffect(() => {
+    if (disabled) {
+      setIsPressed(false)
+      setIsHovered(false)
+      setIsFocused(false)
+    }
+  }, [disabled])
+
+  const handlePressIn = useCallback<NonNullable<PressableProps["onPressIn"]>>(
+    (event) => {
+      if (!animationDisabled) {
+        scale.value = withSpring(1.06, { damping: 100, stiffness: 1000 })
+      }
+      setIsPressed(true)
+      onPressIn?.(event)
+    },
+    [animationDisabled, onPressIn, scale],
+  )
+
+  const handlePressOut = useCallback<NonNullable<PressableProps["onPressOut"]>>(
+    (event) => {
+      if (!animationDisabled) {
+        scale.value = withSpring(1, { damping: 100, stiffness: 1000 })
+      }
+      setIsPressed(false)
+      onPressOut?.(event)
+    },
+    [animationDisabled, onPressOut, scale],
+  )
+
+  const handleHoverIn = useCallback<NonNullable<PressableProps["onHoverIn"]>>(
+    (event) => {
+      setIsHovered(true)
+      onHoverIn?.(event)
+    },
+    [onHoverIn],
+  )
+
+  const handleHoverOut = useCallback<NonNullable<PressableProps["onHoverOut"]>>(
+    (event) => {
+      setIsHovered(false)
+      onHoverOut?.(event)
+    },
+    [onHoverOut],
+  )
+
+  const handleFocus = useCallback<NonNullable<PressableProps["onFocus"]>>(
+    (event) => {
+      setIsFocused(true)
+      onFocus?.(event)
+    },
+    [onFocus],
+  )
+
+  const handleBlur = useCallback<NonNullable<PressableProps["onBlur"]>>(
+    (event) => {
+      setIsFocused(false)
+      onBlur?.(event)
+    },
+    [onBlur],
+  )
+
+  const pressableState = useMemo<PressableStateCallbackType>(
+    () => ({ pressed: isPressed, hovered: isHovered, focused: isFocused }),
+    [isFocused, isHovered, isPressed],
+  )
+
+  const baseViewStyle = useMemo(() => $viewStyle(pressableState), [pressableState])
+  const baseViewStyleArray = useMemo(
+    () => (Array.isArray(baseViewStyle) ? baseViewStyle : [baseViewStyle]),
+    [baseViewStyle],
+  )
+  const finalViewStyle = animationDisabled
+    ? baseViewStyleArray
+    : [...baseViewStyleArray, animatedStyle]
+  const textStateStyle = useMemo(() => $textStyle(pressableState), [pressableState])
   /**
    * @param {PressableStateCallbackType} root0 - The root object containing the pressed state.
    * @param {boolean} root0.pressed - The pressed state.
@@ -148,33 +252,39 @@ export function Button(props: ButtonProps) {
   }
 
   return (
-    <Pressable
-      style={$viewStyle}
+    <AnimatedPressable
+      style={finalViewStyle}
       accessibilityRole="button"
       accessibilityState={{ disabled: !!disabled }}
       {...rest}
       disabled={disabled}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      onHoverIn={handleHoverIn}
+      onHoverOut={handleHoverOut}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
     >
-      {(state) => (
-        <>
-          {!!LeftAccessory && (
-            <LeftAccessory style={$leftAccessoryStyle} pressableState={state} disabled={disabled} />
-          )}
-
-          <Text tx={tx} text={text} txOptions={txOptions} style={$textStyle(state)}>
-            {children}
-          </Text>
-
-          {!!RightAccessory && (
-            <RightAccessory
-              style={$rightAccessoryStyle}
-              pressableState={state}
-              disabled={disabled}
-            />
-          )}
-        </>
+      {!!LeftAccessory && (
+        <LeftAccessory
+          style={$leftAccessoryStyle}
+          pressableState={pressableState}
+          disabled={disabled}
+        />
       )}
-    </Pressable>
+
+      <Text tx={tx} text={text} txOptions={txOptions} style={textStateStyle}>
+        {children}
+      </Text>
+
+      {!!RightAccessory && (
+        <RightAccessory
+          style={$rightAccessoryStyle}
+          pressableState={pressableState}
+          disabled={disabled}
+        />
+      )}
+    </AnimatedPressable>
   )
 }
 
@@ -209,15 +319,15 @@ const $leftAccessoryStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 })
 
 const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
-  "default": [
+  default: [
     $styles.row,
     $baseViewStyle,
     ({ colors }) => ({
       backgroundColor: colors.primary,
     }),
   ],
-  "error": [$styles.row, $baseViewStyle, ({ colors }) => ({ backgroundColor: colors.error })],
-  "reverse": [
+  error: [$styles.row, $baseViewStyle, ({ colors }) => ({ backgroundColor: colors.error })],
+  reverse: [
     $styles.row,
     $baseViewStyle,
     ({ colors }) => ({
@@ -226,14 +336,14 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
       borderWidth: 1,
     }),
   ],
-  "no-border": [
+  navigation: [
     $styles.row,
     $baseViewStyle,
     ({ colors }) => ({
       backgroundColor: colors.transparent,
     }),
   ],
-  "floating": [
+  floating: [
     $styles.row,
     $baseViewStyle,
     ({ colors }) => ({
@@ -246,44 +356,44 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
 }
 
 const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
-  "default": [$baseTextStyle],
-  "error": [$baseTextStyle],
-  "reverse": [$baseTextStyle, ({ colors }) => ({ color: colors.primary })],
-  "no-border": [$baseTextStyle, ({ colors }) => ({ color: colors.primary })],
-  "floating": [$baseTextStyle, ({ colors }) => ({ color: colors.text })],
+  default: [$baseTextStyle],
+  error: [$baseTextStyle],
+  reverse: [$baseTextStyle, ({ colors }) => ({ color: colors.primary })],
+  navigation: [$baseTextStyle, ({ colors }) => ({ color: colors.primary })],
+  floating: [$baseTextStyle, ({ colors }) => ({ color: colors.text })],
 }
 
 const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
-  "default": ({ colors }) => ({ backgroundColor: colors.primaryPressed }),
-  "error": ({ colors }) => ({ backgroundColor: colors.errorPressed }),
-  "reverse": ({ colors }) => ({ backgroundColor: colors.transparentPressed }),
-  "no-border": ({ colors }) => ({ backgroundColor: colors.transparentPressed }),
-  "floating": ({ colors }) => ({ backgroundColor: colors.floatingButtonPressed }),
+  default: ({ colors }) => ({ backgroundColor: colors.primaryPressed }),
+  error: ({ colors }) => ({ backgroundColor: colors.errorPressed }),
+  reverse: ({ colors }) => ({ backgroundColor: colors.transparentPressed }),
+  navigation: ({}) => ({}),
+  floating: ({ colors }) => ({ backgroundColor: colors.floatingButtonPressed }),
 }
 
 const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
-  "default": () => ({ opacity: 0.9 }),
-  "error": () => ({ opacity: 0.9 }),
-  "reverse": () => ({ opacity: 0.9 }),
-  "no-border": () => ({ opacity: 0.9 }),
-  "floating": () => ({ opacity: 0.9 }),
+  default: () => ({ opacity: 0.9 }),
+  error: () => ({ opacity: 0.9 }),
+  reverse: () => ({ opacity: 0.9 }),
+  navigation: ({ colors }) => ({ opacity: 0.9, color: colors.primary }),
+  floating: () => ({ opacity: 0.9 }),
 }
 
 const $disabledViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
-  "default": ({ colors }) => ({ backgroundColor: colors.disabled }),
-  "error": ({ colors }) => ({ backgroundColor: colors.disabled }),
-  "reverse": ({ colors }) => ({
+  default: ({ colors }) => ({ backgroundColor: colors.disabled }),
+  error: ({ colors }) => ({ backgroundColor: colors.disabled }),
+  reverse: ({ colors }) => ({
     borderColor: colors.disabled,
     backgroundColor: colors.transparentPressed,
   }),
-  "no-border": ({ colors }) => ({ backgroundColor: colors.transparent }),
-  "floating": ({ colors }) => ({ backgroundColor: colors.disabled }),
+  navigation: ({ colors }) => ({ backgroundColor: colors.transparent }),
+  floating: ({ colors }) => ({ backgroundColor: colors.disabled }),
 }
 
 const $disabledTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
-  "default": ({ colors }) => ({ color: colors.textDim }),
-  "error": ({ colors }) => ({ color: colors.textDim }),
-  "reverse": ({ colors }) => ({ color: colors.textDim }),
-  "no-border": ({ colors }) => ({ color: colors.disabled }),
-  "floating": ({ colors }) => ({ color: colors.textDim }),
+  default: ({ colors }) => ({ color: colors.textDim }),
+  error: ({ colors }) => ({ color: colors.textDim }),
+  reverse: ({ colors }) => ({ color: colors.textDim }),
+  navigation: ({ colors }) => ({ color: colors.disabled }),
+  floating: ({ colors }) => ({ color: colors.textDim }),
 }

@@ -11,25 +11,22 @@ import { Button } from "@/components"
 type TabBarButtonProps = Omit<ComponentProps<typeof Button>, "children"> & {
   label: string
   routeName: string
-  color: string
   isFocused?: boolean
   href?: string
 }
 
-export function TabBarButton({ routeName, color, label, isFocused, ...props }: TabBarButtonProps) {
+export function TabBarButton({ routeName, label, isFocused, ...props }: TabBarButtonProps) {
   const {
     themed,
     theme: { colors },
   } = useAppTheme()
   const [isPressed, setIsPressed] = useState(false)
-
-  const active = isFocused
-  const localColor = isFocused || isPressed ? color : active ? colors.primary : colors.text
+  const localColor = isFocused || isPressed ? colors.primary : colors.text
 
   return (
     <Button
-      preset="no-border"
-      style={[themed($tabBarItem), isFocused && { backgroundColor: colors.transparentPressed }]}
+      preset="navigation"
+      style={themed($tabBarItem)}
       onPressIn={() => setIsPressed(true)}
       onPressOut={() => setIsPressed(false)}
       {...props}
