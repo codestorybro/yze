@@ -98,7 +98,7 @@ export default function SignIn() {
         <AnimatedSvgIcon
           ref={logoIconRef}
           pathData={SvgIconPaths.logo}
-          color={colors.mainBackground}
+          color={colors.background}
           size={128}
           slow
         />
@@ -112,7 +112,11 @@ export default function SignIn() {
       </View>
 
       <View onStartShouldSetResponder={() => true} onResponderRelease={Keyboard.dismiss}>
-        <KeyboardResponsiveView style={themed($formContainer)} keyboardOffset={spacing.xxs}>
+        <KeyboardResponsiveView
+          style={themed($formContainer)}
+          keyboardOffset={spacing.xxs}
+          extraShift={-50}
+        >
           <Controller
             name="email"
             control={control}
