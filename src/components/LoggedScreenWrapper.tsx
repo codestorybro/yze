@@ -6,7 +6,6 @@ import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 
 import { Screen, ScreenProps } from "./Screen"
-import isNewIos from "@/constants/isNewIos"
 
 export function LoggedScreenWrapper({
   contentContainerStyle,
@@ -27,8 +26,7 @@ export function LoggedScreenWrapper({
         contentContainerStyle={[
           themed($container),
           preset !== "fixed" && { paddingBottom: spacing.lg },
-          preset !== "fixed" &&
-            !isNewIos && { paddingTop: top, paddingBottom: bottom + spacing.xxxxl },
+          preset !== "fixed" && { paddingTop: top, paddingBottom: bottom + spacing.xxxxl },
           contentContainerStyle,
         ]}
         {...props}
@@ -45,7 +43,7 @@ export function LoggedScreenWrapper({
       <LinearGradient
         pointerEvents="none"
         colors={[colors.transparent, colors.mainBackground]}
-        style={[styles.fade, { bottom: 0, height: spacing.xxxl + spacing.md }]}
+        style={[styles.fade, { bottom: 0, height: spacing.xxxxl * 1.3 }]}
       />
     </View>
   )

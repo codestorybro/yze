@@ -10,7 +10,6 @@ import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
 import { GradientSeparator } from "@/components/TabBar/GradientSeparator"
-import isNewIos from "@/constants/isNewIos"
 import { router } from "expo-router"
 
 const mockedUsers = [
@@ -124,19 +123,17 @@ export default function Voting() {
         <UsersList users={membersList} />
       </LoggedScreenWrapper>
 
-      {!isNewIos && (
-        <KeyboardResponsiveView
-          style={[themed($actionContentWrapper), { bottom }]}
-          extraShift={spacing.lg}
-        >
-          <Button preset="floating" onPress={() => router.back()}>
-            <SvgIcon pathData={SvgIconPaths.index} color={colors.text} />
-          </Button>
-          <View style={themed($searchBarWrapper)}>
-            <UserSearchBar />
-          </View>
-        </KeyboardResponsiveView>
-      )}
+      <KeyboardResponsiveView
+        style={[themed($actionContentWrapper), { bottom }]}
+        extraShift={spacing.lg}
+      >
+        <Button preset="floating" onPress={() => router.back()}>
+          <SvgIcon pathData={SvgIconPaths.index} color={colors.text} />
+        </Button>
+        <View style={themed($searchBarWrapper)}>
+          <UserSearchBar />
+        </View>
+      </KeyboardResponsiveView>
     </View>
   )
 }
