@@ -1,4 +1,4 @@
-import { ComponentType, useCallback, useEffect, useMemo, useState } from "react"
+import { ComponentType, useCallback, useEffect, useState } from "react"
 import {
   Pressable,
   PressableProps,
@@ -210,20 +210,18 @@ export function Button(props: ButtonProps) {
     [onBlur],
   )
 
-  const pressableState = useMemo<PressableStateCallbackType>(
-    () => ({ pressed: isPressed, hovered: isHovered, focused: isFocused }),
-    [isFocused, isHovered, isPressed],
-  )
+  const pressableState = {
+    pressed: isPressed,
+    hovered: isHovered,
+    focused: isFocused,
+  } as PressableStateCallbackType & { hovered: boolean; focused: boolean }
 
-  const baseViewStyle = useMemo(() => $viewStyle(pressableState), [pressableState])
-  const baseViewStyleArray = useMemo(
-    () => (Array.isArray(baseViewStyle) ? baseViewStyle : [baseViewStyle]),
-    [baseViewStyle],
-  )
+  const baseViewStyle = $viewStyle(pressableState)
+  const baseViewStyleArray = Array.isArray(baseViewStyle) ? baseViewStyle : [baseViewStyle]
   const finalViewStyle = animationDisabled
     ? baseViewStyleArray
     : [...baseViewStyleArray, animatedStyle]
-  const textStateStyle = useMemo(() => $textStyle(pressableState), [pressableState])
+  const textStateStyle = $textStyle(pressableState)
   /**
    * @param {PressableStateCallbackType} root0 - The root object containing the pressed state.
    * @param {boolean} root0.pressed - The pressed state.
