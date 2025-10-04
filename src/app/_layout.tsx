@@ -15,6 +15,7 @@ import { ThemeProvider } from "@/theme/context"
 import { customFontsToLoad } from "@/theme/typography"
 import { loadDateFnsLocale } from "@/utils/formatDate"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
+import { ModalProvider } from "@/store/modal"
 
 const queryClient = new QueryClient()
 
@@ -56,18 +57,20 @@ export default function Root() {
                 <GroupStoreProvider>
                   <BottomSheetProvider>
                     <AttributesProvider>
-                      {appIsReady ? (
-                        <>
-                          <Slot />
-                          {showSplash && (
-                            <AnimatedBootSplash
-                              onAnimationEnd={() => {
-                                setShowSplash(false)
-                              }}
-                            />
-                          )}
-                        </>
-                      ) : null}
+                      <ModalProvider>
+                        {appIsReady ? (
+                          <>
+                            <Slot />
+                            {showSplash && (
+                              <AnimatedBootSplash
+                                onAnimationEnd={() => {
+                                  setShowSplash(false)
+                                }}
+                              />
+                            )}
+                          </>
+                        ) : null}
+                      </ModalProvider>
                     </AttributesProvider>
                   </BottomSheetProvider>
                 </GroupStoreProvider>

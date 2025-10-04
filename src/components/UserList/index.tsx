@@ -10,6 +10,7 @@ import { useGroup } from "@/store/group"
 import { UserType } from "@/types/userType"
 
 import { UserListCard } from "./UserListCard"
+import { useModal } from "@/store/modal"
 
 type Props = {
   users: UserType[]
@@ -23,6 +24,7 @@ export const UsersList: React.FC<Props> = ({ users }) => {
     theme: { spacing },
   } = useAppTheme()
   const { searchUserTerm } = useGroup()
+  const { openModal } = useModal()
   const { bottom, top } = useSafeAreaInsets()
 
   const filtered = users.filter((user) => user.name.includes(searchUserTerm))
@@ -45,7 +47,15 @@ export const UsersList: React.FC<Props> = ({ users }) => {
         return (
           <Animated.View entering={SlideInLeft.duration(250)} exiting={SlideOutLeft.duration(250)}>
             <Card
-              onPress={() => console.log("User pressed!")}
+              onPress={() => {
+                openModal({
+                  title: u.name,
+                  description: "You have selected this user.",
+                  onConfirmPress: () => {
+                    console.log("User pressed!")
+                  },
+                })
+              }}
               style={[
                 themed($cardStyle),
                 i === 0 && { marginTop: top * 2.2 },
