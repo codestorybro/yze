@@ -3,4 +3,5 @@ export type UserType = {
   name: string
   email?: string
   avatarUri?: string
+  dominantArchetypeId?: string
 }

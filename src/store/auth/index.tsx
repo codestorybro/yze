@@ -20,6 +20,7 @@ const fakeUser: UserType = {
   email: "example@example.com",
   name: "John Doe",
   avatarUri: "https://i.pravatar.cc/150?img=3",
+  dominantArchetypeId: "flash",
 }
 
 export function AuthProvider({ children }: PropsWithChildren) {
