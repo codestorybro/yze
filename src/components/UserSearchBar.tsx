@@ -5,6 +5,7 @@ import { PressableIcon, TextField, TextFieldAccessoryProps } from "@/components"
 import { useGroup } from "@/store/group"
 import { useAppTheme } from "@/theme/context"
 import { translate } from "@/i18n/translate"
+import { ThemedStyle } from "@/theme/types"
 
 export function UserSearchBar() {
   const { searchUserTerm, setSearchUserTerm } = useGroup()
@@ -31,6 +32,7 @@ export function UserSearchBar() {
 
   return (
     <TextField
+      inputWrapperStyle={themed($inputStyle)}
       placeholder={translate("searchScreen:searchForUser")}
       value={searchUserTerm}
       onChangeText={setSearchUserTerm}
@@ -38,3 +40,7 @@ export function UserSearchBar() {
     />
   )
 }
+
+const $inputStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  paddingVertical: spacing.xxs,
+})

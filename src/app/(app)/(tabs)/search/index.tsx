@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { View, ViewStyle, StyleSheet } from "react-native"
+import { View, ViewStyle, StyleSheet, Platform } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { Button, KeyboardResponsiveView, LoggedScreenWrapper, SvgIcon, Text } from "@/components"
@@ -135,9 +135,9 @@ export default function Voting() {
 
       <KeyboardResponsiveView
         style={[themed($actionContentWrapper), { bottom }]}
-        extraShift={spacing.lg}
+        extraShift={Platform.OS === "ios" ? spacing.xxs : spacing.xl}
       >
-        <Button preset="floating" onPress={() => router.back()}>
+        <Button preset="floating" onPress={() => router.back()} style={{ height: 62, width: 62 }}>
           <SvgIcon pathData={SvgIconPaths.index} color={colors.text} />
         </Button>
         <View style={themed($searchBarWrapper)}>
