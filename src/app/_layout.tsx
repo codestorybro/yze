@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { Slot } from "expo-router"
 import { useFonts } from "@expo-google-fonts/space-grotesk"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { KeyboardProvider } from "react-native-keyboard-controller"
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 
@@ -16,8 +15,6 @@ import { customFontsToLoad } from "@/theme/typography"
 import { loadDateFnsLocale } from "@/utils/formatDate"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { ModalProvider } from "@/store/modal"
-
-const queryClient = new QueryClient()
 
 if (__DEV__) {
   require("src/devtools/ReactotronConfig.ts")
@@ -49,36 +46,34 @@ export default function Root() {
 
   return (
     <GestureHandlerRootView>
-      <QueryClientProvider client={queryClient}>
-        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-          <ThemeProvider>
-            <KeyboardProvider>
-              <AuthProvider>
-                <GroupStoreProvider>
-                  <BottomSheetProvider>
-                    <AttributesProvider>
-                      <ModalProvider>
-                        {appIsReady ? (
-                          <>
-                            <Slot />
-                            {showSplash && (
-                              <AnimatedBootSplash
-                                onAnimationEnd={() => {
-                                  setShowSplash(false)
-                                }}
-                              />
-                            )}
-                          </>
-                        ) : null}
-                      </ModalProvider>
-                    </AttributesProvider>
-                  </BottomSheetProvider>
-                </GroupStoreProvider>
-              </AuthProvider>
-            </KeyboardProvider>
-          </ThemeProvider>
-        </SafeAreaProvider>
-      </QueryClientProvider>
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+        <ThemeProvider>
+          <KeyboardProvider>
+            <AuthProvider>
+              <GroupStoreProvider>
+                <BottomSheetProvider>
+                  <AttributesProvider>
+                    <ModalProvider>
+                      {appIsReady ? (
+                        <>
+                          <Slot />
+                          {showSplash && (
+                            <AnimatedBootSplash
+                              onAnimationEnd={() => {
+                                setShowSplash(false)
+                              }}
+                            />
+                          )}
+                        </>
+                      ) : null}
+                    </ModalProvider>
+                  </AttributesProvider>
+                </BottomSheetProvider>
+              </GroupStoreProvider>
+            </AuthProvider>
+          </KeyboardProvider>
+        </ThemeProvider>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   )
 }
