@@ -20,13 +20,13 @@ import { useUser } from "@/store/auth"
 import { useAttributes } from "@/store/attributes"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
-import { AttributesView } from "@/utils/fetchAttributes"
+import { AttributesViewType } from "@/types/attributesViewType"
 
 const _avatarSize = 150
 
 type PeriodOption = {
   labelTx: TxKeyPath
-  value: AttributesView
+  value: AttributesViewType
 }
 
 const createArrowAccessory = (direction: "left" | "right") =>
@@ -51,7 +51,7 @@ export default function Index() {
   const { normalizedAttributes, refreshAttributes } = useAttributes()
   const { t, i18n } = useTranslation()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [selectedView, setSelectedView] = useState<AttributesView>("overall")
+  const [selectedView, setSelectedView] = useState<AttributesViewType>("overall")
   const [periodOffset, setPeriodOffset] = useState(0)
   const avatarUri = user?.avatarUri
     ? { uri: user.avatarUri }
@@ -135,7 +135,7 @@ export default function Index() {
     refreshAttributes({ view: selectedView, offset: periodOffset })
   }, [periodOffset, refreshAttributes, selectedView])
 
-  const handleSelectView = useCallback((value: AttributesView) => {
+  const handleSelectView = useCallback((value: AttributesViewType) => {
     setSelectedView(value)
     setPeriodOffset(0)
     setIsDropdownOpen(false)

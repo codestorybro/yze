@@ -10,7 +10,7 @@ import {
 
 import { useUser } from "@/store/auth"
 import { AttributeType } from "@/types/attributeType"
-import { fetchAttributes, FetchAttributesParams } from "@/utils/fetchAttributes"
+import { fetchAttributes, FetchAttributesParams } from "@/utils/fetchAttributesMock"
 import { NormalizedAttribute, useNormalizeAttributes } from "@/utils/useNormalizeAttributes"
 
 export type AttributesContextType = {
