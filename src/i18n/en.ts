@@ -41,6 +41,22 @@ const en = {
     userSettings: "User Settings",
     manageGroup: "Manage Group",
   },
+  homeScreen: {
+    periodSelector: {
+      weekly: "Weekly view",
+      monthly: "Monthly view",
+      yearly: "Yearly view",
+      overall: "All time",
+      range: {
+        overall: "All time",
+        weekCurrent: "Current week",
+        monthCurrent: "Current month",
+        yearCurrent: "Current year",
+        navigatePrevious: "Go to previous period",
+        navigateNext: "Go to next period",
+      },
+    },
+  },
   attributes: {
     detailsPlaceholder: "Detailed information about the {{attributeName}} attribute goes here.",
   },

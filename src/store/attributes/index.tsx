@@ -10,14 +10,14 @@ import {
 
 import { useUser } from "@/store/auth"
 import { AttributeType } from "@/types/attributeType"
-import { fetchAttributes } from "@/utils/fetchAttributes"
+import { fetchAttributes, FetchAttributesParams } from "@/utils/fetchAttributes"
 import { NormalizedAttribute, useNormalizeAttributes } from "@/utils/useNormalizeAttributes"
 
 export type AttributesContextType = {
   attributes: AttributeType[]
   normalizedAttributes: NormalizedAttribute[]
   isLoading: boolean
-  refreshAttributes: () => Promise<void>
+  refreshAttributes: (params?: FetchAttributesParams) => Promise<void>
 }
 
 const AttributesContext = createContext<AttributesContextType | null>(null)
@@ -28,24 +28,27 @@ export function AttributesProvider({ children }: PropsWithChildren) {
   const [isLoading, setIsLoading] = useState(false)
   const normalizedAttributes = useNormalizeAttributes(attributes)
 
-  const refreshAttributes = useCallback(async () => {
-    if (!user) {
-      setAttributes([])
-      setIsLoading(false)
-      return
-    }
+  const refreshAttributes = useCallback(
+    async (params?: FetchAttributesParams) => {
+      if (!user) {
+        setAttributes([])
+        setIsLoading(false)
+        return
+      }
 
-    setIsLoading(true)
-    try {
-      const data = await fetchAttributes()
-      setAttributes(data)
-    } catch (error) {
-      console.error("Failed to fetch attributes", error)
-      setAttributes([])
-    } finally {
-      setIsLoading(false)
-    }
-  }, [user])
+      setIsLoading(true)
+      try {
+        const data = await fetchAttributes(params)
+        setAttributes(data)
+      } catch (error) {
+        console.error("Failed to fetch attributes", error)
+        setAttributes([])
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [user],
+  )
 
   useEffect(() => {
     refreshAttributes()

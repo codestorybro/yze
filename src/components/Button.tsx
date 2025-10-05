@@ -343,12 +343,24 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
   ],
   floating: [
     $styles.row,
-    $baseViewStyle,
-    ({ colors }) => ({
-      backgroundColor: colors.background,
+    ({ colors, spacing }) => ({
+      alignItems: "center",
+      justifyContent: "center",
+      width: spacing.xl,
+      height: spacing.xl,
+      minWidth: spacing.xl,
+      minHeight: spacing.xl,
+      borderRadius: spacing.xl,
+      backgroundColor: colors.cardBackground,
       borderWidth: 1,
       borderColor: colors.border,
-      boxShadow: `0px 0px 12px ${colors.shadow}`,
+      paddingHorizontal: 0,
+      paddingVertical: 0,
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.12,
+      shadowOffset: { width: 0, height: 4 },
+      shadowRadius: 12,
+      elevation: 2,
     }),
   ],
 }
@@ -385,7 +397,7 @@ const $disabledViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
     backgroundColor: colors.transparentPressed,
   }),
   navigation: ({ colors }) => ({ backgroundColor: colors.transparent }),
-  floating: ({ colors }) => ({ backgroundColor: colors.disabled }),
+  floating: () => ({ opacity: 0.35 }),
 }
 
 const $disabledTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {

@@ -1,6 +1,5 @@
 import { ReactNode, useCallback, useMemo } from "react"
 import { View } from "react-native"
-import { useSharedValue } from "react-native-reanimated"
 
 import { SingleAttribute, SvgIcon, Text } from "@/components"
 import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
@@ -20,7 +19,6 @@ export const useNormalizeAttributes = (attributes: AttributeType[]) => {
     theme: { colors },
   } = useAppTheme()
   const { openSheet } = useBottomSheet()
-  const anim = useSharedValue(0)
   const {
     attributeArrowRight,
     attributeBuddy,
@@ -76,7 +74,7 @@ export const useNormalizeAttributes = (attributes: AttributeType[]) => {
 
   return useMemo<NormalizedAttribute[]>(
     () =>
-      attributes.map((singleAttribute, index) => {
+      attributes.map((singleAttribute) => {
         const color = selectColorBasedOnAttribute(singleAttribute.id)
 
         return {
@@ -88,16 +86,7 @@ export const useNormalizeAttributes = (attributes: AttributeType[]) => {
               <SingleAttribute
                 color={color}
                 attribute={{ ...singleAttribute }}
-                index={index}
-                anim={anim}
                 maxScore={maxScore}
-                onFinish={
-                  index === attributes.length - 1
-                    ? () => {
-                        anim.value = 1
-                      }
-                    : null
-                }
               />
               <SvgIcon pathData={SvgIconPaths.right_arrow} size={16} color={attributeArrowRight} />
             </View>
@@ -105,6 +94,6 @@ export const useNormalizeAttributes = (attributes: AttributeType[]) => {
           onPress: () => handleOnPress(singleAttribute),
         }
       }),
-    [anim, attributeArrowRight, attributes, handleOnPress, maxScore, selectColorBasedOnAttribute],
+    [attributeArrowRight, attributes, handleOnPress, maxScore, selectColorBasedOnAttribute],
   )
 }

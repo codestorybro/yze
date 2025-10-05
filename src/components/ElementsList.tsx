@@ -3,8 +3,6 @@ import { View, StyleSheet, ViewStyle, Pressable } from "react-native"
 import { Card, SvgIcon } from "@/components"
 import { ThemedStyle } from "@/theme/types"
 import { useAppTheme } from "@/theme/context"
-import Animated, { FadeInUp, useSharedValue } from "react-native-reanimated"
-import { scheduleOnRN } from "react-native-worklets"
 import { SvgIconPaths } from "./SvgIcon/svgsPaths"
 
 type SingleElementProps = {
@@ -12,12 +10,10 @@ type SingleElementProps = {
   onPress?: () => void
   content: ReactNode
   isLastElement?: boolean
-  onFinish?: (() => void) | null
   index: number
   svgIconColor?: string
 }
 
-const _stagger = 150
 const _iconSize = 32
 
 const ElementsItem: React.FC<SingleElementProps> = ({
@@ -26,7 +22,6 @@ const ElementsItem: React.FC<SingleElementProps> = ({
   isLastElement,
   onPress,
   index,
-  onFinish,
   svgIconColor,
 }) => {
   const {
@@ -47,23 +42,12 @@ const ElementsItem: React.FC<SingleElementProps> = ({
       ]}
     >
       <View style={styles.itemContainer}>
-        <Animated.View
-          style={styles.row}
-          entering={FadeInUp.delay(_stagger * index)
-            .springify()
-            .damping(80)
-            .stiffness(200)
-            .withCallback((finished) => {
-              if (finished && onFinish) {
-                scheduleOnRN(onFinish)
-              }
-            })}
-        >
+        <View style={styles.row}>
           <View style={themed($iconWrapper)}>
             <SvgIcon pathData={SvgIconPaths[svgIconPath]} size={_iconSize} color={svgIconColor} />
           </View>
           <View style={styles.contentWrapper}>{content}</View>
-        </Animated.View>
+        </View>
 
         {!isLastElement && (
           <View style={themed($separatorContainer)}>
@@ -86,8 +70,6 @@ type Props = {
 }
 
 export const ElementsList: React.FC<Props> = ({ items }) => {
-  const _anim = useSharedValue(0)
-
   return (
     <Card
       style={styles.cardContainer}
@@ -102,13 +84,6 @@ export const ElementsList: React.FC<Props> = ({ items }) => {
               content={item.content}
               onPress={item.onPress}
               svgIconColor={item.svgIconColor}
-              onFinish={
-                i === items.length - 1
-                  ? () => {
-                      _anim.value = 1
-                    }
-                  : null
-              }
             />
           ))}
         </>

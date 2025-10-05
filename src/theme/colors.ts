@@ -36,7 +36,7 @@ export const colors = {
 
   cardBackground: "#FFFFFF",
   inputBackground: "#FFFFFF",
-  tabBarBackground: "#F2F1F6",
+  tabBarBackground: "#FFFFFF",
   textReversed: "#F2F1F6",
   background: "#FFFFFF",
 

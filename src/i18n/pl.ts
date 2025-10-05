@@ -44,6 +44,22 @@ const pl: Translations = {
     userSettings: "Ustawienia użytkownika",
     manageGroup: "Zarządzaj grupą",
   },
+  homeScreen: {
+    periodSelector: {
+      weekly: "Widok tygodniowy",
+      monthly: "Widok miesięczny",
+      yearly: "Widok roczny",
+      overall: "Cały okres",
+      range: {
+        overall: "Cały okres",
+        weekCurrent: "Obecny tydzień",
+        monthCurrent: "Obecny miesiąc",
+        yearCurrent: "Obecny rok",
+        navigatePrevious: "Przejdź do poprzedniego okresu",
+        navigateNext: "Przejdź do następnego okresu",
+      },
+    },
+  },
   attributes: {
     detailsPlaceholder: "Szczegółowe informacje o atrybucie {{attributeName}} znajdują się tutaj.",
   },
