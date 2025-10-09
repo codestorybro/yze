@@ -1,10 +1,13 @@
-import { ComponentType, useCallback, useEffect, useState } from "react"
+import { ComponentType, useCallback, useEffect, useMemo, useState } from "react"
 import {
+  ActivityIndicator,
   Pressable,
   PressableProps,
   PressableStateCallbackType,
   StyleProp,
   TextStyle,
+  StyleSheet,
+  View,
   ViewStyle,
 } from "react-native"
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated"
@@ -90,6 +93,10 @@ export interface ButtonProps extends PressableProps {
    * Disable the press scale animation when set to true.
    */
   disableAnimation?: boolean
+  /**
+   * Show a loading spinner and disable interactions.
+   */
+  isLoading?: boolean
 }
 
 /**
@@ -128,16 +135,18 @@ export function Button(props: ButtonProps) {
     onHoverOut,
     onFocus,
     onBlur,
+    isLoading = false,
     ...rest
   } = props
 
   const preset: Presets = props.preset ?? "default"
-  const { themed } = useAppTheme()
+  const { themed, theme } = useAppTheme()
   const [isPressed, setIsPressed] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
+  const isButtonDisabled = !!disabled || isLoading
   const scale = useSharedValue(1)
-  const animationDisabled = disableAnimation || !!disabled
+  const animationDisabled = disableAnimation || isButtonDisabled
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }))
@@ -149,12 +158,12 @@ export function Button(props: ButtonProps) {
   }, [animationDisabled, scale])
 
   useEffect(() => {
-    if (disabled) {
+    if (isButtonDisabled) {
       setIsPressed(false)
       setIsHovered(false)
       setIsFocused(false)
     }
-  }, [disabled])
+  }, [isButtonDisabled])
 
   const handlePressIn = useCallback<NonNullable<PressableProps["onPressIn"]>>(
     (event) => {
@@ -232,7 +241,7 @@ export function Button(props: ButtonProps) {
       themed($viewPresets[preset]),
       $viewStyleOverride,
       !!pressed && themed([$pressedViewPresets[preset], $pressedViewStyleOverride]),
-      !!disabled && themed([$disabledViewPresets[preset], $disabledViewStyleOverride]),
+      !!isButtonDisabled && themed([$disabledViewPresets[preset], $disabledViewStyleOverride]),
     ]
   }
   /**
@@ -245,17 +254,30 @@ export function Button(props: ButtonProps) {
       themed($textPresets[preset]),
       $textStyleOverride,
       !!pressed && themed([$pressedTextPresets[preset], $pressedTextStyleOverride]),
-      !!disabled && themed([$disabledTextPresets[preset], $disabledTextStyleOverride]),
+      !!isButtonDisabled && themed([$disabledTextPresets[preset], $disabledTextStyleOverride]),
     ]
   }
+
+  const spinnerColor = useMemo(() => {
+    switch (preset) {
+      case "floating":
+        return theme.colors.text
+      case "reverse":
+        return theme.colors.primary
+      case "navigation":
+        return theme.colors.primary
+      default:
+        return theme.colors.textReversed
+    }
+  }, [preset, theme.colors.primary, theme.colors.text, theme.colors.textReversed])
 
   return (
     <AnimatedPressable
       style={finalViewStyle}
       accessibilityRole="button"
-      accessibilityState={{ disabled: !!disabled }}
+      accessibilityState={{ disabled: isButtonDisabled }}
       {...rest}
-      disabled={disabled}
+      disabled={isButtonDisabled}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       onHoverIn={handleHoverIn}
@@ -263,24 +285,35 @@ export function Button(props: ButtonProps) {
       onFocus={handleFocus}
       onBlur={handleBlur}
     >
-      {!!LeftAccessory && (
+      {!!LeftAccessory && !isLoading && (
         <LeftAccessory
           style={$leftAccessoryStyle}
           pressableState={pressableState}
-          disabled={disabled}
+          disabled={isButtonDisabled}
         />
       )}
 
-      <Text tx={tx} text={text} txOptions={txOptions} style={textStateStyle}>
+      <Text
+        tx={tx}
+        text={text}
+        txOptions={txOptions}
+        style={[textStateStyle, isLoading && $stylesInternal.hiddenText]}
+      >
         {children}
       </Text>
 
-      {!!RightAccessory && (
+      {!!RightAccessory && !isLoading && (
         <RightAccessory
           style={$rightAccessoryStyle}
           pressableState={pressableState}
-          disabled={disabled}
+          disabled={isButtonDisabled}
         />
+      )}
+
+      {isLoading && (
+        <View pointerEvents="none" style={$stylesInternal.loaderContainer}>
+          <ActivityIndicator color={spinnerColor} />
+        </View>
       )}
     </AnimatedPressable>
   )
@@ -314,6 +347,17 @@ const $rightAccessoryStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 const $leftAccessoryStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   marginEnd: spacing.xs,
   zIndex: 1,
+})
+
+const $stylesInternal = StyleSheet.create({
+  loaderContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  hiddenText: {
+    opacity: 0,
+  },
 })
 
 const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {

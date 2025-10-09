@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { Pressable, StyleSheet, TextStyle, View, ViewStyle } from "react-native"
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated"
 import { endOfWeek, format, startOfWeek, subMonths, subWeeks, subYears } from "date-fns"
@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next"
 import {
   Button,
   ElementsList,
+  ElementsListSkeleton,
   LoggedScreenWrapper,
   SkeletonImage,
   SvgIcon,
@@ -48,11 +49,16 @@ const RightArrowAccessory = createArrowAccessory("right")
 export default function Index() {
   const { themed } = useAppTheme()
   const { user } = useUser()
-  const { normalizedAttributes, refreshAttributes } = useAttributes()
+  const {
+    normalizedAttributes,
+    refreshAttributes,
+    isLoading: isAttributesLoading,
+    currentView,
+    currentOffset,
+    maxOffset,
+  } = useAttributes()
   const { t, i18n } = useTranslation()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [selectedView, setSelectedView] = useState<AttributesViewType>("overall")
-  const [periodOffset, setPeriodOffset] = useState(0)
   const avatarUri = user?.avatarUri
     ? { uri: user.avatarUri }
     : require("../../../../assets/images/user.png")
@@ -80,26 +86,28 @@ export default function Index() {
   )
 
   const currentOption = useMemo(
-    () => periodOptions.find((option) => option.value === selectedView) ?? periodOptions[0],
-    [periodOptions, selectedView],
+    () => periodOptions.find((option) => option.value === currentView) ?? periodOptions[0],
+    [currentView, periodOptions],
   )
 
-  const canNavigateBack = selectedView !== "overall"
-  const canNavigateForward = selectedView !== "overall" && periodOffset > 0
+  const hasHistoricalData = maxOffset > 0
+  const canNavigateBack =
+    currentView !== "overall" && hasHistoricalData && currentOffset < maxOffset
+  const canNavigateForward = currentView !== "overall" && currentOffset > 0
 
   const rangeLabel = useMemo(() => {
     const now = new Date()
 
-    if (selectedView === "overall") {
+    if (currentView === "overall") {
       return t("homeScreen:periodSelector.range.overall")
     }
 
-    if (selectedView === "weekly") {
-      if (periodOffset === 0) {
+    if (currentView === "weekly") {
+      if (currentOffset === 0) {
         return t("homeScreen:periodSelector.range.weekCurrent")
       }
 
-      const targetDate = subWeeks(now, periodOffset)
+      const targetDate = subWeeks(now, currentOffset)
       const weekStart = startOfWeek(targetDate, { weekStartsOn: 1 })
       const weekEnd = endOfWeek(targetDate, { weekStartsOn: 1 })
       const sameYear = weekStart.getFullYear() === weekEnd.getFullYear()
@@ -110,46 +118,46 @@ export default function Index() {
       return `${startLabel} – ${endLabel}`
     }
 
-    if (selectedView === "monthly") {
-      if (periodOffset === 0) {
+    if (currentView === "monthly") {
+      if (currentOffset === 0) {
         return t("homeScreen:periodSelector.range.monthCurrent")
       }
 
-      const targetDate = subMonths(now, periodOffset)
+      const targetDate = subMonths(now, currentOffset)
       return capitalize(format(targetDate, "LLLL yyyy", { locale: dateLocale }))
     }
 
-    if (selectedView === "yearly") {
-      if (periodOffset === 0) {
+    if (currentView === "yearly") {
+      if (currentOffset === 0) {
         return t("homeScreen:periodSelector.range.yearCurrent")
       }
 
-      const targetDate = subYears(now, periodOffset)
+      const targetDate = subYears(now, currentOffset)
       return format(targetDate, "yyyy", { locale: dateLocale })
     }
 
     return t("homeScreen:periodSelector.range.overall")
-  }, [capitalize, dateLocale, periodOffset, selectedView, t])
+  }, [capitalize, currentOffset, currentView, dateLocale, t])
 
-  useEffect(() => {
-    refreshAttributes({ view: selectedView, offset: periodOffset })
-  }, [periodOffset, refreshAttributes, selectedView])
-
-  const handleSelectView = useCallback((value: AttributesViewType) => {
-    setSelectedView(value)
-    setPeriodOffset(0)
-    setIsDropdownOpen(false)
-  }, [])
+  const handleSelectView = useCallback(
+    (value: AttributesViewType) => {
+      void refreshAttributes({ view: value, offset: 0 })
+      setIsDropdownOpen(false)
+    },
+    [refreshAttributes],
+  )
 
   const handleNavigateBack = useCallback(() => {
     if (!canNavigateBack) return
-    setPeriodOffset((prev) => prev + 1)
-  }, [canNavigateBack])
+    const nextOffset = Math.min(maxOffset, currentOffset + 1)
+    void refreshAttributes({ offset: nextOffset })
+  }, [canNavigateBack, currentOffset, maxOffset, refreshAttributes])
 
   const handleNavigateForward = useCallback(() => {
     if (!canNavigateForward) return
-    setPeriodOffset((prev) => Math.max(0, prev - 1))
-  }, [canNavigateForward])
+    const nextOffset = Math.max(0, currentOffset - 1)
+    void refreshAttributes({ offset: nextOffset })
+  }, [canNavigateForward, currentOffset, refreshAttributes])
 
   return (
     <LoggedScreenWrapper>
@@ -204,7 +212,7 @@ export default function Index() {
                     onPress={() => handleSelectView(option.value)}
                     style={({ pressed }) => [
                       themed($dropdownItem),
-                      option.value === selectedView && themed($dropdownItemActive),
+                      option.value === currentView && themed($dropdownItemActive),
                       pressed && themed($dropdownItemPressed),
                     ]}
                   >
@@ -212,7 +220,7 @@ export default function Index() {
                       preset="default"
                       style={[
                         themed($dropdownItemText),
-                        option.value === selectedView && themed($dropdownItemTextActive),
+                        option.value === currentView && themed($dropdownItemTextActive),
                       ]}
                       tx={option.labelTx}
                     />
@@ -222,9 +230,18 @@ export default function Index() {
             )}
           </View>
 
-          {normalizedAttributes.length > 0 && <ElementsList items={normalizedAttributes} />}
+          {isAttributesLoading ? (
+            <ElementsListSkeleton itemCount={normalizedAttributes.length || 4} />
+          ) : (
+            normalizedAttributes.length > 0 && <ElementsList items={normalizedAttributes} />
+          )}
 
-          <View style={[styles.navigationWrapper, selectedView === "overall" && { opacity: 0 }]}>
+          <View
+            style={[
+              styles.navigationWrapper,
+              (currentView === "overall" || !hasHistoricalData) && { opacity: 0 },
+            ]}
+          >
             <Button
               preset="floating"
               onPress={handleNavigateBack}

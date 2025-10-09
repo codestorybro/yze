@@ -7,16 +7,24 @@ import {
   useMemo,
   useState,
 } from "react"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 
 import { useUser } from "@/store/auth"
 import { AttributeType } from "@/types/attributeType"
-import { fetchAttributes, FetchAttributesParams } from "@/utils/fetchAttributesMock"
+import { AttributesViewType } from "@/types/attributesViewType"
+import { fetchAttributes, FetchAttributesParams } from "@/utils/fetchAttributes"
 import { NormalizedAttribute, useNormalizeAttributes } from "@/utils/useNormalizeAttributes"
 
 export type AttributesContextType = {
   attributes: AttributeType[]
+  timeline: AttributeType[][]
   normalizedAttributes: NormalizedAttribute[]
+  currentView: AttributesViewType
+  currentOffset: number
+  maxOffset: number
   isLoading: boolean
+  isInitialLoading: boolean
+  isRefetching: boolean
   refreshAttributes: (params?: FetchAttributesParams) => Promise<void>
 }
 
@@ -24,39 +32,120 @@ const AttributesContext = createContext<AttributesContextType | null>(null)
 
 export function AttributesProvider({ children }: PropsWithChildren) {
   const { user } = useUser()
-  const [attributes, setAttributes] = useState<AttributeType[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const queryClient = useQueryClient()
+  const [currentView, setCurrentView] = useState<AttributesViewType>("overall")
+  const [currentOffset, setCurrentOffset] = useState(0)
+
+  const queryKey = useMemo(() => ["attributes", currentView], [currentView])
+
+  const {
+    data: timelineData,
+    isLoading: isInitialLoading,
+    isRefetching,
+  } = useQuery<AttributeType[][]>({
+    queryKey,
+    queryFn: async ({ queryKey: [, viewKey] }) => {
+      if (!user) return []
+      const safeView = (viewKey as AttributesViewType) ?? "overall"
+      const result = await fetchAttributes({ view: safeView })
+      return Array.isArray(result) ? (result as AttributeType[][]) : []
+    },
+    enabled: !!user,
+    placeholderData: (previousData) => previousData ?? ([] as AttributeType[][]),
+    staleTime: 30_000,
+  })
+
+  useEffect(() => {
+    if (!user) {
+      queryClient.removeQueries({ queryKey: ["attributes"] })
+      setCurrentView("overall")
+      setCurrentOffset(0)
+    }
+  }, [queryClient, user])
+
+  useEffect(() => {
+    if (!timelineData || timelineData.length === 0) {
+      setCurrentOffset(0)
+      return
+    }
+
+    setCurrentOffset((previous) => {
+      const maxIndex = timelineData.length - 1
+      const clamped = Math.min(Math.max(previous, 0), maxIndex)
+      return clamped === previous ? previous : clamped
+    })
+  }, [timelineData])
+
+  const timeline = timelineData ?? []
+  const maxOffset = timeline.length > 0 ? timeline.length - 1 : 0
+  const attributes: AttributeType[] = timeline[currentOffset] ?? []
   const normalizedAttributes = useNormalizeAttributes(attributes)
 
   const refreshAttributes = useCallback(
     async (params?: FetchAttributesParams) => {
       if (!user) {
-        setAttributes([])
-        setIsLoading(false)
+        queryClient.removeQueries({ queryKey: ["attributes"] })
+        setCurrentView("overall")
+        setCurrentOffset(0)
         return
       }
 
-      setIsLoading(true)
-      try {
-        const data = await fetchAttributes(params)
-        setAttributes(data)
-      } catch (error) {
-        console.error("Failed to fetch attributes", error)
-        setAttributes([])
-      } finally {
-        setIsLoading(false)
+      const nextView = params?.view ?? currentView
+      const viewChanged = nextView !== currentView
+      const desiredOffset =
+        params?.offset != null
+          ? Math.max(0, Math.floor(params.offset))
+          : viewChanged
+            ? 0
+            : currentOffset
+      const boundedOffset = viewChanged ? desiredOffset : Math.min(desiredOffset, maxOffset)
+
+      if (viewChanged) {
+        setCurrentView(nextView)
+      }
+
+      setCurrentOffset((previous) => {
+        const normalized = viewChanged ? desiredOffset : boundedOffset
+        return normalized === previous ? previous : normalized
+      })
+
+      if (viewChanged) {
+        await queryClient.invalidateQueries({
+          queryKey: ["attributes", nextView],
+          exact: true,
+        })
       }
     },
-    [user],
+    [currentOffset, currentView, maxOffset, queryClient, user],
   )
 
-  useEffect(() => {
-    refreshAttributes()
-  }, [refreshAttributes])
+  const isLoading = isInitialLoading || isRefetching
 
   const value = useMemo(
-    () => ({ attributes, normalizedAttributes, isLoading, refreshAttributes }),
-    [attributes, normalizedAttributes, isLoading, refreshAttributes],
+    () => ({
+      attributes,
+      timeline,
+      normalizedAttributes,
+      currentView,
+      currentOffset,
+      maxOffset,
+      isLoading,
+      isInitialLoading,
+      isRefetching,
+      refreshAttributes,
+    }),
+    [
+      attributes,
+      currentOffset,
+      currentView,
+      isInitialLoading,
+      isLoading,
+      isRefetching,
+      maxOffset,
+      normalizedAttributes,
+      refreshAttributes,
+      timeline,
+    ],
   )
 
   return <AttributesContext.Provider value={value}>{children}</AttributesContext.Provider>

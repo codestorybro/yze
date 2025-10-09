@@ -1,4 +1,14 @@
-import { createContext, useContext, type PropsWithChildren } from "react"
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  type PropsWithChildren,
+} from "react"
+
+import { login, logout } from "@/api/auth"
+import { clearTokens, setTokens, subscribe } from "@/api/tokenManager"
 
 import { UserType } from "@/types/userType"
 
@@ -9,19 +19,11 @@ type AuthContextType = {
   authToken: string | null
   refreshToken: string | null
   signIn: (email: string, password: string) => Promise<void>
-  signOut: () => void
+  signOut: () => Promise<void>
   isLoading: boolean
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
-
-const fakeUser: UserType = {
-  id: "1",
-  email: "example@example.com",
-  name: "John Doe",
-  avatarUri: "https://i.pravatar.cc/150?img=3",
-  dominantArchetypeId: "flash",
-}
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const [[isUserLoading, storedUser], setStoredUser] = useStorageState("user")
@@ -29,7 +31,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [[isRefreshTokenLoading, storedRefreshToken], setStoredRefreshToken] =
     useStorageState("refreshToken")
 
-  const parseUser = (raw: string | null): UserType | null => {
+  const parseUser = useCallback((raw: string | null): UserType | null => {
     if (!raw) return null
     try {
       return JSON.parse(raw) as UserType
@@ -37,25 +39,60 @@ export function AuthProvider({ children }: PropsWithChildren) {
       console.warn("Invalid stored user data", err)
       return null
     }
-  }
+  }, [])
 
-  const user = parseUser(storedUser)
+  const user = useMemo(() => parseUser(storedUser), [parseUser, storedUser])
 
-  const signIn = async (email: string, password: string) => {
-    // TODO: call backend here, mock for now
-    const fakeAuthToken = "fakeAuthToken123"
-    const fakeRefreshToken = "fakeRefreshToken456"
+  useEffect(() => {
+    if (isAuthTokenLoading || isRefreshTokenLoading) return
 
-    setStoredUser(JSON.stringify(fakeUser))
-    setStoredAuthToken(fakeAuthToken)
-    setStoredRefreshToken(fakeRefreshToken)
-  }
+    if (storedAuthToken && storedRefreshToken) {
+      setTokens({ accessToken: storedAuthToken, refreshToken: storedRefreshToken })
+    } else {
+      clearTokens()
+    }
+  }, [isAuthTokenLoading, isRefreshTokenLoading, storedAuthToken, storedRefreshToken])
 
-  const signOut = () => {
-    setStoredUser(null)
-    setStoredAuthToken(null)
-    setStoredRefreshToken(null)
-  }
+  useEffect(() => {
+    const unsubscribe = subscribe((tokenPair) => {
+      if (!tokenPair) {
+        setStoredAuthToken(null)
+        setStoredRefreshToken(null)
+        setStoredUser(null)
+        return
+      }
+
+      setStoredAuthToken(tokenPair.accessToken)
+      setStoredRefreshToken(tokenPair.refreshToken)
+    })
+
+    return unsubscribe
+  }, [setStoredAuthToken, setStoredRefreshToken, setStoredUser])
+
+  const signIn = useCallback(
+    async (email: string, password: string) => {
+      const { user: authenticatedUser, tokens } = await login({ email, password })
+
+      setStoredUser(JSON.stringify(authenticatedUser))
+      setStoredAuthToken(tokens.accessToken)
+      setStoredRefreshToken(tokens.refreshToken)
+      setTokens(tokens)
+    },
+    [setStoredAuthToken, setStoredRefreshToken, setStoredUser],
+  )
+
+  const signOut = useCallback(async () => {
+    try {
+      await logout()
+    } catch (error) {
+      console.warn("Failed to notify backend about sign out", error)
+    } finally {
+      setStoredUser(null)
+      setStoredAuthToken(null)
+      setStoredRefreshToken(null)
+      clearTokens()
+    }
+  }, [setStoredAuthToken, setStoredRefreshToken, setStoredUser])
 
   const isLoading = isUserLoading || isAuthTokenLoading || isRefreshTokenLoading
 

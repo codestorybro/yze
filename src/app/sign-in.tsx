@@ -47,7 +47,7 @@ export default function SignIn() {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormData>({
     defaultValues: initialValues,
   })
@@ -65,10 +65,14 @@ export default function SignIn() {
   }, [])
 
   const onSubmit = async (data: FormData) => {
-    withKeyboardDismiss(() => {
-      signIn(data.email, data.password)
-      router.replace("/(app)/(tabs)")
-    })
+    try {
+      await withKeyboardDismiss(async () => {
+        await signIn(data.email, data.password)
+        router.replace("/(app)/(tabs)")
+      })
+    } catch (error) {
+      console.error("Failed to sign in", error)
+    }
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
@@ -195,6 +199,8 @@ export default function SignIn() {
               tx="loginScreen:login"
               style={themed($tapButton)}
               onPress={handleSubmit(onSubmit)}
+              isLoading={isSubmitting}
+              disabled={isSubmitting}
             />
           </Animated.View>
 

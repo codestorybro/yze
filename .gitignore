@@ -23,6 +23,7 @@ DerivedData
 *.tar.gz
 *.xcuserstate
 ios/.xcode.env.local
+.env
 
 # Android/IntelliJ
 #

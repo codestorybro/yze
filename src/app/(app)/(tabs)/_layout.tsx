@@ -3,12 +3,9 @@ import { Tabs, Redirect } from "expo-router"
 
 import { TabBar } from "@/components"
 import { useUser } from "@/store/auth"
-import { useAppTheme } from "@/theme/context"
+import { Reactotron } from "@/devtools/ReactotronClient"
 
 export default function TabLayout() {
-  const {
-    theme: { colors },
-  } = useAppTheme()
   const { user, isLoading } = useUser()
 
   if (isLoading) {
@@ -16,6 +13,7 @@ export default function TabLayout() {
   }
 
   if (!user) {
+    Reactotron.log("🙅‍♂️ No user found, redirecting to sign-in")
     return <Redirect href="../../sign-in" />
   }
 
