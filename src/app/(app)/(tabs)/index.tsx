@@ -47,7 +47,10 @@ const LeftArrowAccessory = createArrowAccessory("left")
 const RightArrowAccessory = createArrowAccessory("right")
 
 export default function Index() {
-  const { themed } = useAppTheme()
+  const {
+    themed,
+    theme: { colors },
+  } = useAppTheme()
   const { user } = useUser()
   const {
     normalizedAttributes,
@@ -190,18 +193,17 @@ export default function Index() {
           <View style={styles.dropdownWrapper}>
             <Pressable
               onPress={() => setIsDropdownOpen((prev) => !prev)}
-              style={themed($selectorButton)}
+              style={({ pressed }) => [
+                themed($selectorButton),
+                pressed && { backgroundColor: colors.touchHighlight },
+              ]}
             >
-              <Text
-                preset="subheading"
-                style={themed($selectorLabel)}
-                numberOfLines={1}
-                tx={currentOption.labelTx}
-              />
+              <Text style={themed($selectorLabel)} numberOfLines={1} tx={currentOption.labelTx} />
               <SvgIcon
                 pathData={SvgIconPaths.right_arrow}
                 size={16}
                 containerStyle={{ transform: [{ rotate: isDropdownOpen ? "90deg" : "0deg" }] }}
+                color={colors.attributeArrowRight}
               />
             </Pressable>
             {isDropdownOpen && (
@@ -295,13 +297,11 @@ const $avatarWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 const $selectorButton: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   alignItems: "center",
   backgroundColor: colors.cardBackground,
-  borderColor: colors.border,
   borderRadius: spacing.md,
-  borderWidth: 1,
   flexDirection: "row",
   justifyContent: "space-between",
   paddingHorizontal: spacing.md,
-  paddingVertical: spacing.xs,
+  paddingVertical: spacing.md,
 })
 
 const $selectorLabel: ThemedStyle<TextStyle> = ({ colors }) => ({

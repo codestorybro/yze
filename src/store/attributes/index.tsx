@@ -12,8 +12,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useUser } from "@/store/auth"
 import { AttributeType } from "@/types/attributeType"
 import { AttributesViewType } from "@/types/attributesViewType"
-import { fetchAttributes, FetchAttributesParams } from "@/utils/fetchAttributes"
+import { getAttributes } from "@/api/attributes"
 import { NormalizedAttribute, useNormalizeAttributes } from "@/utils/useNormalizeAttributes"
+
+type RefreshAttributesParams = {
+  view?: AttributesViewType
+  offset?: number
+}
 
 export type AttributesContextType = {
   attributes: AttributeType[]
@@ -25,7 +30,7 @@ export type AttributesContextType = {
   isLoading: boolean
   isInitialLoading: boolean
   isRefetching: boolean
-  refreshAttributes: (params?: FetchAttributesParams) => Promise<void>
+  refreshAttributes: (params?: RefreshAttributesParams) => Promise<void>
 }
 
 const AttributesContext = createContext<AttributesContextType | null>(null)
@@ -47,8 +52,8 @@ export function AttributesProvider({ children }: PropsWithChildren) {
     queryFn: async ({ queryKey: [, viewKey] }) => {
       if (!user) return []
       const safeView = (viewKey as AttributesViewType) ?? "overall"
-      const result = await fetchAttributes({ view: safeView })
-      return Array.isArray(result) ? (result as AttributeType[][]) : []
+      const result = await getAttributes({ view: safeView })
+      return Array.isArray(result) ? result : []
     },
     enabled: !!user,
     placeholderData: (previousData) => previousData ?? ([] as AttributeType[][]),
@@ -82,7 +87,7 @@ export function AttributesProvider({ children }: PropsWithChildren) {
   const normalizedAttributes = useNormalizeAttributes(attributes)
 
   const refreshAttributes = useCallback(
-    async (params?: FetchAttributesParams) => {
+    async (params?: RefreshAttributesParams) => {
       if (!user) {
         queryClient.removeQueries({ queryKey: ["attributes"] })
         setCurrentView("overall")
