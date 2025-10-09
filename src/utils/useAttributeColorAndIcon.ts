@@ -7,8 +7,8 @@ export const useAttributeColorAndIcon = (attributeId?: string) => {
   } = useAppTheme()
   const {
     attributeBuddy,
-    attributeCreator,
-    attributeFlash,
+    attributeVisionary,
+    attributeFlow,
     attributeGuru,
     text: textColor,
   } = colors
@@ -21,13 +21,13 @@ export const useAttributeColorAndIcon = (attributeId?: string) => {
       color = attributeBuddy
       icon = SvgIconPaths.buddy
       break
-    case "creator":
-      color = attributeCreator
-      icon = SvgIconPaths.creator
+    case "visionary":
+      color = attributeVisionary
+      icon = SvgIconPaths.visionary
       break
-    case "flash":
-      color = attributeFlash
-      icon = SvgIconPaths.flash
+    case "flow":
+      color = attributeFlow
+      icon = SvgIconPaths.flow
       break
     case "guru":
       color = attributeGuru

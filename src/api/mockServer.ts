@@ -29,32 +29,32 @@ const mockUser: UserType = {
   email: "example@example.com",
   name: "John Doe",
   avatarUri: "https://i.pravatar.cc/150?img=3",
-  dominantArchetypeId: "flash",
+  dominantArchetypeId: "flow",
 }
 
 const baseAttributes: Record<string, AttributeType[]> = {
   weekly: [
-    { id: "flash", label: "Flash", score: 46 },
+    { id: "flow", label: "Flow", score: 46 },
     { id: "buddy", label: "Buddy", score: 38 },
-    { id: "creator", label: "Creator", score: 31 },
+    { id: "visionary", label: "Visionary", score: 31 },
     { id: "guru", label: "Guru", score: 27 },
   ],
   monthly: [
-    { id: "flash", label: "Flash", score: 58 },
+    { id: "flow", label: "Flow", score: 58 },
     { id: "buddy", label: "Buddy", score: 44 },
-    { id: "creator", label: "Creator", score: 52 },
+    { id: "visionary", label: "Visionary", score: 52 },
     { id: "guru", label: "Guru", score: 41 },
   ],
   yearly: [
-    { id: "flash", label: "Flash", score: 72 },
+    { id: "flow", label: "Flow", score: 72 },
     { id: "buddy", label: "Buddy", score: 65 },
-    { id: "creator", label: "Creator", score: 84 },
+    { id: "visionary", label: "Visionary", score: 84 },
     { id: "guru", label: "Guru", score: 78 },
   ],
   overall: [
-    { id: "flash", label: "Flash", score: 88 },
+    { id: "flow", label: "Flow", score: 88 },
     { id: "buddy", label: "Buddy", score: 79 },
-    { id: "creator", label: "Creator", score: 92 },
+    { id: "visionary", label: "Visionary", score: 92 },
     { id: "guru", label: "Guru", score: 86 },
   ],
 }

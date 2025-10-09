@@ -17,13 +17,13 @@ const mockedUsers = [
     id: "1",
     name: "John Doe",
     avatarUri: "https://avatar.iran.liara.run/public/40",
-    dominantArchetypeId: "creator",
+    dominantArchetypeId: "visionary",
   },
   {
     id: "2",
     name: "Jane Smith",
     avatarUri: "https://avatar.iran.liara.run/public/16",
-    dominantArchetypeId: "flash",
+    dominantArchetypeId: "flow",
   },
   {
     id: "3",
@@ -54,7 +54,7 @@ const mockedUsers = [
     id: "7",
     name: "Emma Thompson",
     avatarUri: "https://avatar.iran.liara.run/public/3",
-    dominantArchetypeId: "creator",
+    dominantArchetypeId: "visionary",
   },
   {
     id: "8",
@@ -81,20 +81,20 @@ const mockedUsers = [
     id: "12",
     name: "Jack Clark",
     avatarUri: "https://avatar.iran.liara.run/public/23",
-    dominantArchetypeId: "flash",
+    dominantArchetypeId: "flow",
   },
   { id: "15", name: "Lorem ipsum" },
   {
     id: "16",
     name: "Tony Williams",
     avatarUri: "https://avatar.iran.liara.run/public/16",
-    dominantArchetypeId: "creator",
+    dominantArchetypeId: "visionary",
   },
   {
     id: "17",
     name: "Stephen Clark",
     avatarUri: "https://avatar.iran.liara.run/public/17",
-    dominantArchetypeId: "flash",
+    dominantArchetypeId: "flow",
   },
   {
     id: "18",

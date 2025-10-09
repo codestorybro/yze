@@ -22,8 +22,8 @@ export const useNormalizeAttributes = (attributes: AttributeType[]) => {
   const {
     attributeArrowRight,
     attributeBuddy,
-    attributeCreator,
-    attributeFlash,
+    attributeVisionary,
+    attributeFlow,
     attributeGuru,
     text: textColor,
   } = colors
@@ -59,17 +59,17 @@ export const useNormalizeAttributes = (attributes: AttributeType[]) => {
       switch (attributeId) {
         case "buddy":
           return attributeBuddy
-        case "creator":
-          return attributeCreator
-        case "flash":
-          return attributeFlash
+        case "visionary":
+          return attributeVisionary
+        case "flow":
+          return attributeFlow
         case "guru":
           return attributeGuru
         default:
           return textColor
       }
     },
-    [attributeBuddy, attributeCreator, attributeFlash, attributeGuru, textColor],
+    [attributeBuddy, attributeVisionary, attributeFlow, attributeGuru, textColor],
   )
 
   return useMemo<NormalizedAttribute[]>(
