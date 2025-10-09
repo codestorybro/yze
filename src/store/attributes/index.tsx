@@ -43,6 +43,17 @@ export function AttributesProvider({ children }: PropsWithChildren) {
 
   const queryKey = useMemo(() => ["attributes", currentView], [currentView])
 
+  const fetchAttributesData = useCallback(
+    async (view: AttributesViewType) => {
+      if (!user) return []
+
+      const safeView = view ?? "overall"
+      const result = await getAttributes({ view: safeView })
+      return Array.isArray(result) ? result : []
+    },
+    [user],
+  )
+
   const {
     data: timelineData,
     isLoading: isInitialLoading,
@@ -50,14 +61,14 @@ export function AttributesProvider({ children }: PropsWithChildren) {
   } = useQuery<AttributeType[][]>({
     queryKey,
     queryFn: async ({ queryKey: [, viewKey] }) => {
-      if (!user) return []
       const safeView = (viewKey as AttributesViewType) ?? "overall"
-      const result = await getAttributes({ view: safeView })
-      return Array.isArray(result) ? result : []
+      return fetchAttributesData(safeView)
     },
     enabled: !!user,
-    placeholderData: (previousData) => previousData ?? ([] as AttributeType[][]),
-    staleTime: 30_000,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnReconnect: "always",
+    refetchOnWindowFocus: "always",
   })
 
   useEffect(() => {
@@ -97,31 +108,34 @@ export function AttributesProvider({ children }: PropsWithChildren) {
 
       const nextView = params?.view ?? currentView
       const viewChanged = nextView !== currentView
-      const desiredOffset =
-        params?.offset != null
-          ? Math.max(0, Math.floor(params.offset))
-          : viewChanged
-            ? 0
-            : currentOffset
-      const boundedOffset = viewChanged ? desiredOffset : Math.min(desiredOffset, maxOffset)
+      const requestedOffset =
+        params?.offset != null ? Math.max(0, Math.floor(params.offset)) : currentOffset
+      const boundedOffset = viewChanged ? requestedOffset : Math.min(requestedOffset, maxOffset)
+      const shouldForceFetch = !params || (params.view == null && params.offset == null)
+      const shouldFetchFromBackend = viewChanged || shouldForceFetch
 
       if (viewChanged) {
         setCurrentView(nextView)
       }
 
       setCurrentOffset((previous) => {
-        const normalized = viewChanged ? desiredOffset : boundedOffset
+        const normalized = viewChanged ? requestedOffset : boundedOffset
         return normalized === previous ? previous : normalized
       })
 
-      if (viewChanged) {
-        await queryClient.invalidateQueries({
-          queryKey: ["attributes", nextView],
-          exact: true,
-        })
+      if (shouldFetchFromBackend) {
+        try {
+          await queryClient.fetchQuery({
+            queryKey: ["attributes", nextView],
+            queryFn: () => fetchAttributesData(nextView),
+            staleTime: 0,
+          })
+        } catch (error) {
+          console.error("Failed to refresh attributes", error)
+        }
       }
     },
-    [currentOffset, currentView, maxOffset, queryClient, user],
+    [currentOffset, currentView, fetchAttributesData, maxOffset, queryClient, user],
   )
 
   const isLoading = isInitialLoading || isRefetching

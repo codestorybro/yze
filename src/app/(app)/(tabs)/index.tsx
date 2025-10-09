@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Pressable, StyleSheet, TextStyle, View, ViewStyle } from "react-native"
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated"
 import { endOfWeek, format, startOfWeek, subMonths, subWeeks, subYears } from "date-fns"
@@ -23,6 +23,7 @@ import { useAttributes } from "@/store/attributes"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 import { AttributesViewType } from "@/types/attributesViewType"
+import { useFocusEffect } from "@react-navigation/native"
 
 const _avatarSize = 150
 
@@ -83,6 +84,12 @@ export default function Index() {
     [],
   )
 
+  const refreshAttributesRef = useRef(refreshAttributes)
+
+  useEffect(() => {
+    refreshAttributesRef.current = refreshAttributes
+  }, [refreshAttributes])
+
   const hasHistoricalData = maxOffset > 0
   const canNavigateBack =
     currentView !== "overall" && hasHistoricalData && currentOffset < maxOffset
@@ -138,6 +145,20 @@ export default function Index() {
       setIsDropdownOpen(false)
     },
     [refreshAttributes],
+  )
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchLatest = async () => {
+        try {
+          await refreshAttributesRef.current?.()
+        } catch {}
+      }
+
+      void fetchLatest()
+
+      return () => {}
+    }, []),
   )
 
   const handleNavigateBack = useCallback(() => {
