@@ -400,11 +400,7 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
       borderColor: colors.border,
       paddingHorizontal: 0,
       paddingVertical: 0,
-      shadowColor: colors.shadow,
-      shadowOpacity: 0.12,
-      shadowOffset: { width: 0, height: 4 },
-      shadowRadius: 12,
-      elevation: 2,
+      boxShadow: `0px 0px 12px ${colors.shadow}`,
     }),
   ],
 }

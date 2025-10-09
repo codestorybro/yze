@@ -187,11 +187,7 @@ const $contentContainerStyle: ThemedStyle<ViewStyle> = ({ colors, spacing }) => 
   borderRadius: spacing.lg,
   padding: spacing.lg,
   backgroundColor: colors.cardBackground,
-  shadowColor: colors.justBlack,
-  shadowOpacity: 0.2,
-  shadowRadius: 12,
-  shadowOffset: { width: 0, height: 6 },
-  elevation: 3,
+  boxShadow: `0px 0px 12px ${colors.shadow}`,
 })
 
 const $titleStyle: ThemedStyle<TextStyle> = ({ spacing }) => ({

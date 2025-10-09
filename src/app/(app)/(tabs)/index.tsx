@@ -14,6 +14,7 @@ import {
   SvgIcon,
   Text,
 } from "@/components"
+import { Dropdown, type DropdownOption } from "@/components/Dropdown"
 import type { ButtonAccessoryProps } from "@/components/Button"
 import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
 import { TxKeyPath } from "@/i18n"
@@ -25,10 +26,7 @@ import { AttributesViewType } from "@/types/attributesViewType"
 
 const _avatarSize = 150
 
-type PeriodOption = {
-  labelTx: TxKeyPath
-  value: AttributesViewType
-}
+type PeriodOption = DropdownOption<AttributesViewType>
 
 const createArrowAccessory = (direction: "left" | "right") =>
   function ArrowAccessory({ style }: ButtonAccessoryProps) {
@@ -47,10 +45,7 @@ const LeftArrowAccessory = createArrowAccessory("left")
 const RightArrowAccessory = createArrowAccessory("right")
 
 export default function Index() {
-  const {
-    themed,
-    theme: { colors },
-  } = useAppTheme()
+  const { themed } = useAppTheme()
   const { user } = useUser()
   const {
     normalizedAttributes,
@@ -86,11 +81,6 @@ export default function Index() {
       { labelTx: "homeScreen:periodSelector.overall" as TxKeyPath, value: "overall" },
     ],
     [],
-  )
-
-  const currentOption = useMemo(
-    () => periodOptions.find((option) => option.value === currentView) ?? periodOptions[0],
-    [currentView, periodOptions],
   )
 
   const hasHistoricalData = maxOffset > 0
@@ -191,45 +181,17 @@ export default function Index() {
 
         <View style={styles.controlsWrapper}>
           <View style={styles.dropdownWrapper}>
-            <Pressable
-              onPress={() => setIsDropdownOpen((prev) => !prev)}
-              style={({ pressed }) => [
-                themed($selectorButton),
-                pressed && { backgroundColor: colors.touchHighlight },
-              ]}
-            >
-              <Text style={themed($selectorLabel)} numberOfLines={1} tx={currentOption.labelTx} />
-              <SvgIcon
-                pathData={SvgIconPaths.right_arrow}
-                size={16}
-                containerStyle={{ transform: [{ rotate: isDropdownOpen ? "90deg" : "0deg" }] }}
-                color={colors.attributeArrowRight}
-              />
-            </Pressable>
-            {isDropdownOpen && (
-              <View style={themed($dropdownContainer)}>
-                {periodOptions.map((option) => (
-                  <Pressable
-                    key={option.value}
-                    onPress={() => handleSelectView(option.value)}
-                    style={({ pressed }) => [
-                      themed($dropdownItem),
-                      option.value === currentView && themed($dropdownItemActive),
-                      pressed && themed($dropdownItemPressed),
-                    ]}
-                  >
-                    <Text
-                      preset="default"
-                      style={[
-                        themed($dropdownItemText),
-                        option.value === currentView && themed($dropdownItemTextActive),
-                      ]}
-                      tx={option.labelTx}
-                    />
-                  </Pressable>
-                ))}
-              </View>
-            )}
+            <Dropdown
+              options={periodOptions}
+              selectedValue={currentView}
+              isOpen={isDropdownOpen}
+              onToggle={() => setIsDropdownOpen((prev) => !prev)}
+              onSelect={handleSelectView}
+              accessibilityLabel={t("homeScreen:periodSelector.accessibilityLabel")}
+              triggerStyle={themed($selectorButton)}
+              triggerTextStyle={themed($selectorLabel)}
+              testID="period-selector"
+            />
           </View>
 
           {isAttributesLoading ? (
@@ -308,46 +270,6 @@ const $selectorLabel: ThemedStyle<TextStyle> = ({ colors }) => ({
   color: colors.text,
   flex: 1,
   marginRight: 12,
-})
-
-const $dropdownContainer: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
-  position: "absolute",
-  top: spacing.md + spacing.xxs,
-  left: 0,
-  right: 0,
-  backgroundColor: colors.cardBackground,
-  borderColor: colors.border,
-  borderRadius: spacing.sm,
-  borderWidth: 1,
-  elevation: 4,
-  paddingVertical: spacing.xxs,
-  shadowColor: colors.shadow,
-  shadowOffset: { width: 0, height: 4 },
-  shadowOpacity: 0.12,
-  shadowRadius: 12,
-  zIndex: 10,
-})
-
-const $dropdownItem: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  paddingHorizontal: spacing.md,
-  paddingVertical: spacing.sm,
-})
-
-const $dropdownItemPressed: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  backgroundColor: colors.touchHighlight,
-})
-
-const $dropdownItemActive: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  backgroundColor: colors.separator,
-})
-
-const $dropdownItemText: ThemedStyle<TextStyle> = ({ colors }) => ({
-  color: colors.text,
-})
-
-const $dropdownItemTextActive: ThemedStyle<TextStyle> = ({ colors }) => ({
-  color: colors.primary,
-  fontWeight: "600",
 })
 
 const $rangeLabel: ThemedStyle<TextStyle> = ({ colors }) => ({
