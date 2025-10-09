@@ -60,7 +60,7 @@ export const UsersList: React.FC<Props> = ({ users }) => {
                 themed($cardStyle),
                 i === 0 && { marginTop: top * 2.2 },
                 i === filtered.length - 1 && {
-                  marginBottom: bottom + spacing.xxxl,
+                  marginBottom: bottom + spacing.xxxl + spacing.md,
                 },
               ]}
               ContentComponent={<UserListCard user={u} />}
