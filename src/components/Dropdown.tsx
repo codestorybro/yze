@@ -1,13 +1,7 @@
-import { memo, useMemo } from "react"
-import {
-  Pressable,
-  PressableStateCallbackType,
-  StyleProp,
-  TextStyle,
-  View,
-  ViewStyle,
-  StyleSheet,
-} from "react-native"
+import { memo, useCallback, useMemo } from "react"
+import type { ReactNode } from "react"
+import { Pressable, StyleProp, StyleSheet, TextStyle, View, ViewStyle } from "react-native"
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated"
 
 import { Text } from "./Text"
 import { SvgIcon } from "./SvgIcon"
@@ -16,6 +10,8 @@ import { SvgIconPaths } from "./SvgIcon/svgsPaths"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 import type { TxKeyPath } from "@/i18n"
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 export type DropdownOption<TValue> = {
   labelTx?: TxKeyPath
@@ -32,7 +28,7 @@ export type DropdownProps<TValue> = {
   accessibilityLabel?: string
   triggerStyle?: StyleProp<ViewStyle>
   triggerTextStyle?: StyleProp<TextStyle>
-  renderLabel?: (option: DropdownOption<TValue>) => React.ReactNode
+  renderLabel?: (option: DropdownOption<TValue>) => ReactNode
   testID?: string
 }
 
@@ -63,8 +59,26 @@ function DropdownComponent<TValue>({
 }: DropdownProps<TValue>) {
   const {
     themed,
-    theme: { colors, spacing },
+    theme: { colors },
   } = useAppTheme()
+
+  const triggerScale = useSharedValue(1)
+  const triggerAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: triggerScale.value }],
+  }))
+
+  const handleTriggerPressIn = useCallback(() => {
+    triggerScale.value = withSpring(1.06, { damping: 100, stiffness: 1000 })
+  }, [triggerScale])
+
+  const handleTriggerPressOut = useCallback(() => {
+    triggerScale.value = withSpring(1, { damping: 100, stiffness: 1000 })
+  }, [triggerScale])
+
+  const triggerStyleArray = useMemo(() => {
+    if (!triggerStyle) return [] as StyleProp<ViewStyle>[]
+    return Array.isArray(triggerStyle) ? triggerStyle : [triggerStyle]
+  }, [triggerStyle])
 
   const selectedOption = useMemo(
     () => options.find((option) => areValuesEqual(option.value, selectedValue)) ?? null,
@@ -73,15 +87,13 @@ function DropdownComponent<TValue>({
 
   return (
     <View style={styles.root} testID={testID}>
-      <Pressable
+      <AnimatedPressable
         onPress={onToggle}
+        onPressIn={handleTriggerPressIn}
+        onPressOut={handleTriggerPressOut}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
-        style={({ pressed }: PressableStateCallbackType) => [
-          themed($trigger),
-          triggerStyle,
-          pressed && { backgroundColor: colors.touchHighlight },
-        ]}
+        style={[themed($trigger), ...triggerStyleArray, triggerAnimatedStyle]}
       >
         <Text
           tx={selectedOption?.labelTx}
@@ -95,46 +107,82 @@ function DropdownComponent<TValue>({
           containerStyle={{ transform: [{ rotate: isOpen ? "90deg" : "0deg" }] }}
           color={colors.attributeArrowRight}
         />
-      </Pressable>
+      </AnimatedPressable>
 
       {isOpen && (
         <View style={themed($dropdownContainer)}>
-          {options.map((option, i) => {
-            const isSelected = areValuesEqual(option.value, selectedOption?.value)
-            return (
-              <Pressable
-                key={String(option.value)}
-                onPress={() => onSelect(option.value)}
-                style={({ pressed }) => [
-                  themed($dropdownItem),
-                  isSelected && themed($dropdownItemActive),
-                  pressed && themed($dropdownItemPressed),
-                  i === 0 && { borderTopLeftRadius: spacing.md, borderTopRightRadius: spacing.md },
-                  i === options.length - 1 && {
-                    borderBottomLeftRadius: spacing.md,
-                    borderBottomRightRadius: spacing.md,
-                  },
-                ]}
-              >
-                {renderLabel ? (
-                  renderLabel(option)
-                ) : (
-                  <Text
-                    preset="default"
-                    style={[
-                      themed($dropdownItemText),
-                      isSelected && themed($dropdownItemTextActive),
-                    ]}
-                    tx={option.labelTx}
-                    text={option.labelText}
-                  />
-                )}
-              </Pressable>
-            )
-          })}
+          {options.map((option, index) => (
+            <DropdownItem
+              key={String(option.value)}
+              option={option}
+              index={index}
+              total={options.length}
+              isSelected={areValuesEqual(option.value, selectedOption?.value)}
+              onSelect={onSelect}
+              renderLabel={renderLabel}
+            />
+          ))}
         </View>
       )}
     </View>
+  )
+}
+
+type DropdownItemProps<TValue> = {
+  option: DropdownOption<TValue>
+  index: number
+  total: number
+  isSelected: boolean
+  onSelect: (value: TValue) => void
+  renderLabel?: (option: DropdownOption<TValue>) => ReactNode
+}
+
+function DropdownItem<TValue>({
+  option,
+  index,
+  total,
+  isSelected,
+  onSelect,
+  renderLabel,
+}: DropdownItemProps<TValue>) {
+  const {
+    themed,
+    theme: { spacing },
+  } = useAppTheme()
+
+  const handlePress = useCallback(() => {
+    onSelect(option.value)
+  }, [onSelect, option.value])
+
+  const topRadiusStyle =
+    index === 0 ? { borderTopLeftRadius: spacing.md, borderTopRightRadius: spacing.md } : null
+  const bottomRadiusStyle =
+    index === total - 1
+      ? { borderBottomLeftRadius: spacing.md, borderBottomRightRadius: spacing.md }
+      : null
+
+  return (
+    <Pressable
+      onPress={handlePress}
+      style={({ pressed }) => [
+        themed($dropdownItem),
+        isSelected && themed($dropdownItemActive),
+        pressed && themed($dropdownItemPressed),
+        topRadiusStyle ?? undefined,
+        bottomRadiusStyle ?? undefined,
+      ]}
+    >
+      {renderLabel ? (
+        renderLabel(option)
+      ) : (
+        <Text
+          preset="default"
+          style={[themed($dropdownItemText), isSelected && themed($dropdownItemTextActive)]}
+          tx={option.labelTx}
+          text={option.labelText}
+        />
+      )}
+    </Pressable>
   )
 }
 
