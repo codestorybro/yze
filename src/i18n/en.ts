@@ -57,6 +57,64 @@ const en = {
       },
     },
     linkButton: "What are personality archetypes?",
+    archetypesSheet: {
+      heading: "What are personality archetypes?",
+      intro: [
+        "Each of us acts differently - some energise others, others bring calm, direction, or wisdom.",
+        "Yze archetypes help you understand your natural way of acting in a team and in life.",
+      ],
+      listHeading: "When you discover your archetype:",
+      bullets: [
+        "you uncover what drives you,",
+        "you learn to collaborate better with others,",
+        "and you balance action, relationships, and reflection with more ease.",
+      ],
+      closing: [
+        "Understanding your archetype helps you act more consciously, consistently, and in tune with yourself.",
+      ],
+      archetypes: {
+        flow: {
+          title: "Flow",
+          subtitle: "Energy that sets everything in motion",
+          paragraphs: [
+            "You spread enthusiasm and motivate others to act. You can create movement where others feel stuck.",
+            "Just be mindful not to burn out when others cannot keep up.",
+          ],
+          traitsLabel: "Dominant traits",
+          traits: "enthusiastic, expressive",
+        },
+        buddy: {
+          title: "Buddy",
+          subtitle: "The heart of the team",
+          paragraphs: [
+            "You create an atmosphere where people feel good. You know who needs support and who simply needs a chat.",
+            "Remember to take care of yourself too.",
+          ],
+          traitsLabel: "Dominant traits",
+          traits: "supportive, empathetic",
+        },
+        visionary: {
+          title: "Visionary",
+          subtitle: "A mind that sees further",
+          paragraphs: [
+            "You have ideas, you inspire others, and you see the direction before there is a map. You love creating, improving, and pushing things forward.",
+            "Be careful not to get stuck in visions without taking action.",
+          ],
+          traitsLabel: "Dominant traits",
+          traits: "ambitious, decisive",
+        },
+        guru: {
+          title: "Guru",
+          subtitle: "Calm and wisdom in chaos",
+          paragraphs: [
+            "You analyse, understand, and help others find balance. You prefer when things simply work instead of being in the spotlight.",
+            "Your strength is perspective and the calm that restores order.",
+          ],
+          traitsLabel: "Dominant traits",
+          traits: "analytical, precise",
+        },
+      },
+    },
   },
   attributes: {
     detailsPlaceholder: "Detailed information about the {{attributeName}} attribute goes here.",

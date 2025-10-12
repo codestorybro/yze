@@ -60,6 +60,64 @@ const pl: Translations = {
       },
     },
     linkButton: "Czym są archetypy osobowości?",
+    archetypesSheet: {
+      heading: "Czym są archetypy osobowości?",
+      intro: [
+        "Każdy z nas działa inaczej - jedni napędzają innych energią, inni dają spokój, kierunek albo mądrość.",
+        "Archetypy Yze pomagają Ci zrozumieć Twój naturalny styl działania w zespole i w życiu.",
+      ],
+      listHeading: "Poznając swój archetyp:",
+      bullets: [
+        "odkrywasz, co Cię napędza,",
+        "uczysz się lepiej współpracować z innymi,",
+        "i łatwiej budujesz równowagę między działaniem, relacjami i refleksją.",
+      ],
+      closing: [
+        "Zrozumienie swojego archetypu pozwala Ci działać bardziej świadomie, spójnie i w zgodzie ze sobą.",
+      ],
+      archetypes: {
+        flow: {
+          title: "Flow",
+          subtitle: "energia, która rusza wszystko",
+          paragraphs: [
+            "Zaraża innych entuzjazmem i motywuje do działania. Potrafi wprowadzić ruch tam, gdzie inni utknęli.",
+            "Należy uważać, żeby nie wypalić się, gdy inni nie nadążają.",
+          ],
+          traitsLabel: "Cechy dominujące",
+          traits: "entuzjastyczny, ekspresyjny",
+        },
+        buddy: {
+          title: "Buddy",
+          subtitle: "serce zespołu",
+          paragraphs: [
+            "Tworzy atmosferę, w której ludzie czują się dobrze. Wie, kto potrzebuje wsparcia, a kto po prostu rozmowy.",
+            "Supermocą Buddy'ego jest budowanie więzi i poczucia wspólnoty. Należy pamiętać, że czasem warto też zadbać o siebie.",
+          ],
+          traitsLabel: "Cechy dominujące",
+          traits: "wspierający, empatyczny",
+        },
+        visionary: {
+          title: "Visionary",
+          subtitle: "umysł, który widzi dalej",
+          paragraphs: [
+            "Ma pomysły, inspiruje innych, widzi kierunek zanim pojawi się mapa. Uwielbia tworzyć, ulepszać i pchać rzeczy do przodu.",
+            "Należy uważać, żeby nie ugrzęznąć w wizjach bez działania.",
+          ],
+          traitsLabel: "Cechy dominujące",
+          traits: "ambitny, decyzyjny",
+        },
+        guru: {
+          title: "Guru",
+          subtitle: "spokój i mądrość w chaosie",
+          paragraphs: [
+            "Analizuje, rozumie i pomaga innym złapać balans. Nie potrzebuje być w centrum - woli, gdy rzeczy po prostu działają.",
+            "Siłą Guru jest perspektywa i spokój, który przywraca porządek.",
+          ],
+          traitsLabel: "Cechy dominujące",
+          traits: "analityczny, dokładny",
+        },
+      },
+    },
   },
   attributes: {
     detailsPlaceholder: "Szczegółowe informacje o atrybucie {{attributeName}} znajdują się tutaj.",

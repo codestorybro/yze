@@ -6,6 +6,7 @@ import { enUS, pl as plLocale } from "date-fns/locale"
 import { useTranslation } from "react-i18next"
 
 import {
+  ArchetypesSheetContent,
   Button,
   ElementsList,
   ElementsListSkeleton,
@@ -20,6 +21,7 @@ import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
 import { TxKeyPath } from "@/i18n"
 import { useUser } from "@/store/auth"
 import { useAttributes } from "@/store/attributes"
+import { useBottomSheet } from "@/store/bottomSheet"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 import { AttributesViewType } from "@/types/attributesViewType"
@@ -56,6 +58,7 @@ export default function Index() {
     currentOffset,
     maxOffset,
   } = useAttributes()
+  const { openSheet } = useBottomSheet()
   const { t, i18n } = useTranslation()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const avatarUri = user?.avatarUri
@@ -173,6 +176,10 @@ export default function Index() {
     void refreshAttributes({ offset: nextOffset })
   }, [canNavigateForward, currentOffset, refreshAttributes])
 
+  const handleOpenArchetypesSheet = useCallback(() => {
+    openSheet(<ArchetypesSheetContent />)
+  }, [openSheet])
+
   return (
     <LoggedScreenWrapper>
       <View style={styles.screenWrapper}>
@@ -264,7 +271,7 @@ export default function Index() {
           tx="homeScreen:linkButton"
           style={styles.linkButton}
           preset="link"
-          onPress={() => {}}
+          onPress={handleOpenArchetypesSheet}
         />
       </View>
     </LoggedScreenWrapper>

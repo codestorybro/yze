@@ -13,6 +13,7 @@ import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from "@gorhom
 import { ThemedStyle } from "@/theme/types"
 import { useAppTheme } from "@/theme/context"
 import { LinearGradient } from "expo-linear-gradient"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 type BottomSheetContextType = {
   openSheet: (content: ReactNode) => void
@@ -28,6 +29,8 @@ export function BottomSheetProvider({ children }: { children: ReactNode }) {
     themed,
     theme: { colors, spacing },
   } = useAppTheme()
+
+  const { bottom } = useSafeAreaInsets()
 
   const snapPoints = useMemo(() => ["75%"], [])
 
@@ -63,7 +66,10 @@ export function BottomSheetProvider({ children }: { children: ReactNode }) {
         >
           <View style={{ flex: 1 }}>
             <BottomSheetScrollView
-              contentContainerStyle={themed($contentContainerStyle)}
+              contentContainerStyle={[
+                themed($contentContainerStyle),
+                { paddingBottom: bottom + spacing.md },
+              ]}
               showsVerticalScrollIndicator={false}
             >
               {content}
@@ -72,13 +78,13 @@ export function BottomSheetProvider({ children }: { children: ReactNode }) {
             <LinearGradient
               pointerEvents="none"
               colors={[colors.tabBarBackground, `${colors.tabBarBackground}00`]}
-              style={[styles.fade, { top: 0, height: spacing.xxl }]}
+              style={[styles.fade, { top: 0, height: spacing.xl }]}
             />
 
             <LinearGradient
               pointerEvents="none"
               colors={[`${colors.tabBarBackground}00`, colors.tabBarBackground]}
-              style={[styles.fade, { bottom: 0, height: spacing.xxl }]}
+              style={[styles.fade, { bottom: 0, height: bottom + spacing.lg }]}
             />
           </View>
         </BottomSheet>
@@ -89,7 +95,8 @@ export function BottomSheetProvider({ children }: { children: ReactNode }) {
 
 const $contentContainerStyle: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   backgroundColor: colors.tabBarBackground,
-  padding: spacing.md,
+  paddingHorizontal: spacing.md,
+  paddingTop: spacing.md,
 })
 
 const $indicatorStyle: ThemedStyle<ViewStyle> = ({ colors }) => ({
