@@ -56,6 +56,7 @@ const en = {
         navigateNext: "Go to next period",
       },
     },
+    linkButton: "What are personality archetypes?",
   },
   attributes: {
     detailsPlaceholder: "Detailed information about the {{attributeName}} attribute goes here.",

@@ -18,7 +18,7 @@ import type { ThemedStyle, ThemedStyleArray } from "@/theme/types"
 
 import { Text, TextProps } from "./Text"
 
-type Presets = "default" | "error" | "reverse" | "navigation" | "floating"
+type Presets = "default" | "error" | "reverse" | "navigation" | "floating" | "link"
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
@@ -266,6 +266,8 @@ export function Button(props: ButtonProps) {
         return theme.colors.primary
       case "navigation":
         return theme.colors.primary
+      case "link":
+        return theme.colors.primary
       default:
         return theme.colors.textReversed
     }
@@ -403,6 +405,15 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
       boxShadow: `0px 0px 12px ${colors.shadow}`,
     }),
   ],
+  link: [
+    $styles.row,
+    () => ({
+      paddingVertical: 0,
+      paddingHorizontal: 0,
+      minHeight: 0,
+      alignItems: "center",
+    }),
+  ],
 }
 
 const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
@@ -411,6 +422,7 @@ const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
   reverse: [$baseTextStyle, ({ colors }) => ({ color: colors.primary })],
   navigation: [$baseTextStyle, ({ colors }) => ({ color: colors.primary })],
   floating: [$baseTextStyle, ({ colors }) => ({ color: colors.text })],
+  link: [$baseTextStyle, ({ colors }) => ({ color: colors.primary })],
 }
 
 const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
@@ -419,6 +431,7 @@ const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
   reverse: ({ colors }) => ({ backgroundColor: colors.transparentPressed }),
   navigation: ({}) => ({}),
   floating: ({ colors }) => ({ backgroundColor: colors.floatingButtonPressed }),
+  link: () => ({}),
 }
 
 const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
@@ -427,6 +440,7 @@ const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
   reverse: () => ({ opacity: 0.9 }),
   navigation: ({ colors }) => ({ opacity: 0.9, color: colors.primary }),
   floating: () => ({ opacity: 0.9 }),
+  link: () => ({ opacity: 0.7 }),
 }
 
 const $disabledViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
@@ -438,6 +452,7 @@ const $disabledViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
   }),
   navigation: ({ colors }) => ({ backgroundColor: colors.transparent }),
   floating: () => ({ opacity: 0.35 }),
+  link: ({}) => ({}),
 }
 
 const $disabledTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
@@ -446,4 +461,5 @@ const $disabledTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
   reverse: ({ colors }) => ({ color: colors.textDim }),
   navigation: ({ colors }) => ({ color: colors.disabled }),
   floating: ({ colors }) => ({ color: colors.textDim }),
+  link: ({ colors }) => ({ color: colors.disabled }),
 }

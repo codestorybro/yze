@@ -59,6 +59,7 @@ const pl: Translations = {
         navigateNext: "Przejdź do następnego okresu",
       },
     },
+    linkButton: "Czym są archetypy osobowości?",
   },
   attributes: {
     detailsPlaceholder: "Szczegółowe informacje o atrybucie {{attributeName}} znajdują się tutaj.",

@@ -259,6 +259,13 @@ export default function Index() {
             normalizedAttributes.length > 0 && <ElementsList items={normalizedAttributes} />
           )}
         </View>
+
+        <Button
+          tx="homeScreen:linkButton"
+          style={styles.linkButton}
+          preset="link"
+          onPress={() => {}}
+        />
       </View>
     </LoggedScreenWrapper>
   )
@@ -299,6 +306,9 @@ const $rangeLabel: ThemedStyle<TextStyle> = ({ colors }) => ({
 })
 
 const styles = StyleSheet.create({
+  linkButton: {
+    alignSelf: "center",
+  },
   screenWrapper: {
     flex: 1,
     position: "relative",
