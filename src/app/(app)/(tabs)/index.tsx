@@ -215,16 +215,10 @@ export default function Index() {
             />
           </View>
 
-          {isAttributesLoading ? (
-            <ElementsListSkeleton itemCount={normalizedAttributes.length || 4} />
-          ) : (
-            normalizedAttributes.length > 0 && <ElementsList items={normalizedAttributes} />
-          )}
-
           <View
             style={[
               styles.navigationWrapper,
-              (currentView === "overall" || !hasHistoricalData) && { opacity: 0 },
+              (currentView === "overall" || !hasHistoricalData) && { opacity: 0.95 },
             ]}
           >
             <Button
@@ -258,6 +252,12 @@ export default function Index() {
               accessibilityLabel={t("homeScreen:periodSelector.range.navigateNext")}
             />
           </View>
+
+          {isAttributesLoading ? (
+            <ElementsListSkeleton itemCount={normalizedAttributes.length || 4} />
+          ) : (
+            normalizedAttributes.length > 0 && <ElementsList items={normalizedAttributes} />
+          )}
         </View>
       </View>
     </LoggedScreenWrapper>
