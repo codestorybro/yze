@@ -7,8 +7,7 @@ import { SvgIcon } from "./SvgIcon"
 import { SvgIconPaths } from "./SvgIcon/svgsPaths"
 import { useAppTheme } from "@/theme/context"
 import type { Spacing } from "@/theme/types"
-
-type ArchetypeKey = "flow" | "buddy" | "visionary" | "guru"
+import { archetypeKeys, type ArchetypeKey } from "@/types/archetype"
 
 type ArchetypeContent = {
   title: string
@@ -95,7 +94,7 @@ export function ArchetypesSheetContent() {
   )
 }
 
-const archetypeOrder: ArchetypeKey[] = ["flow", "buddy", "visionary", "guru"]
+const archetypeOrder: ArchetypeKey[] = [...archetypeKeys]
 
 const createStyles = (spacing: Spacing) =>
   StyleSheet.create({

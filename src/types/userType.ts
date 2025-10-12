@@ -1,7 +1,9 @@
+import type { ArchetypeKey } from "./archetype"
+
 export type UserType = {
   id: string
   name: string
   email?: string
   avatarUri?: string
-  dominantArchetypeId?: string
+  dominantArchetypeId?: ArchetypeKey
 }

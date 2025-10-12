@@ -6,6 +6,7 @@ import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
 import { useBottomSheet } from "@/store/bottomSheet"
 import { useAppTheme } from "@/theme/context"
 import { AttributeType } from "@/types/attributeType"
+import type { ArchetypeKey } from "@/types/archetype"
 
 export type NormalizedAttribute = AttributeType & {
   svgIconPath: keyof typeof SvgIconPaths
@@ -19,14 +20,29 @@ export const useNormalizeAttributes = (attributes: AttributeType[]) => {
     theme: { colors },
   } = useAppTheme()
   const { openSheet } = useBottomSheet()
-  const {
-    attributeArrowRight,
-    attributeBuddy,
-    attributeVisionary,
-    attributeFlow,
-    attributeGuru,
-    text: textColor,
-  } = colors
+  const { attributeArrowRight, attributeBuddy, attributeVisionary, attributeFlow, attributeGuru } =
+    colors
+
+  const archetypeColors = useMemo(
+    () => ({
+      buddy: attributeBuddy,
+      visionary: attributeVisionary,
+      flow: attributeFlow,
+      guru: attributeGuru,
+    }),
+    [attributeBuddy, attributeVisionary, attributeFlow, attributeGuru],
+  )
+
+  const archetypeIcons = useMemo(
+    () =>
+      ({
+        buddy: "buddy",
+        visionary: "visionary",
+        flow: "flow",
+        guru: "guru",
+      }) as const satisfies Record<ArchetypeKey, keyof typeof SvgIconPaths>,
+    [],
+  )
 
   const maxScore = useMemo(() => {
     if (attributes.length === 0) {
@@ -55,31 +71,19 @@ export const useNormalizeAttributes = (attributes: AttributeType[]) => {
   )
 
   const selectColorBasedOnAttribute = useCallback(
-    (attributeId: string) => {
-      switch (attributeId) {
-        case "buddy":
-          return attributeBuddy
-        case "visionary":
-          return attributeVisionary
-        case "flow":
-          return attributeFlow
-        case "guru":
-          return attributeGuru
-        default:
-          return textColor
-      }
-    },
-    [attributeBuddy, attributeVisionary, attributeFlow, attributeGuru, textColor],
+    (attributeId: ArchetypeKey) => archetypeColors[attributeId],
+    [archetypeColors],
   )
 
   return useMemo<NormalizedAttribute[]>(
     () =>
       attributes.map((singleAttribute) => {
         const color = selectColorBasedOnAttribute(singleAttribute.id)
+        const iconPath = archetypeIcons[singleAttribute.id]
 
         return {
           ...singleAttribute,
-          svgIconPath: singleAttribute.id as keyof typeof SvgIconPaths,
+          svgIconPath: iconPath,
           svgIconColor: color,
           content: (
             <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -94,6 +98,13 @@ export const useNormalizeAttributes = (attributes: AttributeType[]) => {
           onPress: () => handleOnPress(singleAttribute),
         }
       }),
-    [attributeArrowRight, attributes, handleOnPress, maxScore, selectColorBasedOnAttribute],
+    [
+      archetypeIcons,
+      attributeArrowRight,
+      attributes,
+      handleOnPress,
+      maxScore,
+      selectColorBasedOnAttribute,
+    ],
   )
 }

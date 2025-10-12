@@ -1,5 +1,7 @@
+import type { ArchetypeKey } from "./archetype"
+
 export type AttributeType = {
-  id: string
+  id: ArchetypeKey
   label: string
   score: number
 }

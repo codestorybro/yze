@@ -1,7 +1,8 @@
 import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
 import { useAppTheme } from "@/theme/context"
+import type { ArchetypeKey } from "@/types/archetype"
 
-export const useAttributeColorAndIcon = (attributeId?: string) => {
+export const useAttributeColorAndIcon = (attributeId?: ArchetypeKey) => {
   const {
     theme: { colors },
   } = useAppTheme()
@@ -13,8 +14,8 @@ export const useAttributeColorAndIcon = (attributeId?: string) => {
     text: textColor,
   } = colors
 
-  let color
-  let icon
+  let color: string = textColor
+  let icon: string | undefined
 
   switch (attributeId) {
     case "buddy":
@@ -33,8 +34,6 @@ export const useAttributeColorAndIcon = (attributeId?: string) => {
       color = attributeGuru
       icon = SvgIconPaths.guru
       break
-    default:
-      color = textColor
   }
 
   return { color, icon }
