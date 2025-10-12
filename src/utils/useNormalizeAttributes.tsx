@@ -20,24 +20,24 @@ export const useNormalizeAttributes = (attributes: AttributeType[]) => {
     theme: { colors },
   } = useAppTheme()
   const { openSheet } = useBottomSheet()
-  const { attributeArrowRight, attributeBuddy, attributeVisionary, attributeFlow, attributeGuru } =
+  const { attributeArrowRight, attributeBuddy, attributeRise, attributeFlow, attributeGuru } =
     colors
 
   const archetypeColors = useMemo(
     () => ({
       buddy: attributeBuddy,
-      visionary: attributeVisionary,
+      rise: attributeRise,
       flow: attributeFlow,
       guru: attributeGuru,
     }),
-    [attributeBuddy, attributeVisionary, attributeFlow, attributeGuru],
+    [attributeBuddy, attributeRise, attributeFlow, attributeGuru],
   )
 
   const archetypeIcons = useMemo(
     () =>
       ({
         buddy: "buddy",
-        visionary: "visionary",
+        rise: "rise",
         flow: "flow",
         guru: "guru",
       }) as const satisfies Record<ArchetypeKey, keyof typeof SvgIconPaths>,

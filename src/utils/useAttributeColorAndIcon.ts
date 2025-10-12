@@ -6,13 +6,7 @@ export const useAttributeColorAndIcon = (attributeId?: ArchetypeKey) => {
   const {
     theme: { colors },
   } = useAppTheme()
-  const {
-    attributeBuddy,
-    attributeVisionary,
-    attributeFlow,
-    attributeGuru,
-    text: textColor,
-  } = colors
+  const { attributeBuddy, attributeRise, attributeFlow, attributeGuru, text: textColor } = colors
 
   let color: string = textColor
   let icon: string | undefined
@@ -22,9 +16,9 @@ export const useAttributeColorAndIcon = (attributeId?: ArchetypeKey) => {
       color = attributeBuddy
       icon = SvgIconPaths.buddy
       break
-    case "visionary":
-      color = attributeVisionary
-      icon = SvgIconPaths.visionary
+    case "rise":
+      color = attributeRise
+      icon = SvgIconPaths.rise
       break
     case "flow":
       color = attributeFlow

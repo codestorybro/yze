@@ -36,25 +36,25 @@ const baseAttributes: Record<string, AttributeType[]> = {
   weekly: [
     { id: "flow", label: "Flow", score: 46 },
     { id: "buddy", label: "Buddy", score: 38 },
-    { id: "visionary", label: "Visionary", score: 31 },
+    { id: "rise", label: "Rise", score: 31 },
     { id: "guru", label: "Guru", score: 27 },
   ],
   monthly: [
     { id: "flow", label: "Flow", score: 58 },
     { id: "buddy", label: "Buddy", score: 44 },
-    { id: "visionary", label: "Visionary", score: 52 },
+    { id: "rise", label: "Rise", score: 52 },
     { id: "guru", label: "Guru", score: 41 },
   ],
   yearly: [
     { id: "flow", label: "Flow", score: 72 },
     { id: "buddy", label: "Buddy", score: 65 },
-    { id: "visionary", label: "Visionary", score: 84 },
+    { id: "rise", label: "Rise", score: 84 },
     { id: "guru", label: "Guru", score: 78 },
   ],
   overall: [
     { id: "flow", label: "Flow", score: 88 },
     { id: "buddy", label: "Buddy", score: 79 },
-    { id: "visionary", label: "Visionary", score: 92 },
+    { id: "rise", label: "Rise", score: 92 },
     { id: "guru", label: "Guru", score: 86 },
   ],
 }

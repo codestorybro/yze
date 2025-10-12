@@ -75,10 +75,11 @@ const en = {
       archetypes: {
         flow: {
           title: "Flow",
-          subtitle: "Energy that sets everything in motion",
+          subtitle: "Muscle that sets everything in motion",
           paragraphs: [
-            "You spread enthusiasm and motivate others to act. You can create movement where others feel stuck.",
-            "Just be mindful not to burn out when others cannot keep up.",
+            "Flow spreads enthusiasm and motivates others to act. He can create movement where others feel stuck.",
+            "Strength: an energy that inspires others to take action.",
+            "Shadow side: may act impulsively or burn out when focusing only on emotions and pace.",
           ],
           traitsLabel: "Dominant traits",
           traits: "enthusiastic, expressive",
@@ -87,28 +88,31 @@ const en = {
           title: "Buddy",
           subtitle: "The heart of the team",
           paragraphs: [
-            "You create an atmosphere where people feel good. You know who needs support and who simply needs a chat.",
-            "Remember to take care of yourself too.",
+            "Buddy creates an atmosphere where people feel good. He knows who needs support and who simply needs a chat.",
+            "Strength: building connections and a positive atmosphere around you.",
+            "Shadow side: may avoid confrontation and overly adapt to others at the expense of yourself.",
           ],
           traitsLabel: "Dominant traits",
           traits: "supportive, empathetic",
         },
-        visionary: {
-          title: "Visionary",
-          subtitle: "A mind that sees further",
+        rise: {
+          title: "Rise",
+          subtitle: "Eyes that see further",
           paragraphs: [
-            "You have ideas, you inspire others, and you see the direction before there is a map. You love creating, improving, and pushing things forward.",
-            "Be careful not to get stuck in visions without taking action.",
+            "Rise has ideas, inspires others, and sees the direction before there is a map. He loves creating, improving, and pushing things forward.",
+            "Strength: the ability to see direction and inspire change.",
+            "Shadow side: may get lost in visions and lose touch with everyday life or details.",
           ],
           traitsLabel: "Dominant traits",
           traits: "ambitious, decisive",
         },
         guru: {
           title: "Guru",
-          subtitle: "Calm and wisdom in chaos",
+          subtitle: "A mind that provides balance",
           paragraphs: [
-            "You analyse, understand, and help others find balance. You prefer when things simply work instead of being in the spotlight.",
-            "Your strength is perspective and the calm that restores order.",
+            "Guru analyses, understands, and helps others find balance. He prefers when things simply work instead of being in the spotlight.",
+            "Strength: calm and wisdom that help others find balance.",
+            "Shadow side: may become too detached or overly critical of others' emotions and chaos.",
           ],
           traitsLabel: "Dominant traits",
           traits: "analytical, precise",

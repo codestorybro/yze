@@ -42,10 +42,10 @@ export function ArchetypesSheetContent() {
     () => ({
       flow: { color: colors.attributeFlow, icon: SvgIconPaths.flow },
       buddy: { color: colors.attributeBuddy, icon: SvgIconPaths.buddy },
-      visionary: { color: colors.attributeVisionary, icon: SvgIconPaths.visionary },
+      rise: { color: colors.attributeRise, icon: SvgIconPaths.rise },
       guru: { color: colors.attributeGuru, icon: SvgIconPaths.guru },
     }),
-    [colors.attributeBuddy, colors.attributeFlow, colors.attributeGuru, colors.attributeVisionary],
+    [colors.attributeBuddy, colors.attributeFlow, colors.attributeGuru, colors.attributeRise],
   )
 
   return (

@@ -78,40 +78,44 @@ const pl: Translations = {
       archetypes: {
         flow: {
           title: "Flow",
-          subtitle: "energia, która rusza wszystko",
+          subtitle: "Mięśnie, które ruszają wszystko",
           paragraphs: [
             "Zaraża innych entuzjazmem i motywuje do działania. Potrafi wprowadzić ruch tam, gdzie inni utknęli.",
-            "Należy uważać, żeby nie wypalić się, gdy inni nie nadążają.",
+            "Siła: energia, która inspiruje innych do działania.",
+            "Shadow side: może działać impulsywnie lub wypalać się, gdy skupia się tylko na emocjach i tempie.",
           ],
           traitsLabel: "Cechy dominujące",
           traits: "entuzjastyczny, ekspresyjny",
         },
         buddy: {
           title: "Buddy",
-          subtitle: "serce zespołu",
+          subtitle: "Serce zespołu",
           paragraphs: [
             "Tworzy atmosferę, w której ludzie czują się dobrze. Wie, kto potrzebuje wsparcia, a kto po prostu rozmowy.",
-            "Supermocą Buddy'ego jest budowanie więzi i poczucia wspólnoty. Należy pamiętać, że czasem warto też zadbać o siebie.",
+            "Siła: budowanie więzi i pozytywnej atmosfery wokół siebie.",
+            "Shadow side: może unikać konfrontacji i zbyt mocno dostosowywać się do innych kosztem siebie.",
           ],
           traitsLabel: "Cechy dominujące",
           traits: "wspierający, empatyczny",
         },
-        visionary: {
-          title: "Visionary",
-          subtitle: "umysł, który widzi dalej",
+        rise: {
+          title: "Rise",
+          subtitle: "Oczy, które widzą dalej",
           paragraphs: [
             "Ma pomysły, inspiruje innych, widzi kierunek zanim pojawi się mapa. Uwielbia tworzyć, ulepszać i pchać rzeczy do przodu.",
-            "Należy uważać, żeby nie ugrzęznąć w wizjach bez działania.",
+            "Siła: zdolność dostrzegania kierunku i inspirowania zmian.",
+            "Shadow side: może gubić się w pomysłach i tracić kontakt z codziennością lub detalami.",
           ],
           traitsLabel: "Cechy dominujące",
           traits: "ambitny, decyzyjny",
         },
         guru: {
           title: "Guru",
-          subtitle: "spokój i mądrość w chaosie",
+          subtitle: "Umysł, który zapewnia równowagę",
           paragraphs: [
             "Analizuje, rozumie i pomaga innym złapać balans. Nie potrzebuje być w centrum - woli, gdy rzeczy po prostu działają.",
-            "Siłą Guru jest perspektywa i spokój, który przywraca porządek.",
+            "Siła: spokój i mądrość, które pomagają innym odnaleźć balans.",
+            "Shadow side: może stać się zbyt zdystansowany lub nadmiernie krytyczny wobec emocji i chaosu innych.",
           ],
           traitsLabel: "Cechy dominujące",
           traits: "analityczny, dokładny",

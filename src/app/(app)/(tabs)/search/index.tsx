@@ -17,7 +17,7 @@ const mockedUsers = [
     id: "1",
     name: "John Doe",
     avatarUri: "https://avatar.iran.liara.run/public/40",
-    dominantArchetypeId: "visionary",
+    dominantArchetypeId: "rise",
   },
   {
     id: "2",
@@ -54,7 +54,7 @@ const mockedUsers = [
     id: "7",
     name: "Emma Thompson",
     avatarUri: "https://avatar.iran.liara.run/public/3",
-    dominantArchetypeId: "visionary",
+    dominantArchetypeId: "rise",
   },
   {
     id: "8",
@@ -88,7 +88,7 @@ const mockedUsers = [
     id: "16",
     name: "Tony Williams",
     avatarUri: "https://avatar.iran.liara.run/public/16",
-    dominantArchetypeId: "visionary",
+    dominantArchetypeId: "rise",
   },
   {
     id: "17",
