@@ -7,4 +7,5 @@ export type UserType = {
   avatarUri?: string
   dominantArchetypeId?: ArchetypeKey
   alreadyAppreciated?: boolean
+  isOwner?: boolean
 }

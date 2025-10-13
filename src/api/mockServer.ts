@@ -39,6 +39,7 @@ const mockedGroupMembers: UserType[] = [
     avatarUri: "https://avatar.iran.liara.run/public/40",
     dominantArchetypeId: "rise",
     alreadyAppreciated: true,
+    isOwner: true,
   },
   {
     id: "2",

@@ -5,6 +5,7 @@ import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 import { UserType } from "@/types/userType"
 import { useAttributeColorAndIcon } from "@/utils/useAttributeColorAndIcon"
+import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
 
 const _imageSize = 80
 
@@ -13,7 +14,10 @@ type Props = {
 }
 
 export function UserListCard({ user }: Props) {
-  const { themed } = useAppTheme()
+  const {
+    themed,
+    theme: { colors },
+  } = useAppTheme()
   const { color, icon } = useAttributeColorAndIcon(user.dominantArchetypeId)
 
   return (
@@ -28,6 +32,12 @@ export function UserListCard({ user }: Props) {
           />
         </View>
       ) : null}
+      {user.isOwner ? (
+        <View style={themed($crownWrapper)}>
+          <SvgIcon pathData={SvgIconPaths.crown} size={28} color={colors.crown} />
+        </View>
+      ) : null}
+
       {user.dominantArchetypeId && (
         <View style={themed($imageWrapper)}>
           <SvgIcon pathData={icon} color={color} size={24} />
@@ -77,4 +87,12 @@ const $imageWrapper: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   backgroundColor: colors.inputBackground,
   padding: spacing.xxxs,
   borderRadius: spacing.xxxl,
+})
+
+const $crownWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  position: "absolute",
+  top: -spacing.sm,
+  left: spacing.xxxs,
+  transform: [{ rotate: "-30deg" }],
+  zIndex: 1,
 })
