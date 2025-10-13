@@ -82,7 +82,7 @@ const en = {
             "Strength: an energy that inspires others to take action.",
             "Shadow side: may act impulsively or burn out when focusing only on emotions and pace.",
           ],
-          traitsLabel: "Dominant traits",
+          traitsLabel: "Traits",
           traits: "enthusiastic, expressive",
         },
         buddy: {
@@ -93,7 +93,7 @@ const en = {
             "Strength: building connections and a positive atmosphere around you.",
             "Shadow side: may avoid confrontation and overly adapt to others at the expense of yourself.",
           ],
-          traitsLabel: "Dominant traits",
+          traitsLabel: "Traits",
           traits: "supportive, empathetic",
         },
         rise: {
@@ -104,7 +104,7 @@ const en = {
             "Strength: the ability to see direction and inspire change.",
             "Shadow side: may get lost in visions and lose touch with everyday life or details.",
           ],
-          traitsLabel: "Dominant traits",
+          traitsLabel: "Traits",
           traits: "ambitious, decisive",
         },
         guru: {
@@ -115,7 +115,7 @@ const en = {
             "Strength: calm and wisdom that help others find balance.",
             "Shadow side: may become too detached or overly critical of others' emotions and chaos.",
           ],
-          traitsLabel: "Dominant traits",
+          traitsLabel: "Traits",
           traits: "analytical, precise",
         },
       },

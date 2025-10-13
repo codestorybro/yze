@@ -85,7 +85,7 @@ const pl: Translations = {
             "Siła: energia, która inspiruje innych do działania.",
             "Shadow side: może działać impulsywnie lub wypalać się, gdy skupia się tylko na emocjach i tempie.",
           ],
-          traitsLabel: "Cechy dominujące",
+          traitsLabel: "Cechy",
           traits: "entuzjastyczny, ekspresyjny",
         },
         buddy: {
@@ -96,7 +96,7 @@ const pl: Translations = {
             "Siła: budowanie więzi i pozytywnej atmosfery wokół siebie.",
             "Shadow side: może unikać konfrontacji i zbyt mocno dostosowywać się do innych kosztem siebie.",
           ],
-          traitsLabel: "Cechy dominujące",
+          traitsLabel: "Cechy",
           traits: "wspierający, empatyczny",
         },
         rise: {
@@ -107,7 +107,7 @@ const pl: Translations = {
             "Siła: zdolność dostrzegania kierunku i inspirowania zmian.",
             "Shadow side: może gubić się w pomysłach i tracić kontakt z codziennością lub detalami.",
           ],
-          traitsLabel: "Cechy dominujące",
+          traitsLabel: "Cechy",
           traits: "ambitny, decyzyjny",
         },
         guru: {
@@ -118,7 +118,7 @@ const pl: Translations = {
             "Siła: spokój i mądrość, które pomagają innym odnaleźć balans.",
             "Shadow side: może stać się zbyt zdystansowany lub nadmiernie krytyczny wobec emocji i chaosu innych.",
           ],
-          traitsLabel: "Cechy dominujące",
+          traitsLabel: "Cechy",
           traits: "analityczny, dokładny",
         },
       },
