@@ -24,6 +24,7 @@ const pl: Translations = {
     noResults: "Brak wyników",
     suggestion: "Sprawdź czy tekst jest poprawny, lub spróbuj szukać po innych frazach",
     searchForUser: "Szukaj użytkownika",
+    appreciatedToday: "Doceniono dzisiaj",
   },
   errorScreen: {
     title: "Coś poszło nie tak!",

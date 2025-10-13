@@ -1,4 +1,4 @@
-import { View, ViewStyle } from "react-native"
+import { View, ViewStyle, TextStyle } from "react-native"
 
 import { Text, SkeletonImage, SvgIcon } from "@/components"
 import { useAppTheme } from "@/theme/context"
@@ -18,6 +18,16 @@ export function UserListCard({ user }: Props) {
 
   return (
     <View style={themed($wrapper)}>
+      {user.alreadyAppreciated ? (
+        <View style={themed($badgeWrapper)}>
+          <Text
+            preset="formHelper"
+            size="xs"
+            tx="searchScreen:appreciatedToday"
+            style={themed($badgeText)}
+          />
+        </View>
+      ) : null}
       {user.dominantArchetypeId && (
         <View style={themed($imageWrapper)}>
           <SvgIcon pathData={icon} color={color} size={24} />
@@ -43,6 +53,20 @@ const $wrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   alignItems: "center",
   gap: spacing.lg,
   position: "relative",
+})
+
+const $badgeWrapper: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
+  position: "absolute",
+  top: spacing.xxs,
+  right: spacing.xxs,
+  backgroundColor: colors.inputBackground,
+  paddingHorizontal: spacing.xxs,
+  paddingVertical: spacing.xxxs,
+  borderRadius: spacing.xxxs,
+})
+
+const $badgeText: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.primary,
 })
 
 const $imageWrapper: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({

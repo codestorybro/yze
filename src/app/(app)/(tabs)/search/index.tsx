@@ -1,5 +1,4 @@
-import { useEffect } from "react"
-import { View, ViewStyle, StyleSheet, Platform } from "react-native"
+import { View, ViewStyle, TextStyle, StyleSheet, Platform } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { Button, KeyboardResponsiveView, LoggedScreenWrapper, SvgIcon, Text } from "@/components"
@@ -12,110 +11,15 @@ import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
 import { GradientSeparator } from "@/components/TabBar/GradientSeparator"
 import { router } from "expo-router"
 
-const mockedUsers = [
-  {
-    id: "1",
-    name: "John Doe",
-    avatarUri: "https://avatar.iran.liara.run/public/40",
-    dominantArchetypeId: "rise",
-  },
-  {
-    id: "2",
-    name: "Jane Smith",
-    avatarUri: "https://avatar.iran.liara.run/public/16",
-    dominantArchetypeId: "flow",
-  },
-  {
-    id: "3",
-    name: "Alice Johnson",
-    avatarUri: "https://avatar.iran.liara.run/public/33",
-    dominantArchetypeId: "buddy",
-  },
-  {
-    id: "4",
-    name: "Bob Brown",
-    avatarUri: "https://avatar.iran.liara.run/public/32",
-    dominantArchetypeId: "buddy",
-  },
-  {
-    id: "5",
-    name: "Charlie Davis",
-    avatarUri: "https://avatar.iran.liara.run/public/39",
-    dominantArchetypeId: "buddy",
-  },
-  { id: "13", name: "No avataro alvaro", avatarUri: "", dominantArchetypeId: "buddy" },
-  {
-    id: "6",
-    name: "David Wilson",
-    avatarUri: "https://avatar.iran.liara.run/public/21",
-    dominantArchetypeId: "guru",
-  },
-  {
-    id: "7",
-    name: "Emma Thompson",
-    avatarUri: "https://avatar.iran.liara.run/public/3",
-    dominantArchetypeId: "rise",
-  },
-  {
-    id: "8",
-    name: "Frank Miller",
-    avatarUri: "https://avatar.iran.liara.run/public/48",
-  },
-  {
-    id: "9",
-    name: "Grace Lee",
-    avatarUri: "https://avatar.iran.liara.run/public/36",
-  },
-  {
-    id: "10",
-    name: "Hannah White",
-    avatarUri: "https://avatar.iran.liara.run/public/12",
-  },
-  { id: "14", name: "Blah bala" },
-  {
-    id: "11",
-    name: "Ian Harris",
-    avatarUri: "https://avatar.iran.liara.run/public/27",
-  },
-  {
-    id: "12",
-    name: "Jack Clark",
-    avatarUri: "https://avatar.iran.liara.run/public/23",
-    dominantArchetypeId: "flow",
-  },
-  { id: "15", name: "Lorem ipsum" },
-  {
-    id: "16",
-    name: "Tony Williams",
-    avatarUri: "https://avatar.iran.liara.run/public/16",
-    dominantArchetypeId: "rise",
-  },
-  {
-    id: "17",
-    name: "Stephen Clark",
-    avatarUri: "https://avatar.iran.liara.run/public/17",
-    dominantArchetypeId: "flow",
-  },
-  {
-    id: "18",
-    name: "Johny Bravo",
-    avatarUri: "https://avatar.iran.liara.run/public/23",
-  },
-]
-
 export default function Voting() {
-  const { membersList, setMembersList } = useGroup()
+  const { membersList, hasLoadedMembers, isMembersLoading, membersError } = useGroup()
   const { top, bottom } = useSafeAreaInsets()
   const {
     themed,
     theme: { colors, spacing },
   } = useAppTheme()
 
-  useEffect(() => {
-    setMembersList(mockedUsers)
-  }, [])
-
-  if (!membersList) return null
+  if (!hasLoadedMembers && isMembersLoading) return null
 
   return (
     <View style={styles.flex}>
@@ -130,7 +34,13 @@ export default function Voting() {
       </GradientSeparator>
 
       <LoggedScreenWrapper preset="fixed" disableKeyboardAvoidingView>
-        <UsersList users={membersList} />
+        {membersError ? (
+          <View style={themed($errorWrapper)}>
+            <Text preset="subheading" text={membersError} style={themed($errorText)} />
+          </View>
+        ) : membersList ? (
+          <UsersList users={membersList} />
+        ) : null}
       </LoggedScreenWrapper>
 
       <KeyboardResponsiveView
@@ -173,6 +83,17 @@ const $actionContentWrapper: ThemedStyle<ViewStyle> = ({ spacing, colors }) => (
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "space-between",
+})
+
+const $errorWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  flex: 1,
+  alignItems: "center",
+  justifyContent: "center",
+  paddingHorizontal: spacing.lg,
+})
+
+const $errorText: ThemedStyle<TextStyle> = () => ({
+  textAlign: "center",
 })
 
 const styles = StyleSheet.create({

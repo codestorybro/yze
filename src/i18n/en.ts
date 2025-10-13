@@ -22,6 +22,7 @@ const en = {
     noResults: "No Results",
     suggestion: "Check if the text is correct, or try searching with different phrases",
     searchForUser: "Search for user",
+    appreciatedToday: "Appreciated today",
   },
   errorScreen: {
     title: "Something went wrong!",

@@ -6,4 +6,5 @@ export type UserType = {
   email?: string
   avatarUri?: string
   dominantArchetypeId?: ArchetypeKey
+  alreadyAppreciated?: boolean
 }

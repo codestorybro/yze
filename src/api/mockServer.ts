@@ -32,6 +32,118 @@ const mockUser: UserType = {
   dominantArchetypeId: "flow",
 }
 
+const mockedGroupMembers: UserType[] = [
+  {
+    id: "1",
+    name: "John Doe",
+    avatarUri: "https://avatar.iran.liara.run/public/40",
+    dominantArchetypeId: "rise",
+    alreadyAppreciated: true,
+  },
+  {
+    id: "2",
+    name: "Jane Smith",
+    avatarUri: "https://avatar.iran.liara.run/public/16",
+    dominantArchetypeId: "flow",
+    alreadyAppreciated: false,
+  },
+  {
+    id: "3",
+    name: "Alice Johnson",
+    avatarUri: "https://avatar.iran.liara.run/public/33",
+    dominantArchetypeId: "buddy",
+    alreadyAppreciated: false,
+  },
+  {
+    id: "4",
+    name: "Bob Brown",
+    avatarUri: "https://avatar.iran.liara.run/public/32",
+    dominantArchetypeId: "buddy",
+    alreadyAppreciated: true,
+  },
+  {
+    id: "5",
+    name: "Charlie Davis",
+    avatarUri: "https://avatar.iran.liara.run/public/39",
+    dominantArchetypeId: "buddy",
+    alreadyAppreciated: false,
+  },
+  {
+    id: "13",
+    name: "No avataro alvaro",
+    avatarUri: "",
+    dominantArchetypeId: "buddy",
+    alreadyAppreciated: true,
+  },
+  {
+    id: "6",
+    name: "David Wilson",
+    avatarUri: "https://avatar.iran.liara.run/public/21",
+    dominantArchetypeId: "guru",
+    alreadyAppreciated: false,
+  },
+  {
+    id: "7",
+    name: "Emma Thompson",
+    avatarUri: "https://avatar.iran.liara.run/public/3",
+    dominantArchetypeId: "rise",
+    alreadyAppreciated: false,
+  },
+  {
+    id: "8",
+    name: "Frank Miller",
+    avatarUri: "https://avatar.iran.liara.run/public/48",
+    alreadyAppreciated: false,
+  },
+  {
+    id: "9",
+    name: "Grace Lee",
+    avatarUri: "https://avatar.iran.liara.run/public/36",
+    alreadyAppreciated: true,
+  },
+  {
+    id: "10",
+    name: "Hannah White",
+    avatarUri: "https://avatar.iran.liara.run/public/12",
+    alreadyAppreciated: false,
+  },
+  { id: "14", name: "Blah bala", alreadyAppreciated: false },
+  {
+    id: "11",
+    name: "Ian Harris",
+    avatarUri: "https://avatar.iran.liara.run/public/27",
+    alreadyAppreciated: false,
+  },
+  {
+    id: "12",
+    name: "Jack Clark",
+    avatarUri: "https://avatar.iran.liara.run/public/23",
+    dominantArchetypeId: "flow",
+    alreadyAppreciated: true,
+  },
+  { id: "15", name: "Lorem ipsum", alreadyAppreciated: false },
+  {
+    id: "16",
+    name: "Tony Williams",
+    avatarUri: "https://avatar.iran.liara.run/public/16",
+    dominantArchetypeId: "rise",
+    alreadyAppreciated: false,
+  },
+  {
+    id: "17",
+    name: "Stephen Clark",
+    avatarUri: "https://avatar.iran.liara.run/public/17",
+    dominantArchetypeId: "flow",
+    alreadyAppreciated: true,
+  },
+  {
+    id: "18",
+    name: "Johny Bravo",
+    avatarUri: "https://avatar.iran.liara.run/public/23",
+    alreadyAppreciated: false,
+  },
+]
+
 const baseAttributes: Record<string, AttributeType[]> = {
   weekly: [
     { id: "flow", label: "Flow", score: 46 },
@@ -170,6 +282,17 @@ function handleAttributes(config: InternalAxiosRequestConfig): AxiosResponse {
   })
 }
 
+function handleGroupMembers(config: InternalAxiosRequestConfig): AxiosResponse {
+  const authCheck = assertAuthHeader(config)
+  if (!authCheck.valid) {
+    return createResponse(config, 401, { error: authCheck.message })
+  }
+
+  return createResponse(config, 200, {
+    data: mockedGroupMembers,
+  })
+}
+
 function applyOffset(view: string, offset: number): AttributeType[] {
   if (view === "overall" || offset === 0) {
     return baseAttributes[view] ?? baseAttributes.overall
@@ -252,6 +375,7 @@ const handlerMap: Record<string, (config: InternalAxiosRequestConfig) => AxiosRe
   "POST /auth/refresh": handleRefresh,
   "POST /auth/logout": handleLogout,
   "GET /attributes": handleAttributes,
+  "GET /groups/members": handleGroupMembers,
 }
 
 export const mockAdapter: AxiosAdapter = async (config) => {

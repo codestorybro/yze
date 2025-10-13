@@ -1,5 +1,12 @@
 import React from "react"
-import { ViewStyle, FlatList, TextStyle, ImageStyle } from "react-native"
+import {
+  ActivityIndicator,
+  FlatList,
+  ImageStyle,
+  RefreshControl,
+  TextStyle,
+  ViewStyle,
+} from "react-native"
 import Animated, { SlideInLeft, SlideOutLeft } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
@@ -21,9 +28,9 @@ const cryFace = require("@assets/images/cry.png")
 export const UsersList: React.FC<Props> = ({ users }) => {
   const {
     themed,
-    theme: { spacing },
+    theme: { spacing, colors },
   } = useAppTheme()
-  const { searchUserTerm } = useGroup()
+  const { searchUserTerm, refreshMembersList, isMembersRefetching } = useGroup()
   const { openModal } = useModal()
   const { bottom, top } = useSafeAreaInsets()
 
@@ -31,6 +38,7 @@ export const UsersList: React.FC<Props> = ({ users }) => {
   const showEmptyState = filtered.length === 0
 
   const listContentStyle = showEmptyState ? themed($emptyListContent) : undefined
+  const showRefreshIndicator = isMembersRefetching && !showEmptyState
 
   return (
     <FlatList
@@ -43,27 +51,46 @@ export const UsersList: React.FC<Props> = ({ users }) => {
       style={{ minHeight: "100%" }}
       contentContainerStyle={listContentStyle}
       scrollEnabled={!showEmptyState}
-      renderItem={({ item: u, index: i }) => {
+      refreshControl={
+        <RefreshControl
+          refreshing={isMembersRefetching}
+          onRefresh={refreshMembersList}
+          tintColor={colors.text}
+        />
+      }
+      ListHeaderComponent={
+        showRefreshIndicator ? (
+          <ActivityIndicator color={colors.textDim} style={{ marginVertical: spacing.lg }} />
+        ) : null
+      }
+      renderItem={({ item: user, index }) => {
+        const isAlreadyAppreciated = !!user.alreadyAppreciated
+
+        const handlePress = isAlreadyAppreciated
+          ? undefined
+          : () => {
+              openModal({
+                title: user.name,
+                description: "You have selected this user.",
+                onConfirmPress: () => {
+                  console.log("User pressed!")
+                },
+              })
+            }
+
         return (
           <Animated.View entering={SlideInLeft.duration(250)} exiting={SlideOutLeft.duration(250)}>
             <Card
-              onPress={() => {
-                openModal({
-                  title: u.name,
-                  description: "You have selected this user.",
-                  onConfirmPress: () => {
-                    console.log("User pressed!")
-                  },
-                })
-              }}
+              onPress={handlePress}
               style={[
                 themed($cardStyle),
-                i === 0 && { marginTop: top * 2.2 },
-                i === filtered.length - 1 && {
+                isAlreadyAppreciated && themed($cardAppreciatedStyle),
+                index === 0 && { marginTop: top * 2.2 },
+                index === filtered.length - 1 && {
                   marginBottom: bottom + spacing.xxxl + spacing.md,
                 },
               ]}
-              ContentComponent={<UserListCard user={u} />}
+              ContentComponent={<UserListCard user={user} />}
             />
           </Animated.View>
         )
@@ -75,7 +102,6 @@ export const UsersList: React.FC<Props> = ({ users }) => {
             size={128}
             style={themed($emptyIllustrationPlaceholder)}
           />
-
           <Text preset="heading" style={themed($emptyHeading)} tx="searchScreen:noResults" />
           <Text
             preset="subheading"
@@ -90,6 +116,10 @@ export const UsersList: React.FC<Props> = ({ users }) => {
 
 const $cardStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   marginBottom: spacing.xs,
+})
+
+const $cardAppreciatedStyle: ThemedStyle<ViewStyle> = () => ({
+  opacity: 0.5,
 })
 
 const $emptyListContent: ThemedStyle<ViewStyle> = ({ spacing }) => ({
