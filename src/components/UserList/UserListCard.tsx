@@ -32,9 +32,9 @@ export function UserListCard({ user }: Props) {
           />
         </View>
       ) : null}
-      {user.isOwner ? (
-        <View style={themed($crownWrapper)}>
-          <SvgIcon pathData={SvgIconPaths.crown} size={28} color={colors.crown} />
+      {user.isAdmin ? (
+        <View style={themed($briefcaseWrapper)}>
+          <SvgIcon pathData={SvgIconPaths.briefcase} size={24} color={colors.briefcase} />
         </View>
       ) : null}
 
@@ -81,18 +81,17 @@ const $badgeText: ThemedStyle<TextStyle> = ({ colors }) => ({
 
 const $imageWrapper: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   position: "absolute",
-  zIndex: 100,
+  zIndex: 1,
   bottom: 0,
-  left: 0,
+  left: -spacing.xs,
   backgroundColor: colors.inputBackground,
-  padding: spacing.xxxs,
+  padding: spacing.xxs,
   borderRadius: spacing.xxxl,
 })
 
-const $crownWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+const $briefcaseWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   position: "absolute",
-  top: -spacing.sm,
-  left: spacing.xxxs,
-  transform: [{ rotate: "-30deg" }],
+  bottom: 0,
+  right: 0,
   zIndex: 1,
 })

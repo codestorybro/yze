@@ -46,9 +46,9 @@ export const colors = {
   attributeGuru: "#5C6BC0",
   attributeBuddy: "#4ABDAC",
   attributeRise: "#E25A53",
-  attributeFlow: "#FF8A00",
+  attributeFlow: "#F4B400",
 
-  crown: "#F4B400",
+  briefcase: "#795548",
 
   justWhite: "#FFFFFF",
   justBlack: "#000000",

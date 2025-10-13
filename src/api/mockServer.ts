@@ -39,7 +39,7 @@ const mockedGroupMembers: UserType[] = [
     avatarUri: "https://avatar.iran.liara.run/public/40",
     dominantArchetypeId: "rise",
     alreadyAppreciated: true,
-    isOwner: true,
+    isAdmin: true,
   },
   {
     id: "2",
@@ -68,6 +68,7 @@ const mockedGroupMembers: UserType[] = [
     avatarUri: "https://avatar.iran.liara.run/public/39",
     dominantArchetypeId: "buddy",
     alreadyAppreciated: false,
+    isAdmin: true,
   },
   {
     id: "13",
@@ -89,6 +90,7 @@ const mockedGroupMembers: UserType[] = [
     avatarUri: "https://avatar.iran.liara.run/public/3",
     dominantArchetypeId: "rise",
     alreadyAppreciated: false,
+    isAdmin: true,
   },
   {
     id: "8",
@@ -142,6 +144,7 @@ const mockedGroupMembers: UserType[] = [
     name: "Johny Bravo",
     avatarUri: "https://avatar.iran.liara.run/public/23",
     alreadyAppreciated: false,
+    isAdmin: true,
   },
 ]
 
