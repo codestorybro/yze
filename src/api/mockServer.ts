@@ -3,7 +3,10 @@ import type { AxiosAdapter, AxiosHeaders, AxiosResponse, InternalAxiosRequestCon
 import { Platform } from "react-native"
 import * as SecureStore from "expo-secure-store"
 
-import type { AttributeType } from "@/types/attributeType"
+import type { ArchetypeAttribute, AttributeTraitType } from "@/types/attributeType"
+import type { AttributeDetails } from "@/types/attributeDetails"
+import type { AttributesViewType } from "@/types/attributesViewType"
+import type { ArchetypeKey } from "@/types/archetype"
 import type { UserType } from "@/types/userType"
 
 type LoginBody = {
@@ -148,7 +151,7 @@ const mockedGroupMembers: UserType[] = [
   },
 ]
 
-const baseAttributes: Record<string, AttributeType[]> = {
+const baseAttributes: Record<string, ArchetypeAttribute[]> = {
   weekly: [
     { id: "flow", label: "Flow", score: 46 },
     { id: "buddy", label: "Buddy", score: 38 },
@@ -175,6 +178,75 @@ const baseAttributes: Record<string, AttributeType[]> = {
   ],
 }
 
+const archetypeTraitDefinitions: Record<ArchetypeKey, Omit<AttributeTraitType, "score">[]> = {
+  guru: [
+    { id: "calm", label: "Calm" },
+    { id: "reasonable", label: "Reasonable" },
+    { id: "patient", label: "Patient" },
+    { id: "authentic", label: "Authentic" },
+    { id: "balanced", label: "Balanced" },
+  ],
+  buddy: [
+    { id: "sociable", label: "Sociable" },
+    { id: "empathetic", label: "Empathetic" },
+    { id: "helpful", label: "Helpful" },
+    { id: "fun", label: "Fun" },
+    { id: "loyal", label: "Loyal" },
+  ],
+  rise: [
+    { id: "brave", label: "Brave" },
+    { id: "motivating", label: "Motivating" },
+    { id: "charismatic", label: "Charismatic" },
+    { id: "energetic", label: "Energetic" },
+    { id: "proactive", label: "Proactive" },
+  ],
+  flow: [
+    { id: "creative", label: "Creative" },
+    { id: "spontaneous", label: "Spontaneous" },
+    { id: "intuitive", label: "Intuitive" },
+    { id: "flexible", label: "Flexible" },
+    { id: "optimistic", label: "Optimistic" },
+  ],
+}
+
+const archetypeTraitDefinitionsPL: Record<ArchetypeKey, Omit<AttributeTraitType, "score">[]> = {
+  guru: [
+    { id: "calm", label: "spokojny" },
+    { id: "reasonable", label: "rozsądny" },
+    { id: "patient", label: "cierpliwy" },
+    { id: "authentic", label: "autentyczny" },
+    { id: "balanced", label: "zrównoważony" },
+  ],
+  buddy: [
+    { id: "sociable", label: "towarzyski" },
+    { id: "empathetic", label: "empatyczny" },
+    { id: "helpful", label: "pomocny" },
+    { id: "fun", label: "zabawny" },
+    { id: "loyal", label: "lojalny" },
+  ],
+  rise: [
+    { id: "brave", label: "odważny" },
+    { id: "motivating", label: "motywujący" },
+    { id: "charismatic", label: "charyzmatyczny" },
+    { id: "energetic", label: "energiczny" },
+    { id: "proactive", label: "proaktywny" },
+  ],
+  flow: [
+    { id: "creative", label: "kreatywny" },
+    { id: "spontaneous", label: "spontaniczny" },
+    { id: "intuitive", label: "intuicyjny" },
+    { id: "flexible", label: "elastyczny" },
+    { id: "optimistic", label: "optymistyczny" },
+  ],
+}
+
+const traitWeightMap: Record<ArchetypeKey, number[]> = {
+  guru: [1.12, 1.07, 1, 0.98, 0.95],
+  buddy: [1.08, 1.05, 1, 0.97, 0.94],
+  rise: [1.1, 1.05, 1.02, 0.98, 0.95],
+  flow: [1.09, 1.02, 1, 0.97, 0.94],
+}
+
 let activeSession: MockSession | null = null
 const SESSION_STORAGE_KEY = "mockServer.session"
 
@@ -189,7 +261,7 @@ const TIMELINE_LENGTH_BY_VIEW: Record<string, number> = {
 
 const DEFAULT_TIMELINE_LENGTH = 8
 
-const attributesTimeline: Record<string, AttributeType[][]> = Object.fromEntries(
+const attributesTimeline: Record<string, ArchetypeAttribute[][]> = Object.fromEntries(
   Object.entries(TIMELINE_LENGTH_BY_VIEW).map(([view, length]) => [
     view,
     createTimelineForView(view, length),
@@ -286,6 +358,52 @@ function handleAttributes(config: InternalAxiosRequestConfig): AxiosResponse {
   })
 }
 
+function handleAttributeDetails(config: InternalAxiosRequestConfig): AxiosResponse {
+  const authCheck = assertAuthHeader(config)
+  if (!authCheck.valid) {
+    return createResponse(config, 401, { error: authCheck.message })
+  }
+
+  const view = ((config.params?.view as AttributesViewType) ?? "overall") as AttributesViewType
+  const archetypeId = config.params?.archetypeId as ArchetypeKey | undefined
+  const rawOffset = parseInt(String(config.params?.offset ?? "0"), 10)
+  const lang = (config.params?.lang as string) ?? "en"
+  if (!archetypeId) {
+    return createResponse(config, 400, { error: "Missing archetypeId" })
+  }
+
+  const timeline = ensureTimeline(view)
+  const maxIndex = Math.max(0, timeline.length - 1)
+  const offset = Number.isFinite(rawOffset) ? Math.min(Math.max(rawOffset, 0), maxIndex) : 0
+  const attributes = timeline[offset] ?? []
+  const attribute = attributes.find((item) => item.id === archetypeId)
+
+  if (!attribute) {
+    return createResponse(config, 404, { error: "Attribute not found" })
+  }
+
+  const traits = buildTraitDetails({
+    archetypeId,
+    totalScore: attribute.score,
+    offset,
+    view,
+    lang,
+  })
+
+  const payload: AttributeDetails = {
+    archetypeId,
+    label: attribute.label,
+    totalScore: attribute.score,
+    view,
+    offset,
+    traits,
+  }
+
+  return createResponse(config, 200, {
+    data: payload,
+  })
+}
+
 function handleGroupMembers(config: InternalAxiosRequestConfig): AxiosResponse {
   const authCheck = assertAuthHeader(config)
   if (!authCheck.valid) {
@@ -297,7 +415,7 @@ function handleGroupMembers(config: InternalAxiosRequestConfig): AxiosResponse {
   })
 }
 
-function applyOffset(view: string, offset: number): AttributeType[] {
+function applyOffset(view: string, offset: number): ArchetypeAttribute[] {
   if (view === "overall" || offset === 0) {
     return baseAttributes[view] ?? baseAttributes.overall
   }
@@ -329,7 +447,7 @@ function applyOffset(view: string, offset: number): AttributeType[] {
   })
 }
 
-function ensureTimeline(view: string): AttributeType[][] {
+function ensureTimeline(view: string): ArchetypeAttribute[][] {
   if (!attributesTimeline[view]) {
     const length = TIMELINE_LENGTH_BY_VIEW[view] ?? DEFAULT_TIMELINE_LENGTH
     attributesTimeline[view] = createTimelineForView(view, length)
@@ -338,7 +456,7 @@ function ensureTimeline(view: string): AttributeType[][] {
   return attributesTimeline[view]
 }
 
-function createTimelineForView(view: string, length: number): AttributeType[][] {
+function createTimelineForView(view: string, length: number): ArchetypeAttribute[][] {
   const normalizedLength = Math.max(1, Math.floor(length))
   return Array.from({ length: normalizedLength }, (_, index) => {
     if (index === 0) {
@@ -347,6 +465,45 @@ function createTimelineForView(view: string, length: number): AttributeType[][] 
     }
 
     return applyOffset(view, index)
+  })
+}
+
+function buildTraitDetails(params: {
+  archetypeId: ArchetypeKey
+  totalScore: number
+  offset: number
+  view: AttributesViewType
+  lang?: string
+}): AttributeTraitType[] {
+  const { archetypeId, totalScore, offset, view, lang = "en" } = params
+  const traitDefinitions =
+    lang === "pl"
+      ? (archetypeTraitDefinitionsPL[archetypeId] ?? [])
+      : (archetypeTraitDefinitions[archetypeId] ?? [])
+  if (traitDefinitions.length === 0) return []
+
+  const weights = traitWeightMap[archetypeId] ?? []
+  const count = traitDefinitions.length
+  const baseScore = totalScore / count
+  const midpoint = (count - 1) / 2
+  const viewModifierMap: Record<AttributesViewType, number> = {
+    overall: 1,
+    weekly: 0.85,
+    monthly: 0.95,
+    yearly: 1.05,
+  }
+
+  const viewModifier = viewModifierMap[view] ?? 1
+
+  return traitDefinitions.map((trait, index) => {
+    const weight = weights[index] ?? 1
+    const positionVariance = (index - midpoint) * 1.6
+    const offsetVariance = offset * (index % 2 === 0 ? -1.2 : 1.2)
+    const rawScore = baseScore * weight * viewModifier + positionVariance + offsetVariance
+    return {
+      ...trait,
+      score: Math.max(2, Math.round(rawScore)),
+    }
   })
 }
 
@@ -379,6 +536,7 @@ const handlerMap: Record<string, (config: InternalAxiosRequestConfig) => AxiosRe
   "POST /auth/refresh": handleRefresh,
   "POST /auth/logout": handleLogout,
   "GET /attributes": handleAttributes,
+  "GET /attributes/details": handleAttributeDetails,
   "GET /groups/members": handleGroupMembers,
 }
 

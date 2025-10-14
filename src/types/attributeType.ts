@@ -1,7 +1,9 @@
 import type { ArchetypeKey } from "./archetype"
 
-export type AttributeType = {
-  id: ArchetypeKey
+export type AttributeTraitType<TId = string> = {
+  id: TId
   label: string
   score: number
 }
+
+export type ArchetypeAttribute = AttributeTraitType<ArchetypeKey>

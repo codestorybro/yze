@@ -55,8 +55,8 @@ export default function Root() {
             <KeyboardProvider>
               <AuthProvider>
                 <GroupStoreProvider>
-                  <BottomSheetProvider>
-                    <AttributesProvider>
+                  <AttributesProvider>
+                    <BottomSheetProvider>
                       <ModalProvider>
                         {appIsReady ? (
                           <>
@@ -71,8 +71,8 @@ export default function Root() {
                           </>
                         ) : null}
                       </ModalProvider>
-                    </AttributesProvider>
-                  </BottomSheetProvider>
+                    </BottomSheetProvider>
+                  </AttributesProvider>
                 </GroupStoreProvider>
               </AuthProvider>
             </KeyboardProvider>

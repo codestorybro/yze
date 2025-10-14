@@ -122,7 +122,12 @@ const en = {
     },
   },
   attributes: {
-    detailsPlaceholder: "Detailed information about the {{attributeName}} attribute goes here.",
+    details: {
+      heading: "{{label}} breakdown",
+      totalScoreLabel: "Score",
+      error: "We couldn't load the details. Try again.",
+      traitScoreSuffix: "pts",
+    },
   },
 }
 

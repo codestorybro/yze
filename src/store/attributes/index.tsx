@@ -10,20 +10,28 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 
 import { useUser } from "@/store/auth"
-import { AttributeType } from "@/types/attributeType"
+import { ArchetypeAttribute } from "@/types/attributeType"
 import { AttributesViewType } from "@/types/attributesViewType"
-import { getAttributes } from "@/api/attributes"
-import { NormalizedAttribute, useNormalizeAttributes } from "@/utils/useNormalizeAttributes"
+import { getAttributeDetails, getAttributes } from "@/api/attributes"
+import type { AttributeDetails } from "@/types/attributeDetails"
+import type { ArchetypeKey } from "@/types/archetype"
 
 type RefreshAttributesParams = {
   view?: AttributesViewType
   offset?: number
 }
 
+type AttributeDetailsParams = {
+  archetypeId: ArchetypeKey
+  view?: AttributesViewType
+  offset?: number
+  force?: boolean
+  lang?: string
+}
+
 export type AttributesContextType = {
-  attributes: AttributeType[]
-  timeline: AttributeType[][]
-  normalizedAttributes: NormalizedAttribute[]
+  attributes: ArchetypeAttribute[]
+  timeline: ArchetypeAttribute[][]
   currentView: AttributesViewType
   currentOffset: number
   maxOffset: number
@@ -31,15 +39,32 @@ export type AttributesContextType = {
   isInitialLoading: boolean
   isRefetching: boolean
   refreshAttributes: (params?: RefreshAttributesParams) => Promise<void>
+  attributeDetails: Record<string, AttributeDetails>
+  attributeDetailsLoading: Record<string, boolean>
+  fetchAttributeDetails: (params: AttributeDetailsParams) => Promise<AttributeDetails | null>
 }
 
 const AttributesContext = createContext<AttributesContextType | null>(null)
+
+export function createAttributeDetailsKey(
+  view: AttributesViewType,
+  offset: number,
+  archetypeId: ArchetypeKey,
+) {
+  return `${view}:${offset}:${archetypeId}`
+}
 
 export function AttributesProvider({ children }: PropsWithChildren) {
   const { user } = useUser()
   const queryClient = useQueryClient()
   const [currentView, setCurrentView] = useState<AttributesViewType>("overall")
   const [currentOffset, setCurrentOffset] = useState(0)
+  const [attributeDetailsMap, setAttributeDetailsMap] = useState<Record<string, AttributeDetails>>(
+    {},
+  )
+  const [attributeDetailsLoading, setAttributeDetailsLoading] = useState<Record<string, boolean>>(
+    {},
+  )
 
   const queryKey = useMemo(() => ["attributes", currentView], [currentView])
 
@@ -58,7 +83,7 @@ export function AttributesProvider({ children }: PropsWithChildren) {
     data: timelineData,
     isLoading: isInitialLoading,
     isRefetching,
-  } = useQuery<AttributeType[][]>({
+  } = useQuery<ArchetypeAttribute[][]>({
     queryKey,
     queryFn: async ({ queryKey: [, viewKey] }) => {
       const safeView = (viewKey as AttributesViewType) ?? "overall"
@@ -76,6 +101,8 @@ export function AttributesProvider({ children }: PropsWithChildren) {
       queryClient.removeQueries({ queryKey: ["attributes"] })
       setCurrentView("overall")
       setCurrentOffset(0)
+      setAttributeDetailsMap({})
+      setAttributeDetailsLoading({})
     }
   }, [queryClient, user])
 
@@ -94,9 +121,7 @@ export function AttributesProvider({ children }: PropsWithChildren) {
 
   const timeline = timelineData ?? []
   const maxOffset = timeline.length > 0 ? timeline.length - 1 : 0
-  const attributes: AttributeType[] = timeline[currentOffset] ?? []
-  const normalizedAttributes = useNormalizeAttributes(attributes)
-
+  const attributes: ArchetypeAttribute[] = timeline[currentOffset] ?? []
   const refreshAttributes = useCallback(
     async (params?: RefreshAttributesParams) => {
       if (!user) {
@@ -140,11 +165,63 @@ export function AttributesProvider({ children }: PropsWithChildren) {
 
   const isLoading = isInitialLoading || isRefetching
 
+  const fetchAttributeDetails = useCallback(
+    async (params: AttributeDetailsParams): Promise<AttributeDetails | null> => {
+      if (!user) {
+        setAttributeDetailsMap({})
+        setAttributeDetailsLoading({})
+        return null
+      }
+
+      const targetView = params.view ?? currentView
+      const targetOffset = params.offset ?? currentOffset
+      const key = createAttributeDetailsKey(targetView, targetOffset, params.archetypeId)
+
+      if (!params.force && attributeDetailsMap[key]) {
+        return attributeDetailsMap[key]
+      }
+
+      if (attributeDetailsLoading[key]) {
+        return null
+      }
+
+      setAttributeDetailsLoading((prev) => ({ ...prev, [key]: true }))
+
+      try {
+        const details = await getAttributeDetails({
+          view: targetView,
+          offset: targetOffset,
+          archetypeId: params.archetypeId,
+          lang: params.lang,
+        })
+
+        setAttributeDetailsMap((prev) => ({ ...prev, [key]: details }))
+        return details
+      } catch (error) {
+        console.error("Failed to fetch attribute details", error)
+        return null
+      } finally {
+        setAttributeDetailsLoading((prev) => {
+          const next = { ...prev }
+          delete next[key]
+          return next
+        })
+      }
+    },
+    [
+      attributeDetailsLoading,
+      attributeDetailsMap,
+      currentOffset,
+      currentView,
+      user,
+      getAttributeDetails,
+    ],
+  )
+
   const value = useMemo(
     () => ({
       attributes,
-      timeline,
-      normalizedAttributes,
+      timeline: timeline,
       currentView,
       currentOffset,
       maxOffset,
@@ -152,16 +229,21 @@ export function AttributesProvider({ children }: PropsWithChildren) {
       isInitialLoading,
       isRefetching,
       refreshAttributes,
+      attributeDetails: attributeDetailsMap,
+      attributeDetailsLoading,
+      fetchAttributeDetails,
     }),
     [
       attributes,
+      attributeDetailsLoading,
+      attributeDetailsMap,
       currentOffset,
       currentView,
       isInitialLoading,
       isLoading,
       isRefetching,
       maxOffset,
-      normalizedAttributes,
+      fetchAttributeDetails,
       refreshAttributes,
       timeline,
     ],

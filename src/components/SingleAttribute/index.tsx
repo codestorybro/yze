@@ -5,13 +5,13 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-na
 import { Text } from "@/components"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
-import { AttributeType } from "@/types/attributeType"
+import { AttributeTraitType } from "@/types/attributeType"
 
 // constants
 const _barSize = 12
 
 type Props = {
-  attribute: AttributeType
+  attribute: AttributeTraitType
   color: string
   maxScore: number
 }

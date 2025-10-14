@@ -125,7 +125,12 @@ const pl: Translations = {
     },
   },
   attributes: {
-    detailsPlaceholder: "Szczegółowe informacje o atrybucie {{attributeName}} znajdują się tutaj.",
+    details: {
+      heading: "Szczegóły: {{label}}",
+      totalScoreLabel: "Wynik",
+      error: "Nie udało się pobrać szczegółów. Spróbuj ponownie.",
+      traitScoreSuffix: "pkt",
+    },
   },
 }
 

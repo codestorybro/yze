@@ -1,21 +1,21 @@
 import { ReactNode, useCallback, useMemo } from "react"
 import { View } from "react-native"
 
-import { SingleAttribute, SvgIcon, Text } from "@/components"
+import { AttributeDetailsSheet, SingleAttribute, SvgIcon } from "@/components"
 import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
 import { useBottomSheet } from "@/store/bottomSheet"
 import { useAppTheme } from "@/theme/context"
-import { AttributeType } from "@/types/attributeType"
+import { ArchetypeAttribute } from "@/types/attributeType"
 import type { ArchetypeKey } from "@/types/archetype"
 
-export type NormalizedAttribute = AttributeType & {
+export type NormalizedAttribute = ArchetypeAttribute & {
   svgIconPath: keyof typeof SvgIconPaths
   svgIconColor: string
   content: ReactNode
   onPress: () => void
 }
 
-export const useNormalizeAttributes = (attributes: AttributeType[]) => {
+export const useNormalizeAttributes = (attributes: ArchetypeAttribute[], rangeLabel: string) => {
   const {
     theme: { colors },
   } = useAppTheme()
@@ -53,18 +53,14 @@ export const useNormalizeAttributes = (attributes: AttributeType[]) => {
   }, [attributes])
 
   const handleOnPress = useCallback(
-    (attribute: AttributeType) => {
+    (attribute: ArchetypeAttribute, color: string, rangeLabel: string) => {
       openSheet(
-        <View style={{ padding: 16 }}>
-          <Text preset="heading" style={{ marginBottom: 8 }}>
-            {attribute.label}
-          </Text>
-          <Text
-            preset="subheading"
-            tx="attributes:detailsPlaceholder"
-            txOptions={{ attributeName: attribute.id }}
-          />
-        </View>,
+        <AttributeDetailsSheet
+          archetypeId={attribute.id}
+          archetypeLabel={attribute.label}
+          accentColor={color}
+          rangeLabel={rangeLabel}
+        />,
       )
     },
     [openSheet],
@@ -95,7 +91,7 @@ export const useNormalizeAttributes = (attributes: AttributeType[]) => {
               <SvgIcon pathData={SvgIconPaths.right_arrow} size={16} color={attributeArrowRight} />
             </View>
           ),
-          onPress: () => handleOnPress(singleAttribute),
+          onPress: () => handleOnPress(singleAttribute, color, rangeLabel),
         }
       }),
     [

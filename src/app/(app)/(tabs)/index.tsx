@@ -25,6 +25,7 @@ import { useBottomSheet } from "@/store/bottomSheet"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 import { AttributesViewType } from "@/types/attributesViewType"
+import { useNormalizeAttributes } from "@/utils/useNormalizeAttributes"
 import { useFocusEffect } from "@react-navigation/native"
 
 const _avatarSize = 150
@@ -51,7 +52,7 @@ export default function Index() {
   const { themed } = useAppTheme()
   const { user } = useUser()
   const {
-    normalizedAttributes,
+    attributes,
     refreshAttributes,
     isLoading: isAttributesLoading,
     currentView,
@@ -179,6 +180,8 @@ export default function Index() {
   const handleOpenArchetypesSheet = useCallback(() => {
     openSheet(<ArchetypesSheetContent />)
   }, [openSheet])
+
+  const normalizedAttributes = useNormalizeAttributes(attributes, rangeLabel)
 
   return (
     <LoggedScreenWrapper>
