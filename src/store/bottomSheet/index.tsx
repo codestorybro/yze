@@ -25,6 +25,7 @@ const BottomSheetContext = createContext<BottomSheetContextType | undefined>(und
 export function BottomSheetProvider({ children }: { children: ReactNode }) {
   const sheetRef = useRef<BottomSheet>(null)
   const [content, setContent] = useState<ReactNode>(null)
+  const [isOpening, setIsOpening] = useState(false)
   const {
     themed,
     theme: { colors, spacing },
@@ -34,14 +35,26 @@ export function BottomSheetProvider({ children }: { children: ReactNode }) {
 
   const snapPoints = useMemo(() => ["75%"], [])
 
-  const openSheet = useCallback((content: ReactNode) => {
-    setContent(content)
-    sheetRef.current?.snapToIndex(0)
-  }, [])
+  const openSheet = useCallback(
+    (content: ReactNode) => {
+      if (!content || isOpening) return
+
+      setIsOpening(true)
+      setTimeout(() => {
+        if (content && sheetRef.current) {
+          setContent(content)
+          sheetRef.current.snapToIndex(0)
+        }
+        setIsOpening(false)
+      }, 10)
+    },
+    [isOpening],
+  )
 
   const closeSheet = useCallback(() => {
     sheetRef.current?.close()
     setContent(null)
+    setIsOpening(false)
   }, [])
 
   const renderBackdrop = useCallback(
@@ -59,7 +72,10 @@ export function BottomSheetProvider({ children }: { children: ReactNode }) {
           snapPoints={snapPoints}
           enableDynamicSizing={false}
           backdropComponent={renderBackdrop}
-          onClose={() => setContent(null)}
+          onClose={() => {
+            setContent(null)
+            setIsOpening(false)
+          }}
           enablePanDownToClose
           backgroundStyle={themed($contentContainerStyle)}
           handleIndicatorStyle={themed($indicatorStyle)}
@@ -72,7 +88,7 @@ export function BottomSheetProvider({ children }: { children: ReactNode }) {
               ]}
               showsVerticalScrollIndicator={false}
             >
-              {content}
+              {content && content}
             </BottomSheetScrollView>
 
             <LinearGradient
