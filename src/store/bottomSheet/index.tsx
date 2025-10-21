@@ -112,7 +112,7 @@ export function BottomSheetProvider({ children }: { children: ReactNode }) {
 const $contentContainerStyle: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   backgroundColor: colors.tabBarBackground,
   paddingHorizontal: spacing.md,
-  paddingTop: spacing.md,
+  paddingTop: spacing.lg,
 })
 
 const $indicatorStyle: ThemedStyle<ViewStyle> = ({ colors }) => ({

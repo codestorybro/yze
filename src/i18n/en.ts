@@ -128,6 +128,12 @@ const en = {
       error: "We couldn't load the details. Try again.",
       traitScoreSuffix: "pts",
     },
+    comments: {
+      heading: "Feedback",
+      anonymousAuthor: "Anonymous",
+      error: "We couldn't load the comments. Try again.",
+      noComments: "No feedback yet for this period.",
+    },
   },
 }
 

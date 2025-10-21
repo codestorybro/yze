@@ -8,6 +8,7 @@ import type { AttributeDetails } from "@/types/attributeDetails"
 import type { AttributesViewType } from "@/types/attributesViewType"
 import type { ArchetypeKey } from "@/types/archetype"
 import type { UserType } from "@/types/userType"
+import type { AttributeCommentsData, AttributeComment } from "@/types/attributeComment"
 
 type LoginBody = {
   email: string
@@ -31,7 +32,7 @@ const mockUser: UserType = {
   id: "1",
   email: "example@example.com",
   name: "John Doe",
-  avatarUri: "https://i.pravatar.cc/150?img=3",
+  avatarUri: "https://avatar.iran.liara.run/public/60",
   dominantArchetypeId: "flow",
 }
 
@@ -150,6 +151,86 @@ const mockedGroupMembers: UserType[] = [
     isAdmin: true,
   },
 ]
+
+const mockAttributeComments: Record<string, AttributeComment[]> = {
+  flow: [
+    {
+      id: "comment-1",
+      author: {
+        name: "Alice Johnson",
+        isAnonymous: false,
+        avatarUri: "https://avatar.iran.liara.run/public/33",
+      },
+      message: "Great job on the project! Your attention to detail really shows.",
+      timestamp: "2024-10-20T10:30:00Z",
+    },
+    {
+      id: "comment-2",
+      author: { name: "", isAnonymous: true },
+      message:
+        "You handled that difficult situation really well. Thanks for staying calm under pressure.",
+      timestamp: "2024-10-19T14:15:00Z",
+    },
+    {
+      id: "comment-3",
+      author: {
+        name: "Bob Wilson",
+        isAnonymous: false,
+        avatarUri: "https://avatar.iran.liara.run/public/21",
+      },
+      message: "Your presentation was excellent and very engaging!",
+      timestamp: "2024-10-18T16:45:00Z",
+    },
+  ],
+  buddy: [
+    {
+      id: "comment-4",
+      author: { name: "", isAnonymous: true },
+      message: "Always there to help others. Really appreciate your team spirit!",
+      timestamp: "2024-10-20T09:20:00Z",
+    },
+    {
+      id: "comment-5",
+      author: {
+        name: "Sarah Chen",
+        isAnonymous: false,
+        avatarUri: "https://avatar.iran.liara.run/public/36",
+      },
+      message: "Thanks for being so supportive during the tough deadline last week.",
+      timestamp: "2024-10-17T13:30:00Z",
+    },
+  ],
+  rise: [
+    {
+      id: "comment-6",
+      author: {
+        name: "Mike Thompson",
+        isAnonymous: false,
+        avatarUri: "https://avatar.iran.liara.run/public/48",
+      },
+      message: "Your leadership in the new initiative has been inspiring to watch.",
+      timestamp: "2024-10-21T08:15:00Z",
+    },
+  ],
+  guru: [
+    {
+      id: "comment-7",
+      author: { name: "", isAnonymous: true },
+      message: "Your expertise really helped solve that complex problem. Thank you!",
+      timestamp: "2024-10-19T11:45:00Z",
+    },
+    {
+      id: "comment-8",
+      author: {
+        name: "Lisa Davis",
+        isAnonymous: false,
+        avatarUri: "https://avatar.iran.liara.run/public/12",
+      },
+      message: "The training session you led was incredibly valuable. Learned so much!",
+      timestamp: "2024-10-16T15:20:00Z",
+    },
+  ],
+}
 
 const baseAttributes: Record<string, ArchetypeAttribute[]> = {
   weekly: [
@@ -404,6 +485,33 @@ function handleAttributeDetails(config: InternalAxiosRequestConfig): AxiosRespon
   })
 }
 
+function handleAttributeComments(config: InternalAxiosRequestConfig): AxiosResponse {
+  const authCheck = assertAuthHeader(config)
+  if (!authCheck.valid) {
+    return createResponse(config, 401, { error: authCheck.message })
+  }
+
+  const archetypeId = config.params?.archetypeId as ArchetypeKey | undefined
+  if (!archetypeId) {
+    return createResponse(config, 400, { error: "Missing archetypeId" })
+  }
+
+  const comments = mockAttributeComments[archetypeId] || []
+
+  // Sort comments by timestamp, newest first
+  const sortedComments = [...comments].sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+  )
+
+  const payload: AttributeCommentsData = {
+    comments: sortedComments,
+  }
+
+  return createResponse(config, 200, {
+    data: payload,
+  })
+}
+
 function handleGroupMembers(config: InternalAxiosRequestConfig): AxiosResponse {
   const authCheck = assertAuthHeader(config)
   if (!authCheck.valid) {
@@ -537,6 +645,7 @@ const handlerMap: Record<string, (config: InternalAxiosRequestConfig) => AxiosRe
   "POST /auth/logout": handleLogout,
   "GET /attributes": handleAttributes,
   "GET /attributes/details": handleAttributeDetails,
+  "GET /attributes/comments": handleAttributeComments,
   "GET /groups/members": handleGroupMembers,
 }
 

@@ -131,6 +131,12 @@ const pl: Translations = {
       error: "Nie udało się pobrać szczegółów. Spróbuj ponownie.",
       traitScoreSuffix: "pkt",
     },
+    comments: {
+      heading: "Komentarze",
+      anonymousAuthor: "Anonimowy",
+      error: "Nie udało się pobrać komentarzy. Spróbuj ponownie.",
+      noComments: "Brak komentarzy w tym okresie.",
+    },
   },
 }
 

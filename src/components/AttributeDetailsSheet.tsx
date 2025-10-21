@@ -7,12 +7,11 @@ import { Text } from "./Text"
 import { SvgIcon } from "./SvgIcon"
 import { SvgIconPaths } from "./SvgIcon/svgsPaths"
 import { SkeletonImage } from "./SkeletonImage"
+import { Comment } from "./Comment"
 import { createAttributeDetailsKey, useAttributes } from "@/store/attributes"
 import { useAppTheme } from "@/theme/context"
 import type { ArchetypeKey } from "@/types/archetype"
 import type { AttributeTraitType } from "@/types/attributeType"
-import { AttributesViewType } from "@/types/attributesViewType"
-import { TxKeyPath } from "@/i18n"
 
 type Props = {
   archetypeId: ArchetypeKey
@@ -126,6 +125,9 @@ export function AttributeDetailsSheet({
     attributeDetails,
     attributeDetailsLoading,
     fetchAttributeDetails,
+    attributeComments,
+    attributeCommentsLoading,
+    fetchAttributeComments,
   } = useAttributes()
   const {
     theme: { colors, spacing },
@@ -139,6 +141,9 @@ export function AttributeDetailsSheet({
 
   const detail = attributeDetails[detailKey]
   const isLoading = attributeDetailsLoading[detailKey] ?? false
+
+  const comments = attributeComments[detailKey]
+  const isCommentsLoading = attributeCommentsLoading[detailKey] ?? false
 
   useEffect(() => {
     setError(null)
@@ -177,6 +182,32 @@ export function AttributeDetailsSheet({
     }
   }, [archetypeId, currentOffset, currentView, detail, fetchAttributeDetails, isLoading, t])
 
+  useEffect(() => {
+    let isMounted = true
+    if (comments || isCommentsLoading) {
+      return
+    }
+
+    const loadComments = async () => {
+      try {
+        await fetchAttributeComments({
+          archetypeId,
+          view: currentView,
+          offset: currentOffset,
+          lang: i18n.language?.split("-")[0] ?? "en",
+        })
+      } catch (err) {
+        console.warn("Failed to load comments:", err)
+      }
+    }
+
+    void loadComments()
+
+    return () => {
+      isMounted = false
+    }
+  }, [archetypeId, currentOffset, currentView, comments, fetchAttributeComments, isCommentsLoading])
+
   const maxTraitScore = useMemo(() => {
     if (!detail || detail.traits.length === 0) return 1
     const scores = detail.traits.map((trait) => trait.score)
@@ -184,14 +215,6 @@ export function AttributeDetailsSheet({
     return maxScore <= 0 ? 1 : maxScore
   }, [detail])
 
-  const viewLabelMap: Record<AttributesViewType, TxKeyPath> = {
-    weekly: "homeScreen:periodSelector.weekly",
-    monthly: "homeScreen:periodSelector.monthly",
-    yearly: "homeScreen:periodSelector.yearly",
-    overall: "homeScreen:periodSelector.overall",
-  }
-
-  const viewLabel = t(viewLabelMap[currentView])
   const iconPath = SvgIconPaths[archetypeIconMap[archetypeId]]
   const scoreSuffix = t("attributes:details.traitScoreSuffix")
 
@@ -245,6 +268,44 @@ export function AttributeDetailsSheet({
           ))}
         </View>
       ) : null}
+
+      {/* Comments Section */}
+      {detail && !error ? (
+        <View style={{ gap: spacing.sm }}>
+          <Text
+            text={t("attributes:comments.heading")}
+            weight="bold"
+            size="lg"
+            style={{ color: colors.text }}
+          />
+
+          {isCommentsLoading ? (
+            <View style={{ gap: spacing.xs }}>
+              {Array.from({ length: 3 }).map((_, index) => (
+                <View key={index} style={[styles.commentSkeleton, { gap: spacing.xs }]}>
+                  <SkeletonImage size={60} width={60} height={12} style={{ borderRadius: 4 }} />
+                  <SkeletonImage size={200} width={200} height={16} style={{ borderRadius: 4 }} />
+                </View>
+              ))}
+            </View>
+          ) : null}
+
+          {comments && comments.comments.length > 0 ? (
+            <View style={{ gap: spacing.xs }}>
+              {comments.comments.map((comment) => (
+                <Comment key={comment.id} comment={comment} />
+              ))}
+            </View>
+          ) : null}
+
+          {comments && comments.comments.length === 0 && !isCommentsLoading ? (
+            <Text
+              text={t("attributes:comments.noComments")}
+              style={{ color: colors.textDim, fontStyle: "italic" }}
+            />
+          ) : null}
+        </View>
+      ) : null}
     </View>
   )
 }
@@ -292,5 +353,8 @@ const styles = StyleSheet.create({
   },
   traitBarFill: {
     height: 12,
+  },
+  commentSkeleton: {
+    padding: 12,
   },
 })

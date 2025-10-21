@@ -20,13 +20,31 @@ export const SkeletonImage: React.FC<SkeletonImageProps> = ({
   size,
   animated = false,
   style,
+  source,
   ...props
 }) => {
   const { themeContext } = useAppTheme()
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const shimmer = useSharedValue(0)
 
   const ImageComponent: any = animated ? Animated.Image : Image
+
+  // For local images (require), set loading to false immediately
+  useEffect(() => {
+    if (source && typeof source === "number") {
+      // Local image (require), no loading needed
+      setLoading(false)
+    } else if (
+      source &&
+      typeof source === "object" &&
+      Array.isArray(source) === false &&
+      !(source as any).uri
+    ) {
+      // Local image object without uri
+      setLoading(false)
+    }
+  }, [source])
 
   useEffect(() => {
     shimmer.value = withRepeat(
@@ -46,8 +64,8 @@ export const SkeletonImage: React.FC<SkeletonImageProps> = ({
   const skeletonColor = themeContext === "dark" ? "#3A3D4A" : "#E0E0E0"
 
   return (
-    <View style={[styles.container, { maxHeight: size, maxWidth: size }]}>
-      {loading && (
+    <View style={[styles.container, { height: size, width: size }]}>
+      {loading && !error && (
         <Animated.View
           style={[
             styles.skeleton,
@@ -63,8 +81,13 @@ export const SkeletonImage: React.FC<SkeletonImageProps> = ({
       )}
       <ImageComponent
         {...props}
+        source={source}
         style={[{ maxHeight: size, maxWidth: size }, style]}
         onLoadEnd={() => setLoading(false)}
+        onError={() => {
+          setError(true)
+          setLoading(false)
+        }}
       />
     </View>
   )
@@ -72,9 +95,9 @@ export const SkeletonImage: React.FC<SkeletonImageProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    position: "relative",
   },
   skeleton: {
     position: "absolute",

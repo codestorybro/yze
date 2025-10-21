@@ -12,9 +12,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useUser } from "@/store/auth"
 import { ArchetypeAttribute } from "@/types/attributeType"
 import { AttributesViewType } from "@/types/attributesViewType"
-import { getAttributeDetails, getAttributes } from "@/api/attributes"
+import { getAttributeDetails, getAttributes, getAttributeComments } from "@/api/attributes"
 import type { AttributeDetails } from "@/types/attributeDetails"
 import type { ArchetypeKey } from "@/types/archetype"
+import type { AttributeCommentsData } from "@/types/attributeComment"
 
 type RefreshAttributesParams = {
   view?: AttributesViewType
@@ -22,6 +23,14 @@ type RefreshAttributesParams = {
 }
 
 type AttributeDetailsParams = {
+  archetypeId: ArchetypeKey
+  view?: AttributesViewType
+  offset?: number
+  force?: boolean
+  lang?: string
+}
+
+type AttributeCommentsParams = {
   archetypeId: ArchetypeKey
   view?: AttributesViewType
   offset?: number
@@ -42,6 +51,9 @@ export type AttributesContextType = {
   attributeDetails: Record<string, AttributeDetails>
   attributeDetailsLoading: Record<string, boolean>
   fetchAttributeDetails: (params: AttributeDetailsParams) => Promise<AttributeDetails | null>
+  attributeComments: Record<string, AttributeCommentsData>
+  attributeCommentsLoading: Record<string, boolean>
+  fetchAttributeComments: (params: AttributeCommentsParams) => Promise<AttributeCommentsData | null>
 }
 
 const AttributesContext = createContext<AttributesContextType | null>(null)
@@ -63,6 +75,12 @@ export function AttributesProvider({ children }: PropsWithChildren) {
     {},
   )
   const [attributeDetailsLoading, setAttributeDetailsLoading] = useState<Record<string, boolean>>(
+    {},
+  )
+  const [attributeCommentsMap, setAttributeCommentsMap] = useState<
+    Record<string, AttributeCommentsData>
+  >({})
+  const [attributeCommentsLoading, setAttributeCommentsLoading] = useState<Record<string, boolean>>(
     {},
   )
 
@@ -103,6 +121,8 @@ export function AttributesProvider({ children }: PropsWithChildren) {
       setCurrentOffset(0)
       setAttributeDetailsMap({})
       setAttributeDetailsLoading({})
+      setAttributeCommentsMap({})
+      setAttributeCommentsLoading({})
     }
   }, [queryClient, user])
 
@@ -170,6 +190,8 @@ export function AttributesProvider({ children }: PropsWithChildren) {
       if (!user) {
         setAttributeDetailsMap({})
         setAttributeDetailsLoading({})
+        setAttributeCommentsMap({})
+        setAttributeCommentsLoading({})
         return null
       }
 
@@ -218,6 +240,52 @@ export function AttributesProvider({ children }: PropsWithChildren) {
     ],
   )
 
+  const fetchAttributeComments = useCallback(
+    async (params: AttributeCommentsParams): Promise<AttributeCommentsData | null> => {
+      if (!user) {
+        setAttributeCommentsMap({})
+        setAttributeCommentsLoading({})
+        return null
+      }
+
+      const targetView = params.view ?? currentView
+      const targetOffset = params.offset ?? currentOffset
+      const key = createAttributeDetailsKey(targetView, targetOffset, params.archetypeId)
+
+      if (!params.force && attributeCommentsMap[key]) {
+        return attributeCommentsMap[key]
+      }
+
+      if (attributeCommentsLoading[key]) {
+        return null
+      }
+
+      setAttributeCommentsLoading((prev) => ({ ...prev, [key]: true }))
+
+      try {
+        const comments = await getAttributeComments({
+          view: targetView,
+          offset: targetOffset,
+          archetypeId: params.archetypeId,
+          lang: params.lang,
+        })
+
+        setAttributeCommentsMap((prev) => ({ ...prev, [key]: comments }))
+        return comments
+      } catch (error) {
+        console.error("Failed to fetch attribute comments", error)
+        return null
+      } finally {
+        setAttributeCommentsLoading((prev) => {
+          const next = { ...prev }
+          delete next[key]
+          return next
+        })
+      }
+    },
+    [attributeCommentsLoading, attributeCommentsMap, currentOffset, currentView, user],
+  )
+
   const value = useMemo(
     () => ({
       attributes,
@@ -232,11 +300,16 @@ export function AttributesProvider({ children }: PropsWithChildren) {
       attributeDetails: attributeDetailsMap,
       attributeDetailsLoading,
       fetchAttributeDetails,
+      attributeComments: attributeCommentsMap,
+      attributeCommentsLoading,
+      fetchAttributeComments,
     }),
     [
       attributes,
       attributeDetailsLoading,
       attributeDetailsMap,
+      attributeCommentsLoading,
+      attributeCommentsMap,
       currentOffset,
       currentView,
       isInitialLoading,
@@ -244,6 +317,7 @@ export function AttributesProvider({ children }: PropsWithChildren) {
       isRefetching,
       maxOffset,
       fetchAttributeDetails,
+      fetchAttributeComments,
       refreshAttributes,
       timeline,
     ],
