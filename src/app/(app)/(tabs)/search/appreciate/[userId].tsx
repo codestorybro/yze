@@ -1,20 +1,65 @@
-import React from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { View, ViewStyle } from "react-native"
 import { useLocalSearchParams, router } from "expo-router"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
-import { Text, Button } from "@/components"
+import { Text, Button, AnimatedSelectableChip, SkeletonImage } from "@/components"
+import { fetchAllTraits } from "@/api/traits"
+import { getGroupMembers } from "@/api/group"
+import { useTranslation } from "react-i18next"
 import { TwoStepAnimatedStepper } from "@/components/Stepper/TwoStepAnimatedStepper"
 
 export default function AppreciateUserScreen() {
   const { userId } = useLocalSearchParams<{ userId: string }>()
   const {
     themed,
-    theme: { spacing },
+    theme: { spacing, colors },
   } = useAppTheme()
   const { bottom, top } = useSafeAreaInsets()
-  const [step, setStep] = React.useState<1 | 2>(1)
+  const [step, setStep] = useState<1 | 2>(1)
+  const { i18n, t } = useTranslation()
+  const [traits, setTraits] = useState<{ id: string; label: string; archetypeId: string }[]>([])
+  const [loadingTraits, setLoadingTraits] = useState(false)
+  const [selectedTraits, setSelectedTraits] = useState<string[]>([])
+  const [resolvedName, setResolvedName] = useState<string>("")
+  const [nameLoading, setNameLoading] = useState<boolean>(true)
+  const canProceed = step === 1 ? selectedTraits.length > 0 : true
+
+  useEffect(() => {
+    if (step !== 1 || traits.length > 0 || loadingTraits) return
+    setLoadingTraits(true)
+    fetchAllTraits({ lang: i18n.language?.split("-")[0] }).then((data) => {
+      setTraits(data)
+      setLoadingTraits(false)
+    })
+  }, [step, traits.length, loadingTraits, i18n.language])
+
+  useEffect(() => {
+    let mounted = true
+    if (!userId) {
+      setNameLoading(false)
+      return
+    }
+    getGroupMembers()
+      .then((members) => {
+        if (!mounted) return
+        const found = members.find((m) => m.id === userId)
+        if (found?.name) {
+          setResolvedName(found.name)
+        }
+      })
+      .finally(() => {
+        if (mounted) setNameLoading(false)
+      })
+    return () => {
+      mounted = false
+    }
+  }, [userId])
+
+  const toggleTrait = useCallback((id: string) => {
+    setSelectedTraits((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
+  }, [])
 
   const goBackOrCancel = () => {
     if (step === 1) {
@@ -25,13 +70,14 @@ export default function AppreciateUserScreen() {
   }
 
   const goForwardOrAppreciate = () => {
-    if (step === 2) {
-      // TODO: trigger appreciate action
-      console.log("Appreciate user", userId)
-      router.back()
-    } else {
+    if (step === 1) {
+      if (!canProceed) return
       setStep(2)
+      return
     }
+    // TODO: trigger appreciate action with selectedTraits
+    console.log("Appreciate user", userId, { traits: selectedTraits })
+    router.back()
   }
 
   return (
@@ -41,7 +87,52 @@ export default function AppreciateUserScreen() {
       </View>
 
       <View style={themed($content)}>
-        <Text>Blah blah blah</Text>
+        {step === 1 ? (
+          <View style={{ flex: 1, width: "100%", gap: spacing.md }}>
+            {nameLoading ? (
+              <SkeletonImage
+                size={60}
+                width={260}
+                height={18}
+                style={{ alignSelf: "center", borderRadius: 8 }}
+              />
+            ) : resolvedName ? (
+              <Text
+                text={t("searchScreen:selectTraitsInstruction", { name: resolvedName })}
+                size="sm"
+                style={{ textAlign: "center" }}
+              />
+            ) : null}
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.xs }}>
+              {traits.map((trait) => (
+                <AnimatedSelectableChip
+                  key={trait.id}
+                  label={trait.label}
+                  selected={selectedTraits.includes(trait.id)}
+                  onToggle={() => toggleTrait(trait.id)}
+                  accentColor={colors.primary}
+                />
+              ))}
+              {loadingTraits && traits.length === 0
+                ? Array.from({ length: 20 }).map((_, i) => (
+                    <View
+                      key={`skeleton-${i}`}
+                      style={{
+                        width: 80,
+                        height: 40,
+                        paddingHorizontal: spacing.md,
+                        paddingVertical: spacing.xs,
+                      }}
+                    >
+                      <SkeletonImage height={40} width={80} infinityLoading />
+                    </View>
+                  ))
+                : null}
+            </View>
+          </View>
+        ) : (
+          <Text>Blah blah blah</Text>
+        )}
       </View>
 
       <View style={[themed($bottomActions), { paddingBottom: bottom + spacing.md }]}>
@@ -55,6 +146,7 @@ export default function AppreciateUserScreen() {
           preset="default"
           onPress={goForwardOrAppreciate}
           tx={step === 2 ? "searchScreen:appreciate" : "searchScreen:next"}
+          disabled={!canProceed}
           style={{ flex: 1 }}
         />
       </View>

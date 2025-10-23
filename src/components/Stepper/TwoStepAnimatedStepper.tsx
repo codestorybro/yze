@@ -98,7 +98,7 @@ const $circle: ThemedStyle<ViewStyle> = ({ colors }) => ({
   height: 34,
   borderRadius: 17,
   borderWidth: 2,
-  borderColor: colors.border,
+  borderColor: colors.stepperLine,
   alignItems: "center",
   justifyContent: "center",
 })
@@ -118,7 +118,7 @@ const $lineBase: ThemedStyle<ViewStyle> = ({ colors }) => ({
   height: 2,
   left: 0,
   right: 0,
-  backgroundColor: colors.border,
+  backgroundColor: colors.stepperLine,
   overflow: "hidden",
 })
 

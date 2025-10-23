@@ -647,6 +647,20 @@ const handlerMap: Record<string, (config: InternalAxiosRequestConfig) => AxiosRe
   "GET /attributes/details": handleAttributeDetails,
   "GET /attributes/comments": handleAttributeComments,
   "GET /groups/members": handleGroupMembers,
+  // Returns a flattened list of all traits (without scores) for appreciate flow selection
+  "GET /traits": (config) => {
+    const authCheck = assertAuthHeader(config)
+    if (!authCheck.valid) {
+      return createResponse(config, 401, { error: authCheck.message })
+    }
+
+    const lang = (config.params?.lang as string) ?? "en"
+    const source = lang === "pl" ? archetypeTraitDefinitionsPL : archetypeTraitDefinitions
+    const traits = Object.entries(source).flatMap(([archetypeId, list]) =>
+      list.map((trait) => ({ ...trait, archetypeId })),
+    )
+    return createResponse(config, 200, { data: traits })
+  },
 }
 
 export const mockAdapter: AxiosAdapter = async (config) => {

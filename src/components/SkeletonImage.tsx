@@ -12,15 +12,17 @@ import Animated, {
 import { useAppTheme } from "@/theme/context"
 
 interface SkeletonImageProps extends ImageProps {
-  size: number
+  size?: number
   animated?: boolean
+  infinityLoading?: boolean
 }
 
 export const SkeletonImage: React.FC<SkeletonImageProps> = ({
-  size,
+  size = 32,
   animated = false,
   style,
   source,
+  infinityLoading = false,
   ...props
 }) => {
   const { themeContext } = useAppTheme()
@@ -62,6 +64,22 @@ export const SkeletonImage: React.FC<SkeletonImageProps> = ({
   }))
 
   const skeletonColor = themeContext === "dark" ? "#3A3D4A" : "#E0E0E0"
+
+  if (infinityLoading)
+    return (
+      <Animated.View
+        style={[
+          styles.skeleton,
+          {
+            height: props.height || size,
+            width: props.width || size,
+            borderRadius: (props.height || size) / 2,
+            backgroundColor: skeletonColor,
+          },
+          animatedStyle,
+        ]}
+      />
+    )
 
   return (
     <View style={[styles.container, { height: size, width: size }]}>

@@ -21,6 +21,7 @@ const pl: Translations = {
   },
   searchScreen: {
     whoToAppreciate: "Kogo chcesz dzisiaj docenić?",
+    selectTraitsInstruction: "Za co chcesz docenić dzisiaj {{name}}?",
     noResults: "Brak wyników",
     suggestion: "Sprawdź czy tekst jest poprawny, lub spróbuj szukać po innych frazach",
     searchForUser: "Szukaj użytkownika",

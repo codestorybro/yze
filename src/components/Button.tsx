@@ -337,7 +337,7 @@ const $baseTextStyle: ThemedStyle<TextStyle> = ({ typography, colors }) => ({
   fontFamily: typography.primary.medium,
   textAlign: "center",
   flexShrink: 1,
-  color: colors.textReversed,
+  color: colors.text,
   flexGrow: 0,
   zIndex: 2,
 })

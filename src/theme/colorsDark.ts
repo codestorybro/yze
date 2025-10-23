@@ -48,6 +48,8 @@ export const colors = {
   attributeRise: "#E25A53",
   attributeFlow: "#F4B400",
 
+  stepperLine: "#3A3D4A",
+
   briefcase: "#795548",
 
   justWhite: "#FFFFFF",
