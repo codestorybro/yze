@@ -25,6 +25,10 @@ const pl: Translations = {
     suggestion: "Sprawdź czy tekst jest poprawny, lub spróbuj szukać po innych frazach",
     searchForUser: "Szukaj użytkownika",
     appreciatedToday: "Doceniono dzisiaj",
+    cancel: "Anuluj",
+    back: "Wstecz",
+    next: "Dalej",
+    appreciate: "Doceń",
   },
   errorScreen: {
     title: "Coś poszło nie tak!",

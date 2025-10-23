@@ -23,6 +23,10 @@ const en = {
     suggestion: "Check if the text is correct, or try searching with different phrases",
     searchForUser: "Search for user",
     appreciatedToday: "Appreciated today",
+    cancel: "Cancel",
+    back: "Back",
+    next: "Next",
+    appreciate: "Appreciate",
   },
   errorScreen: {
     title: "Something went wrong!",

@@ -26,6 +26,7 @@ import { UserType } from "@/types/userType"
 
 import { UserListCard } from "./UserListCard"
 import { useModal } from "@/store/modal"
+import { router } from "expo-router"
 
 type Props = {
   users: UserType[]
@@ -119,13 +120,7 @@ export const UsersList: React.FC<Props> = ({ users }) => {
           const handlePress = isAlreadyAppreciated
             ? undefined
             : () => {
-                openModal({
-                  title: user.name,
-                  description: "You have selected this user.",
-                  onConfirmPress: () => {
-                    console.log("User pressed!")
-                  },
-                })
+                router.push(`/(app)/(tabs)/search/appreciate/${user.id}`)
               }
 
           return (
