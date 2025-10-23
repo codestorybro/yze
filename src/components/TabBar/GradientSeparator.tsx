@@ -8,9 +8,10 @@ import { useGroup } from "@/store/group"
 type Props = {
   children: React.ReactNode
   style?: StyleProp<ViewStyle>
+  heightMultiplier?: number
 }
 
-export function GradientSeparator({ children, style }: Props) {
+export function GradientSeparator({ children, style, heightMultiplier = 2.3 }: Props) {
   const {
     theme: { colors },
   } = useAppTheme()
@@ -21,8 +22,16 @@ export function GradientSeparator({ children, style }: Props) {
     <View style={style}>
       <LinearGradient
         pointerEvents="none"
-        colors={[colors.mainBackground, colors.mainBackground, colors.transparent]}
-        style={[styles.fade, { top: isSearchBarFocused ? -top : 0, height: top * 2.3 }]}
+        colors={[
+          colors.mainBackground,
+          colors.mainBackground,
+          colors.mainBackground,
+          colors.transparent,
+        ]}
+        style={[
+          styles.fade,
+          { top: isSearchBarFocused ? -top : 0, height: top * heightMultiplier },
+        ]}
       />
       {!isSearchBarFocused && children}
     </View>

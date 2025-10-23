@@ -4,11 +4,18 @@ import { useLocalSearchParams, router } from "expo-router"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
-import { Text, Button, AnimatedSelectableChip, SkeletonImage } from "@/components"
+import {
+  Text,
+  Button,
+  AnimatedSelectableChip,
+  SkeletonImage,
+  LoggedScreenWrapper,
+} from "@/components"
 import { fetchAllTraits } from "@/api/traits"
 import { getGroupMembers } from "@/api/group"
 import { useTranslation } from "react-i18next"
 import { TwoStepAnimatedStepper } from "@/components/Stepper/TwoStepAnimatedStepper"
+import { GradientSeparator } from "@/components/TabBar/GradientSeparator"
 
 export default function AppreciateUserScreen() {
   const { userId } = useLocalSearchParams<{ userId: string }>()
@@ -23,7 +30,6 @@ export default function AppreciateUserScreen() {
   const [loadingTraits, setLoadingTraits] = useState(false)
   const [selectedTraits, setSelectedTraits] = useState<string[]>([])
   const [resolvedName, setResolvedName] = useState<string>("")
-  const [nameLoading, setNameLoading] = useState<boolean>(true)
   const canProceed = step === 1 ? selectedTraits.length > 0 : true
 
   useEffect(() => {
@@ -37,21 +43,13 @@ export default function AppreciateUserScreen() {
 
   useEffect(() => {
     let mounted = true
-    if (!userId) {
-      setNameLoading(false)
-      return
-    }
-    getGroupMembers()
-      .then((members) => {
-        if (!mounted) return
-        const found = members.find((m) => m.id === userId)
-        if (found?.name) {
-          setResolvedName(found.name)
-        }
-      })
-      .finally(() => {
-        if (mounted) setNameLoading(false)
-      })
+    getGroupMembers().then((members) => {
+      if (!mounted) return
+      const found = members.find((m) => m.id === userId)
+      if (found?.name) {
+        setResolvedName(found.name)
+      }
+    })
     return () => {
       mounted = false
     }
@@ -82,27 +80,24 @@ export default function AppreciateUserScreen() {
 
   return (
     <View style={themed($screen)}>
-      <View style={[themed($stepperWrapper), { paddingTop: top + spacing.md }]}>
+      <GradientSeparator
+        style={[themed($titleWrapper), { paddingTop: top + spacing.md }]}
+        heightMultiplier={3.5}
+      >
         <TwoStepAnimatedStepper step={step} />
-      </View>
+        {resolvedName && (
+          <Text
+            text={t("searchScreen:selectTraitsInstruction", { name: resolvedName })}
+            size="sm"
+            preset="bold"
+            style={{ margin: "auto" }}
+          />
+        )}
+      </GradientSeparator>
 
-      <View style={themed($content)}>
+      <LoggedScreenWrapper style={{ paddingTop: top + spacing.xxxl + spacing.md }}>
         {step === 1 ? (
           <View style={{ flex: 1, width: "100%", gap: spacing.md }}>
-            {nameLoading ? (
-              <SkeletonImage
-                size={60}
-                width={260}
-                height={18}
-                style={{ alignSelf: "center", borderRadius: 8 }}
-              />
-            ) : resolvedName ? (
-              <Text
-                text={t("searchScreen:selectTraitsInstruction", { name: resolvedName })}
-                size="sm"
-                style={{ textAlign: "center" }}
-              />
-            ) : null}
             <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.xs }}>
               {traits.map((trait) => (
                 <AnimatedSelectableChip
@@ -133,7 +128,7 @@ export default function AppreciateUserScreen() {
         ) : (
           <Text>Blah blah blah</Text>
         )}
-      </View>
+      </LoggedScreenWrapper>
 
       <View style={[themed($bottomActions), { paddingBottom: bottom + spacing.md }]}>
         <Button
@@ -154,24 +149,27 @@ export default function AppreciateUserScreen() {
   )
 }
 
+const $titleWrapper: ThemedStyle<ViewStyle> = ({ spacing, colors }) => ({
+  alignItems: "center",
+  gap: spacing.xxs,
+  paddingHorizontal: spacing.sm,
+  paddingBottom: spacing.xxs,
+  backgroundColor: colors.transparent,
+  zIndex: 1,
+  position: "absolute",
+  left: 0,
+  right: 0,
+})
+
 const $screen: ThemedStyle<ViewStyle> = ({ colors }) => ({
   flex: 1,
   backgroundColor: colors.mainBackground,
 })
 
-const $stepperWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  paddingHorizontal: spacing.md,
-})
-
-const $content: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  flex: 1,
-  paddingHorizontal: spacing.lg,
-  justifyContent: "center",
-  alignItems: "center",
-})
-
 const $bottomActions: ThemedStyle<ViewStyle> = ({ spacing, colors }) => ({
   flexDirection: "row",
+  position: "absolute",
+  bottom: 0,
   gap: spacing.md,
   paddingHorizontal: spacing.md,
 })
