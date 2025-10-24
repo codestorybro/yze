@@ -35,6 +35,7 @@ export default function AppreciateUserScreen() {
   const [resolvedName, setResolvedName] = useState<string>("")
   const [comment, setComment] = useState<string>("")
   const [anonymous, setAnonymous] = useState<boolean>(false)
+  const COMMENT_MAX = 300
   const canProceed = step === 1 ? selectedTraits.length > 0 : true
 
   useEffect(() => {
@@ -108,7 +109,10 @@ export default function AppreciateUserScreen() {
         )}
       </GradientSeparator>
 
-      <LoggedScreenWrapper style={{ paddingTop: top + spacing.xxxl + spacing.md }}>
+      <LoggedScreenWrapper
+        style={{ paddingTop: top + spacing.xxxl + spacing.md }}
+        disableKeyboardAvoidingView
+      >
         {step === 1 ? (
           <View style={{ flex: 1, width: "100%", gap: spacing.md }}>
             <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.xs }}>
@@ -141,12 +145,30 @@ export default function AppreciateUserScreen() {
         ) : (
           <View style={{ flex: 1, width: "100%", gap: spacing.lg }}>
             <TextField
-              multiline
-              numberOfLines={4}
               value={comment}
-              onChangeText={setComment}
+              onChangeText={(text) => {
+                if (text.length <= COMMENT_MAX) {
+                  setComment(text)
+                } else {
+                  setComment(text.slice(0, COMMENT_MAX))
+                }
+              }}
               placeholderTx="searchScreen:commentPlaceholder"
-              inputWrapperStyle={{ borderRadius: spacing.md }}
+            />
+            <Text
+              tx="searchScreen:commentCharCounter"
+              txOptions={{ count: comment.length, max: COMMENT_MAX }}
+              size="xs"
+              style={{
+                alignSelf: "flex-end",
+                marginTop: -spacing.sm,
+                color:
+                  comment.length > COMMENT_MAX * 0.95
+                    ? colors.error
+                    : comment.length > COMMENT_MAX * 0.9
+                      ? colors.secondary
+                      : colors.textDim,
+              }}
             />
             <Switch
               value={anonymous}

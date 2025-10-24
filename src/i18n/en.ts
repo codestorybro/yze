@@ -23,6 +23,7 @@ const en = {
     commentTitle: "Add an optional comment",
     commentPlaceholder: "Add a short note here...",
     anonymousToggleLabel: "Send anonymously",
+  commentCharCounter: "{{count}} / {{max}} characters",
     noResults: "No Results",
     suggestion: "Check if the text is correct, or try searching with different phrases",
     searchForUser: "Search for user",

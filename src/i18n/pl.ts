@@ -25,6 +25,7 @@ const pl: Translations = {
     commentTitle: "Dodaj opcjonalny komentarz",
     commentPlaceholder: "Wpisz tutaj swój komentarz...",
     anonymousToggleLabel: "Wyślij anonimowo",
+    commentCharCounter: "{{count}} / {{max}} znaków",
     noResults: "Brak wyników",
     suggestion: "Sprawdź czy tekst jest poprawny, lub spróbuj szukać po innych frazach",
     searchForUser: "Szukaj użytkownika",
