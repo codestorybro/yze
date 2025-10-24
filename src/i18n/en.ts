@@ -20,6 +20,9 @@ const en = {
   searchScreen: {
     whoToAppreciate: "Who do you want to appreciate today?",
     selectTraitsInstruction: "What would you like to appreciate {{name}} for today?",
+    commentTitle: "Add an optional comment",
+    commentPlaceholder: "Add a short note here...",
+    anonymousToggleLabel: "Send anonymously",
     noResults: "No Results",
     suggestion: "Check if the text is correct, or try searching with different phrases",
     searchForUser: "Search for user",

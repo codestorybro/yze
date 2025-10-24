@@ -10,12 +10,15 @@ import {
   AnimatedSelectableChip,
   SkeletonImage,
   LoggedScreenWrapper,
+  TextField,
+  Toggle,
 } from "@/components"
 import { fetchAllTraits } from "@/api/traits"
 import { getGroupMembers } from "@/api/group"
 import { useTranslation } from "react-i18next"
 import { TwoStepAnimatedStepper } from "@/components/Stepper/TwoStepAnimatedStepper"
 import { GradientSeparator } from "@/components/TabBar/GradientSeparator"
+import { Switch } from "@/components/Toggle/Switch"
 
 export default function AppreciateUserScreen() {
   const { userId } = useLocalSearchParams<{ userId: string }>()
@@ -30,6 +33,8 @@ export default function AppreciateUserScreen() {
   const [loadingTraits, setLoadingTraits] = useState(false)
   const [selectedTraits, setSelectedTraits] = useState<string[]>([])
   const [resolvedName, setResolvedName] = useState<string>("")
+  const [comment, setComment] = useState<string>("")
+  const [anonymous, setAnonymous] = useState<boolean>(false)
   const canProceed = step === 1 ? selectedTraits.length > 0 : true
 
   useEffect(() => {
@@ -74,7 +79,11 @@ export default function AppreciateUserScreen() {
       return
     }
     // TODO: trigger appreciate action with selectedTraits
-    console.log("Appreciate user", userId, { traits: selectedTraits })
+    console.log("Appreciate user", userId, {
+      traits: selectedTraits,
+      comment: comment.trim() || null,
+      anonymous,
+    })
     router.back()
   }
 
@@ -87,7 +96,11 @@ export default function AppreciateUserScreen() {
         <TwoStepAnimatedStepper step={step} />
         {resolvedName && (
           <Text
-            text={t("searchScreen:selectTraitsInstruction", { name: resolvedName })}
+            text={
+              step === 1
+                ? t("searchScreen:selectTraitsInstruction", { name: resolvedName })
+                : t("searchScreen:commentTitle")
+            }
             size="sm"
             preset="bold"
             style={{ margin: "auto" }}
@@ -126,7 +139,22 @@ export default function AppreciateUserScreen() {
             </View>
           </View>
         ) : (
-          <Text>Blah blah blah</Text>
+          <View style={{ flex: 1, width: "100%", gap: spacing.lg }}>
+            <TextField
+              multiline
+              numberOfLines={4}
+              value={comment}
+              onChangeText={setComment}
+              placeholderTx="searchScreen:commentPlaceholder"
+              inputWrapperStyle={{ borderRadius: spacing.md }}
+            />
+            <Switch
+              value={anonymous}
+              onValueChange={setAnonymous}
+              labelPosition="left"
+              labelTx="searchScreen:anonymousToggleLabel"
+            />
+          </View>
         )}
       </LoggedScreenWrapper>
 
