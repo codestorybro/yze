@@ -23,6 +23,7 @@ export default function TabLayout() {
       tabBar={(props) => <TabBar {...props} />}
     >
       <Tabs.Screen name="index" />
+      <Tabs.Screen name="user" />
       <Tabs.Screen name="search" options={{ tabBarStyle: { display: "none" } }} />
       <Tabs.Screen name="settings" />
     </Tabs>
