@@ -47,6 +47,7 @@ export const colors = {
   attributeBuddy: "#4ABDAC",
   attributeRise: "#E25A53",
   attributeFlow: "#F4B400",
+  attributeMostAppreciative: "#1DA1F2",
 
   stepperLine: "#E0E0E0",
 

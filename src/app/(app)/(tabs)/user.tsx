@@ -80,10 +80,10 @@ export default function User() {
 
   const periodOptions = useMemo<PeriodOption[]>(
     () => [
-      { labelTx: "homeScreen:periodSelector.weekly" as TxKeyPath, value: "weekly" },
-      { labelTx: "homeScreen:periodSelector.monthly" as TxKeyPath, value: "monthly" },
-      { labelTx: "homeScreen:periodSelector.yearly" as TxKeyPath, value: "yearly" },
-      { labelTx: "homeScreen:periodSelector.overall" as TxKeyPath, value: "overall" },
+      { labelTx: "userScreen:periodSelector.weekly" as TxKeyPath, value: "weekly" },
+      { labelTx: "userScreen:periodSelector.monthly" as TxKeyPath, value: "monthly" },
+      { labelTx: "userScreen:periodSelector.yearly" as TxKeyPath, value: "yearly" },
+      { labelTx: "userScreen:periodSelector.overall" as TxKeyPath, value: "overall" },
     ],
     [],
   )
@@ -103,12 +103,12 @@ export default function User() {
     const now = new Date()
 
     if (currentView === "overall") {
-      return t("homeScreen:periodSelector.range.overall")
+      return t("userScreen:periodSelector.range.overall")
     }
 
     if (currentView === "weekly") {
       if (currentOffset === 0) {
-        return t("homeScreen:periodSelector.range.weekCurrent")
+        return t("userScreen:periodSelector.range.weekCurrent")
       }
 
       const targetDate = subWeeks(now, currentOffset)
@@ -124,7 +124,7 @@ export default function User() {
 
     if (currentView === "monthly") {
       if (currentOffset === 0) {
-        return t("homeScreen:periodSelector.range.monthCurrent")
+        return t("userScreen:periodSelector.range.monthCurrent")
       }
 
       const targetDate = subMonths(now, currentOffset)
@@ -133,14 +133,14 @@ export default function User() {
 
     if (currentView === "yearly") {
       if (currentOffset === 0) {
-        return t("homeScreen:periodSelector.range.yearCurrent")
+        return t("userScreen:periodSelector.range.yearCurrent")
       }
 
       const targetDate = subYears(now, currentOffset)
       return format(targetDate, "yyyy", { locale: dateLocale })
     }
 
-    return t("homeScreen:periodSelector.range.overall")
+    return t("userScreen:periodSelector.range.overall")
   }, [capitalize, currentOffset, currentView, dateLocale, t])
 
   const handleSelectView = useCallback(
@@ -218,7 +218,7 @@ export default function User() {
               isOpen={isDropdownOpen}
               onToggle={() => setIsDropdownOpen((prev) => !prev)}
               onSelect={handleSelectView}
-              accessibilityLabel={t("homeScreen:periodSelector.accessibilityLabel")}
+              accessibilityLabel={t("userScreen:periodSelector.accessibilityLabel")}
               triggerStyle={themed($selectorButton)}
               triggerTextStyle={themed($selectorLabel)}
               testID="period-selector"
@@ -240,7 +240,7 @@ export default function User() {
               textStyle={styles.floatingButtonText}
               pressedTextStyle={styles.floatingButtonText}
               disabledTextStyle={styles.floatingButtonText}
-              accessibilityLabel={t("homeScreen:periodSelector.range.navigatePrevious")}
+              accessibilityLabel={t("userScreen:periodSelector.range.navigatePrevious")}
             />
             <View style={styles.rangeLabelWrapper}>
               <Text
@@ -259,7 +259,7 @@ export default function User() {
               textStyle={styles.floatingButtonText}
               pressedTextStyle={styles.floatingButtonText}
               disabledTextStyle={styles.floatingButtonText}
-              accessibilityLabel={t("homeScreen:periodSelector.range.navigateNext")}
+              accessibilityLabel={t("userScreen:periodSelector.range.navigateNext")}
             />
           </View>
 
@@ -271,7 +271,7 @@ export default function User() {
         </View>
 
         <Button
-          tx="homeScreen:linkButton"
+          tx="userScreen:linkButton"
           style={styles.linkButton}
           preset="link"
           onPress={handleOpenArchetypesSheet}

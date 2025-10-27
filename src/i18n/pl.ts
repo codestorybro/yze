@@ -55,6 +55,15 @@ const pl: Translations = {
     manageGroup: "Zarządzaj grupą",
   },
   homeScreen: {
+    sortingSelector: {
+      mostAppreciative: "Top najwdzięczniejszych",
+      flow: "Top doceniani Flow",
+      buddy: "Top doceniani Buddy",
+      rise: "Top doceniani Rise",
+      guru: "Top doceniani Guru",
+    },
+  },
+  userScreen: {
     periodSelector: {
       weekly: "Widok tygodniowy",
       monthly: "Widok miesięczny",

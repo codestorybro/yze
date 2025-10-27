@@ -23,16 +23,16 @@ export function ArchetypesSheetContent() {
     theme: { colors, spacing },
   } = useAppTheme()
 
-  const introParagraphs = t("homeScreen:archetypesSheet.intro", {
+  const introParagraphs = t("userScreen:archetypesSheet.intro", {
     returnObjects: true,
   }) as string[]
-  const bulletItems = t("homeScreen:archetypesSheet.bullets", {
+  const bulletItems = t("userScreen:archetypesSheet.bullets", {
     returnObjects: true,
   }) as string[]
-  const closingParagraphs = t("homeScreen:archetypesSheet.closing", {
+  const closingParagraphs = t("userScreen:archetypesSheet.closing", {
     returnObjects: true,
   }) as string[]
-  const archetypes = t("homeScreen:archetypesSheet.archetypes", {
+  const archetypes = t("userScreen:archetypesSheet.archetypes", {
     returnObjects: true,
   }) as Record<ArchetypeKey, ArchetypeContent>
 
@@ -50,13 +50,13 @@ export function ArchetypesSheetContent() {
 
   return (
     <View style={styles.container}>
-      <Text tx="homeScreen:archetypesSheet.heading" weight="bold" size="lg" />
+      <Text tx="userScreen:archetypesSheet.heading" weight="bold" size="lg" />
 
       {introParagraphs.map((paragraph, index) => (
         <Text key={`intro-${index}`} text={paragraph} />
       ))}
 
-      <Text tx="homeScreen:archetypesSheet.listHeading" weight="medium" />
+      <Text tx="userScreen:archetypesSheet.listHeading" weight="medium" />
 
       <View style={styles.list}>
         {bulletItems.map((item, index) => (

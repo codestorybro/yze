@@ -52,6 +52,15 @@ const en = {
     manageGroup: "Manage Group",
   },
   homeScreen: {
+    sortingSelector: {
+      mostAppreciative: "Top most appreciative",
+      flow: "Top appreciated Flow",
+      buddy: "Top appreciated Buddy",
+      rise: "Top appreciated Rise",
+      guru: "Top appreciated Guru",
+    },
+  },
+  userScreen: {
     periodSelector: {
       weekly: "Weekly view",
       monthly: "Monthly view",
