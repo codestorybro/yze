@@ -37,6 +37,34 @@ export default function Index() {
     [],
   )
 
+  const sortedMembersList = useMemo(() => {
+    if (!membersList) return null
+
+    const sortedList = [...membersList].sort((a, b) => {
+      switch (selectedSortingOption) {
+        case "mostAppreciative":
+          return (b.appreciationsGiven || 0) - (a.appreciationsGiven || 0)
+
+        case "guru":
+          return (b.guruPoints || 0) - (a.guruPoints || 0)
+
+        case "buddy":
+          return (b.buddyPoints || 0) - (a.buddyPoints || 0)
+
+        case "flow":
+          return (b.flowPoints || 0) - (a.flowPoints || 0)
+
+        case "rise":
+          return (b.risePoints || 0) - (a.risePoints || 0)
+
+        default:
+          return 0
+      }
+    })
+
+    return sortedList
+  }, [membersList, selectedSortingOption])
+
   if (!hasLoadedMembers && isMembersLoading) return null
 
   return (
@@ -82,9 +110,9 @@ export default function Index() {
           <View style={themed($errorWrapper)}>
             <Text preset="subheading" text={membersError} style={themed($errorText)} />
           </View>
-        ) : membersList ? (
+        ) : sortedMembersList ? (
           <LeaderboardUsersList
-            users={membersList}
+            users={sortedMembersList}
             onUserPress={() => console.log("User pressed!")}
           />
         ) : null}

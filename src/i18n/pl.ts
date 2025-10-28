@@ -57,10 +57,10 @@ const pl: Translations = {
   homeScreen: {
     sortingSelector: {
       mostAppreciative: "Top doceniających",
-      flow: "Top doceniani Flow",
-      buddy: "Top doceniani Buddy",
-      rise: "Top doceniani Rise",
-      guru: "Top doceniani Guru",
+      flow: "Top doceniani jako Flow",
+      buddy: "Top doceniani jako Buddy",
+      rise: "Top doceniani jako Rise",
+      guru: "Top doceniani jako Guru",
     },
     itsYou: "To Ty!",
   },

@@ -54,10 +54,10 @@ const en = {
   homeScreen: {
     sortingSelector: {
       mostAppreciative: "Top most appreciative",
-      flow: "Top appreciated Flow",
-      buddy: "Top appreciated Buddy",
-      rise: "Top appreciated Rise",
-      guru: "Top appreciated Guru",
+      flow: "Top appreciated as Flow",
+      buddy: "Top appreciated as Buddy",
+      rise: "Top appreciated as Rise",
+      guru: "Top appreciated as Guru",
     },
     itsYou: "It's you!",
   },
