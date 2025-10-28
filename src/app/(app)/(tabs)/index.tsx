@@ -11,8 +11,7 @@ import { useMemo, useState } from "react"
 import { TxKeyPath } from "@/i18n"
 import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
 import { capitalize } from "@/utils/capitalize"
-
-type SortingOptionType = "mostAppreciative" | "guru" | "buddy" | "flow" | "rise"
+import { SortingOptionType } from "@/types/sortingOptionType"
 
 export default function Index() {
   const [selectedSortingOption, setSelectedSortingOption] =
@@ -48,8 +47,7 @@ export default function Index() {
           style={{
             margin: "auto",
           }}
-          // text={groupDetails?.name}
-          text="Auctane"
+          text={groupDetails?.name}
         />
         <Text
           preset="subheading"

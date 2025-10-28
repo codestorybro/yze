@@ -8,4 +8,9 @@ export type UserType = {
   dominantArchetypeId?: ArchetypeKey
   alreadyAppreciated?: boolean
   isAdmin?: boolean
+  appreciationsGiven?: number
+  guruPoints?: number
+  buddyPoints?: number
+  flowPoints?: number
+  risePoints?: number
 }
