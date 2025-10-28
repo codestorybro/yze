@@ -2,9 +2,7 @@ import React, { useState, useCallback } from "react"
 import {
   ActivityIndicator,
   FlatList,
-  ImageStyle,
   RefreshControl,
-  TextStyle,
   ViewStyle,
   NativeSyntheticEvent,
   NativeScrollEvent,
@@ -18,30 +16,29 @@ import Animated, {
 } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
-import { Card, SkeletonImage, Text } from "@/components"
+import { Card } from "@/components"
 import { useAppTheme } from "@/theme/context"
 import { ThemedStyle } from "@/theme/types"
 import { useGroup } from "@/store/group"
 import { UserType } from "@/types/userType"
 
-import { UserListCard } from "./UserListCard"
-import { useModal } from "@/store/modal"
-import { router } from "expo-router"
+import { LeaderboardUserListCard } from "@/components/UserList/LeaderboardUserListCard"
+import { useUser } from "@/store/auth"
 
 type Props = {
   users: UserType[]
+  onUserPress?: (user: UserType) => void
 }
 
-const cryFace = require("@assets/images/cry.png")
 const _pullThreshold = 200
 
-export const UsersList: React.FC<Props> = ({ users }) => {
+export const LeaderboardUsersList: React.FC<Props> = ({ users, onUserPress }) => {
   const {
     themed,
     theme: { spacing, colors },
   } = useAppTheme()
   const { searchUserTerm, refreshMembersList, isMembersRefetching } = useGroup()
-  const { openModal } = useModal()
+  const { user: currentUser } = useUser()
   const { bottom, top } = useSafeAreaInsets()
 
   const [isRefreshingLocal, setIsRefreshingLocal] = useState(false)
@@ -92,6 +89,19 @@ export const UsersList: React.FC<Props> = ({ users }) => {
     opacity: activityIndicatorOpacity.value,
   }))
 
+  const getLeaderboardFrameColor = (position: number) => {
+    switch (position) {
+      case 1:
+        return colors.gold
+      case 2:
+        return colors.silver
+      case 3:
+        return colors.bronze
+      default:
+        return undefined
+    }
+  }
+
   return (
     <>
       <FlatList
@@ -115,13 +125,15 @@ export const UsersList: React.FC<Props> = ({ users }) => {
           />
         }
         renderItem={({ item: user, index }) => {
-          const isAlreadyAppreciated = !!user.alreadyAppreciated
+          const position = index + 1
+          const isCurrentUser = currentUser?.id === user.id
+          const frameColor = getLeaderboardFrameColor(position)
 
-          const handlePress = isAlreadyAppreciated
-            ? undefined
-            : () => {
-                router.push(`/(app)/(tabs)/search/appreciate/${user.id}`)
-              }
+          const handlePress = () => {
+            if (onUserPress) {
+              onUserPress(user)
+            }
+          }
 
           return (
             <Animated.View
@@ -132,38 +144,33 @@ export const UsersList: React.FC<Props> = ({ users }) => {
                 onPress={handlePress}
                 style={[
                   themed($cardStyle),
-                  isAlreadyAppreciated && themed($cardAppreciatedStyle),
-                  index === 0 && { marginTop: top * 2.2 },
+                  frameColor && {
+                    borderWidth: 3,
+                    borderColor: frameColor,
+                  },
+                  isCurrentUser && themed($currentUserCardStyle),
+                  index === 0 && { marginTop: top * 3.8 },
                   index === filtered.length - 1 && {
                     marginBottom: bottom + spacing.xxxl + spacing.md,
                   },
                 ]}
-                ContentComponent={<UserListCard user={user} />}
+                ContentComponent={
+                  <LeaderboardUserListCard
+                    user={user}
+                    position={position}
+                    isCurrentUser={isCurrentUser}
+                  />
+                }
               />
             </Animated.View>
           )
         }}
-        ListEmptyComponent={
-          <Animated.View style={[themed($emptyStateWrapper), { marginTop: top * 2.2 }]}>
-            <SkeletonImage
-              source={cryFace}
-              size={128}
-              style={themed($emptyIllustrationPlaceholder)}
-            />
-            <Text preset="heading" style={themed($emptyHeading)} tx="searchScreen:noResults" />
-            <Text
-              preset="subheading"
-              style={themed($emptyDescription)}
-              tx="searchScreen:suggestion"
-            />
-          </Animated.View>
-        }
       />
 
       <Animated.View
         style={[
           themed($absoluteActivityIndicator),
-          { top: top * 2.2 },
+          { top: top * 3.8 },
           animatedActivityIndicatorStyle,
         ]}
       >
@@ -174,7 +181,7 @@ export const UsersList: React.FC<Props> = ({ users }) => {
         <ActivityIndicator
           color={colors.textDim}
           size="large"
-          style={[themed($absoluteActivityIndicator), { top: top * 2.2 }]}
+          style={[themed($absoluteActivityIndicator), { top: top * 3.8 }]}
         />
       )}
     </>
@@ -185,35 +192,14 @@ const $cardStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   marginBottom: spacing.xs,
 })
 
-const $cardAppreciatedStyle: ThemedStyle<ViewStyle> = () => ({
-  opacity: 0.5,
+const $currentUserCardStyle: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  backgroundColor: colors.primary + "20",
 })
 
 const $emptyListContent: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   flexGrow: 1,
   paddingHorizontal: spacing.lg,
   paddingBottom: spacing.xxxl,
-})
-
-const $emptyStateWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  alignItems: "center",
-  gap: spacing.xs,
-})
-
-const $emptyIllustrationPlaceholder: ThemedStyle<ImageStyle> = ({ spacing }) => ({
-  marginTop: -spacing.lg,
-})
-
-const $emptyHeading: ThemedStyle<TextStyle> = ({ colors }) => ({
-  color: colors.text,
-  textAlign: "center",
-})
-
-const $emptyDescription: ThemedStyle<TextStyle> = ({ colors, spacing }) => ({
-  color: colors.textDim,
-  textAlign: "center",
-  maxWidth: 280,
-  marginHorizontal: spacing.sm,
 })
 
 const $absoluteActivityIndicator: ThemedStyle<ViewStyle> = () => ({

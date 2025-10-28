@@ -53,6 +53,10 @@ export const colors = {
 
   briefcase: "#795548",
 
+  gold: "#FFD700",
+  silver: "#C0C0C0",
+  bronze: "#CD7F32",
+
   justWhite: "#FFFFFF",
   justBlack: "#000000",
   transparent: "rgba(0,0,0,0)",

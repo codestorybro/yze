@@ -56,12 +56,13 @@ const pl: Translations = {
   },
   homeScreen: {
     sortingSelector: {
-      mostAppreciative: "Top najwdzięczniejszych",
+      mostAppreciative: "Top doceniających",
       flow: "Top doceniani Flow",
       buddy: "Top doceniani Buddy",
       rise: "Top doceniani Rise",
       guru: "Top doceniani Guru",
     },
+    itsYou: "To Ty!",
   },
   userScreen: {
     periodSelector: {

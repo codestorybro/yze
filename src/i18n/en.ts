@@ -59,6 +59,7 @@ const en = {
       rise: "Top appreciated Rise",
       guru: "Top appreciated Guru",
     },
+    itsYou: "It's you!",
   },
   userScreen: {
     periodSelector: {

@@ -1,6 +1,7 @@
 import { StyleSheet, TextStyle, View, ViewStyle } from "react-native"
 
-import { Button, LoggedScreenWrapper, SvgIcon, Text, UsersList } from "@/components"
+import { Button, LoggedScreenWrapper, SvgIcon, Text } from "@/components"
+import { LeaderboardUsersList } from "@/components/UserList/LeaderboardUsersList"
 import { GradientSeparator } from "@/components/TabBar/GradientSeparator"
 import { ThemedStyle } from "@/theme/types"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
@@ -16,7 +17,7 @@ type SortingOptionType = "mostAppreciative" | "guru" | "buddy" | "flow" | "rise"
 export default function Index() {
   const [selectedSortingOption, setSelectedSortingOption] =
     useState<SortingOptionType>("mostAppreciative")
-  const { membersList, hasLoadedMembers, isMembersLoading, membersError } = useGroup()
+  const { membersList, hasLoadedMembers, isMembersLoading, membersError, groupDetails } = useGroup()
   const { top } = useSafeAreaInsets()
   const {
     themed,
@@ -41,7 +42,15 @@ export default function Index() {
 
   return (
     <View style={styles.flex}>
-      <GradientSeparator style={[themed($titleWrapper), { paddingTop: top }]}>
+      <GradientSeparator heightMultiplier={4} style={[themed($titleWrapper), { paddingTop: top }]}>
+        <Text
+          preset="subheading"
+          style={{
+            margin: "auto",
+          }}
+          // text={groupDetails?.name}
+          text="Auctane"
+        />
         <Text
           preset="subheading"
           style={{
@@ -76,7 +85,10 @@ export default function Index() {
             <Text preset="subheading" text={membersError} style={themed($errorText)} />
           </View>
         ) : membersList ? (
-          <UsersList users={membersList} />
+          <LeaderboardUsersList
+            users={membersList}
+            onUserPress={() => console.log("User pressed!")}
+          />
         ) : null}
       </LoggedScreenWrapper>
     </View>
