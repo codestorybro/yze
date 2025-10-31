@@ -1,4 +1,5 @@
 import { StyleSheet, TextStyle, View, ViewStyle } from "react-native"
+import { router } from "expo-router"
 
 import { Button, LoggedScreenWrapper, SvgIcon, Text } from "@/components"
 import { LeaderboardUsersList } from "@/components/UserList/LeaderboardUsersList"
@@ -12,6 +13,7 @@ import { TxKeyPath } from "@/i18n"
 import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
 import { capitalize } from "@/utils/capitalize"
 import { SortingOptionType } from "@/types/sortingOptionType"
+import { UserType } from "@/types/userType"
 
 export default function Index() {
   const [selectedSortingOption, setSelectedSortingOption] =
@@ -65,6 +67,24 @@ export default function Index() {
     return sortedList
   }, [membersList, selectedSortingOption])
 
+  const handleUserPress = (user: UserType) => {
+    router.push({
+      pathname: "/(app)/user-details",
+      params: {
+        userId: user.id,
+        userName: user.name,
+        userEmail: user.email || "",
+        userAvatarUri: user.avatarUri || "",
+        userGuruPoints: user.guruPoints?.toString() || "",
+        userBuddyPoints: user.buddyPoints?.toString() || "",
+        userFlowPoints: user.flowPoints?.toString() || "",
+        userRisePoints: user.risePoints?.toString() || "",
+        userAppreciationsGiven: user.appreciationsGiven?.toString() || "",
+        userDominantArchetypeId: user.dominantArchetypeId || "",
+      },
+    })
+  }
+
   if (!hasLoadedMembers && isMembersLoading) return null
 
   return (
@@ -111,10 +131,7 @@ export default function Index() {
             <Text preset="subheading" text={membersError} style={themed($errorText)} />
           </View>
         ) : sortedMembersList ? (
-          <LeaderboardUsersList
-            users={sortedMembersList}
-            onUserPress={() => console.log("User pressed!")}
-          />
+          <LeaderboardUsersList users={sortedMembersList} onUserPress={handleUserPress} />
         ) : null}
       </LoggedScreenWrapper>
     </View>
