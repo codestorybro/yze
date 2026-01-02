@@ -8,14 +8,12 @@ import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-c
 import { AnimatedBootSplash } from "@/components/AnimatedBootSplash"
 import { initI18n } from "@/i18n"
 import { AuthProvider } from "@/store/auth"
-import { AttributesProvider } from "@/store/attributes"
 import { BottomSheetProvider } from "@/store/bottomSheet"
-import { GroupStoreProvider } from "@/store/group"
+import { PartnerProvider } from "@/store/partner"
 import { ThemeProvider } from "@/theme/context"
 import { customFontsToLoad } from "@/theme/typography"
 import { loadDateFnsLocale } from "@/utils/formatDate"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
-import { ModalProvider } from "@/store/modal"
 
 const queryClient = new QueryClient()
 
@@ -54,26 +52,22 @@ export default function Root() {
           <ThemeProvider>
             <KeyboardProvider>
               <AuthProvider>
-                <GroupStoreProvider>
-                  <AttributesProvider>
-                    <BottomSheetProvider>
-                      <ModalProvider>
-                        {appIsReady ? (
-                          <>
-                            <Slot />
-                            {showSplash && (
-                              <AnimatedBootSplash
-                                onAnimationEnd={() => {
-                                  setShowSplash(false)
-                                }}
-                              />
-                            )}
-                          </>
-                        ) : null}
-                      </ModalProvider>
-                    </BottomSheetProvider>
-                  </AttributesProvider>
-                </GroupStoreProvider>
+                <PartnerProvider>
+                  <BottomSheetProvider>
+                    {appIsReady ? (
+                      <>
+                        <Slot />
+                        {showSplash && (
+                          <AnimatedBootSplash
+                            onAnimationEnd={() => {
+                              setShowSplash(false)
+                            }}
+                          />
+                        )}
+                      </>
+                    ) : null}
+                  </BottomSheetProvider>
+                </PartnerProvider>
               </AuthProvider>
             </KeyboardProvider>
           </ThemeProvider>

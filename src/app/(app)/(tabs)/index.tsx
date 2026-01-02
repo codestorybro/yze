@@ -1,172 +1,125 @@
-import { StyleSheet, TextStyle, View, ViewStyle } from "react-native"
-import { router } from "expo-router"
-
-import { Button, LoggedScreenWrapper, SvgIcon, Text } from "@/components"
-import { LeaderboardUsersList } from "@/components/UserList/LeaderboardUsersList"
-import { GradientSeparator } from "@/components/TabBar/GradientSeparator"
-import { ThemedStyle } from "@/theme/types"
+import { useState, useCallback } from "react"
+import { View, ViewStyle, TextStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useGroup } from "@/store/group"
-import { useAppTheme } from "@/theme/context"
-import { useMemo, useState } from "react"
-import { TxKeyPath } from "@/i18n"
-import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
-import { capitalize } from "@/utils/capitalize"
-import { SortingOptionType } from "@/types/sortingOptionType"
-import { UserType } from "@/types/userType"
+import { useTranslation } from "react-i18next"
 
-export default function Index() {
-  const [selectedSortingOption, setSelectedSortingOption] =
-    useState<SortingOptionType>("mostAppreciative")
-  const { membersList, hasLoadedMembers, isMembersLoading, membersError, groupDetails } = useGroup()
+import { Screen, Text } from "@/components"
+import { Avatar } from "@/components/Avatar"
+import { MoodCalendar } from "@/components/MoodCalendar"
+import { RatingSheetContent } from "@/components/RatingSheetContent"
+import { DayDetailsSheetContent } from "@/components/DayDetailsSheetContent"
+import { AnimatedSvgIcon } from "@/components/AnimatedSvgIcon"
+import { SvgIconPaths } from "@/components/SvgIcon/svgsPaths"
+import { useBottomSheet } from "@/store/bottomSheet"
+import { usePartner } from "@/store/partner"
+import { useUser } from "@/store/auth"
+import { useAppTheme } from "@/theme/context"
+import type { DayRating } from "@/types/ratingType"
+import type { ThemedStyle } from "@/theme/types"
+
+export default function HomeScreen() {
   const { top } = useSafeAreaInsets()
   const {
     themed,
     theme: { colors, spacing },
   } = useAppTheme()
+  const { t } = useTranslation()
 
-  const sortingOptions = useMemo(
-    () => [
-      {
-        labelTx: "userScreen:sortingSelector.mostAppreciative" as TxKeyPath,
-        value: "mostAppreciative",
-      },
-      { labelTx: "userScreen:sortingSelector.flow" as TxKeyPath, value: "flow" },
-      { labelTx: "userScreen:sortingSelector.buddy" as TxKeyPath, value: "buddy" },
-      { labelTx: "userScreen:sortingSelector.rise" as TxKeyPath, value: "rise" },
-      { labelTx: "userScreen:sortingSelector.guru" as TxKeyPath, value: "guru" },
-    ],
-    [],
+  const { user } = useUser()
+  const { partner, ratings, selectedMonth, setSelectedMonth, submitRating, isSubmitting } =
+    usePartner()
+  const { openSheet, closeSheet } = useBottomSheet()
+
+  const handlePartnerAvatarPress = useCallback(() => {
+    if (!partner) return
+
+    openSheet(
+      <RatingSheetContent
+        partnerName={partner.name}
+        onSubmit={submitRating}
+        onClose={closeSheet}
+        isSubmitting={isSubmitting}
+      />,
+    )
+  }, [partner, openSheet, closeSheet, submitRating, isSubmitting])
+
+  const handleDayPress = useCallback(
+    (date: string, rating?: DayRating) => {
+      if (!partner) return
+
+      openSheet(
+        <DayDetailsSheetContent
+          date={date}
+          rating={rating}
+          partnerName={partner.name}
+          onClose={closeSheet}
+        />,
+      )
+    },
+    [partner, openSheet, closeSheet],
   )
 
-  const sortedMembersList = useMemo(() => {
-    if (!membersList) return null
+  const handlePreviousMonth = useCallback(() => {
+    const newMonth = selectedMonth.month === 1 ? 12 : selectedMonth.month - 1
+    const newYear = selectedMonth.month === 1 ? selectedMonth.year - 1 : selectedMonth.year
+    setSelectedMonth(newYear, newMonth)
+  }, [selectedMonth, setSelectedMonth])
 
-    const sortedList = [...membersList].sort((a, b) => {
-      switch (selectedSortingOption) {
-        case "mostAppreciative":
-          return (b.appreciationsGiven || 0) - (a.appreciationsGiven || 0)
+  const handleNextMonth = useCallback(() => {
+    const today = new Date()
+    const currentYear = today.getFullYear()
+    const currentMonth = today.getMonth() + 1
 
-        case "guru":
-          return (b.guruPoints || 0) - (a.guruPoints || 0)
+    // Don't go beyond current month
+    if (selectedMonth.year === currentYear && selectedMonth.month === currentMonth) {
+      return
+    }
 
-        case "buddy":
-          return (b.buddyPoints || 0) - (a.buddyPoints || 0)
-
-        case "flow":
-          return (b.flowPoints || 0) - (a.flowPoints || 0)
-
-        case "rise":
-          return (b.risePoints || 0) - (a.risePoints || 0)
-
-        default:
-          return 0
-      }
-    })
-
-    return sortedList
-  }, [membersList, selectedSortingOption])
-
-  const handleUserPress = (user: UserType) => {
-    router.push({
-      pathname: "/(app)/user-details",
-      params: {
-        userId: user.id,
-        userName: user.name,
-        userEmail: user.email || "",
-        userAvatarUri: user.avatarUri || "",
-        userGuruPoints: user.guruPoints?.toString() || "",
-        userBuddyPoints: user.buddyPoints?.toString() || "",
-        userFlowPoints: user.flowPoints?.toString() || "",
-        userRisePoints: user.risePoints?.toString() || "",
-        userAppreciationsGiven: user.appreciationsGiven?.toString() || "",
-        userDominantArchetypeId: user.dominantArchetypeId || "",
-      },
-    })
-  }
-
-  if (!hasLoadedMembers && isMembersLoading) return null
+    const newMonth = selectedMonth.month === 12 ? 1 : selectedMonth.month + 1
+    const newYear = selectedMonth.month === 12 ? selectedMonth.year + 1 : selectedMonth.year
+    setSelectedMonth(newYear, newMonth)
+  }, [selectedMonth, setSelectedMonth])
 
   return (
-    <View style={styles.flex}>
-      <GradientSeparator heightMultiplier={4} style={[themed($titleWrapper), { paddingTop: top }]}>
-        <Text
-          preset="subheading"
-          style={{
-            margin: "auto",
-          }}
-          text={groupDetails?.name}
-        />
-        <Text
-          preset="subheading"
-          style={{
-            margin: "auto",
-          }}
-          tx={`homeScreen:sortingSelector.${selectedSortingOption}` as TxKeyPath}
-        />
-        <View style={{ flexDirection: "row", gap: spacing.sm }}>
-          {sortingOptions.map((option) => (
-            <Button
-              preset="navigation"
-              key={option.value}
-              onPress={() => setSelectedSortingOption(option.value as SortingOptionType)}
-              style={
-                selectedSortingOption === option.value
-                  ? {
-                      backgroundColor:
-                        colors[`attribute${capitalize(option.value)}` as keyof typeof colors],
-                    }
-                  : themed($selectorButton)
-              }
-            >
-              <SvgIcon pathData={SvgIconPaths[option.value as keyof typeof SvgIconPaths]} />
-            </Button>
-          ))}
-        </View>
-      </GradientSeparator>
+    <Screen preset="scroll" contentContainerStyle={{ paddingTop: top }}>
+      {/* Header with avatars and logo */}
+      <View style={themed($header)}>
+        <Avatar uri={user?.avatarUri} size={56} />
 
-      <LoggedScreenWrapper preset="fixed" disableKeyboardAvoidingView>
-        {membersError ? (
-          <View style={themed($errorWrapper)}>
-            <Text preset="subheading" text={membersError} style={themed($errorText)} />
-          </View>
-        ) : sortedMembersList ? (
-          <LeaderboardUsersList users={sortedMembersList} onUserPress={handleUserPress} />
-        ) : null}
-      </LoggedScreenWrapper>
-    </View>
+        <AnimatedSvgIcon pathData={SvgIconPaths.logo} color={colors.text} size={48} />
+
+        <Avatar uri={partner?.avatarUri} size={56} onPress={handlePartnerAvatarPress} />
+      </View>
+
+      {/* Partner name hint */}
+      <Text style={themed($partnerHint)}>
+        {t("homeScreen:tapToRate", { name: partner?.name || "partner" })}
+      </Text>
+
+      {/* Calendar */}
+      <MoodCalendar
+        year={selectedMonth.year}
+        month={selectedMonth.month}
+        ratings={ratings}
+        onDayPress={handleDayPress}
+        onPreviousMonth={handlePreviousMonth}
+        onNextMonth={handleNextMonth}
+      />
+    </Screen>
   )
 }
 
-const $titleWrapper: ThemedStyle<ViewStyle> = ({ spacing, colors }) => ({
+const $header: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  flexDirection: "row",
   alignItems: "center",
-  gap: spacing.xxs,
-  paddingHorizontal: spacing.sm,
-  paddingBottom: spacing.xxs,
-  backgroundColor: colors.transparent,
-  zIndex: 1,
-  position: "absolute",
-  left: 0,
-  right: 0,
-})
-
-const $errorWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  flex: 1,
-  alignItems: "center",
-  justifyContent: "center",
+  justifyContent: "space-between",
   paddingHorizontal: spacing.lg,
+  paddingVertical: spacing.md,
 })
 
-const $errorText: ThemedStyle<TextStyle> = () => ({
+const $partnerHint: ThemedStyle<TextStyle> = ({ colors, spacing }) => ({
   textAlign: "center",
-})
-
-const $selectorButton: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  backgroundColor: colors.cardBackground,
-})
-
-const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
+  color: colors.textDim,
+  fontSize: 14,
+  marginBottom: spacing.md,
 })

@@ -8,7 +8,6 @@ import React, {
   useContext,
 } from "react"
 import { ViewStyle, StyleSheet, View } from "react-native"
-import { GestureHandlerRootView } from "react-native-gesture-handler"
 import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from "@gorhom/bottom-sheet"
 import { ThemedStyle } from "@/theme/types"
 import { useAppTheme } from "@/theme/context"
@@ -64,7 +63,7 @@ export function BottomSheetProvider({ children }: { children: ReactNode }) {
 
   return (
     <BottomSheetContext.Provider value={{ openSheet, closeSheet }}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
         {children}
         <BottomSheet
           ref={sheetRef}
@@ -104,7 +103,7 @@ export function BottomSheetProvider({ children }: { children: ReactNode }) {
             />
           </View>
         </BottomSheet>
-      </GestureHandlerRootView>
+      </View>
     </BottomSheetContext.Provider>
   )
 }
