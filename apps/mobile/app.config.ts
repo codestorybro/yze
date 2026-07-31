@@ -16,11 +16,10 @@ import "tsx/cjs"
  */
 export default ({ config }: ConfigContext): Partial<ExpoConfig> => {
   const existingPlugins = config.plugins ?? []
-  const usesLocalHttpApi =
-    process.env.EXPO_PUBLIC_API_URL?.trim().toLowerCase().startsWith("http://") ?? false
+  const isDevelopmentBuild = process.env.APP_VARIANT === "development"
   const plugins = existingPlugins.map((plugin) =>
     plugin === "expo-build-properties"
-      ? ["expo-build-properties", { android: { usesCleartextTraffic: usesLocalHttpApi } }]
+      ? ["expo-build-properties", { android: { usesCleartextTraffic: isDevelopmentBuild } }]
       : plugin,
   ) as ExpoConfig["plugins"]
 
@@ -30,7 +29,7 @@ export default ({ config }: ConfigContext): Partial<ExpoConfig> => {
       ...config.ios,
       infoPlist: {
         ...config.ios?.infoPlist,
-        ...(usesLocalHttpApi
+        ...(isDevelopmentBuild
           ? {
               NSAppTransportSecurity: { NSAllowsLocalNetworking: true },
               NSLocalNetworkUsageDescription:

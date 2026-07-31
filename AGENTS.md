@@ -38,9 +38,20 @@ This file is the canonical repository guidance for Codex and other coding agents
 - Use Expo Router for routes and keep route files thin; screens live under `src/screens`.
 - Keep HTTP code under `src/services/api`; screens must not call `fetch` directly.
 - Read the backend URL from `EXPO_PUBLIC_API_URL`. Never add a hidden production fallback.
+- Development commands must keep `EXPO_PUBLIC_API_URL` automatic and cross-platform through
+  `apps/mobile/scripts/development.mjs`. Do not reintroduce manual per-device URL switching.
+- Use `APP_VARIANT=development`, not the API URL, to enable native local-HTTP permissions. Keep
+  production builds on HTTPS without clear-text exceptions.
 - Prefer strict TypeScript, named exports, existing theme tokens, and small focused tests.
 - Do not add a package when the platform or an existing dependency already covers the need.
 - Public Expo environment variables are not secrets.
+
+## Planned backend networking
+
+- The future local ASP.NET Core API must listen on all interfaces at `0.0.0.0:8080`, not only on
+  loopback, so emulators and physical devices can use the mobile launcher's LAN URL.
+- Docker Compose must publish host port `8080` to container port `8080`.
+- Keep this clear-text, all-interface binding development-only. Deployed environments use HTTPS.
 
 ## Validation
 

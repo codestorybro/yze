@@ -1,5 +1,5 @@
 export const API_CONFIGURATION_ERROR =
-  "EXPO_PUBLIC_API_URL is missing or invalid. Copy .env.example to apps/mobile/.env and use an http(s) URL."
+  "EXPO_PUBLIC_API_URL is missing or invalid. Use a project development command or set an http(s) URL for the current terminal session."
 
 export function getApiBaseUrl(value = process.env.EXPO_PUBLIC_API_URL): string {
   try {
