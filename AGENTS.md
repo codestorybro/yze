@@ -45,6 +45,8 @@ This file is the canonical repository guidance for Codex and other coding agents
 - Prefer strict TypeScript, named exports, existing theme tokens, and small focused tests.
 - Do not add a package when the platform or an existing dependency already covers the need.
 - Public Expo environment variables are not secrets.
+- Follow `docs/design-system.md` for adaptive platform surfaces. Keep Liquid Glass and OS checks out
+  of screens, prefer native controls, and keep any capability check inside a semantic component.
 
 ## Planned backend networking
 
