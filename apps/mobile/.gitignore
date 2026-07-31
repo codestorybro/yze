@@ -19,12 +19,8 @@ xcuserdata
 DerivedData
 *.hmap
 *.ipa
-*.apk
-*.tar.gz
 *.xcuserstate
 ios/.xcode.env.local
-.env*
-!.env.example
 
 # Android/IntelliJ
 #
@@ -39,10 +35,7 @@ local.properties
 # node.js
 #
 node_modules/
-.pnpm-store/
 npm-debug.log
-yarn-error.log
-pnpm-debug.log*
 
 # BUCK
 buck-out/
@@ -73,7 +66,6 @@ buck-out/
 .vscode
 
 # Expo
-.expo/
 .expo/*
 bin/Exponent.app
 /android
@@ -89,9 +81,12 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
-dist/
 
 # Configurations
 !env.js
 
 /coverage
+
+# Dependency Graph Visualizations
+app-dependency-graph.svg
+app-dependency-graph.png

@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "types": ["jest", "node"]
+  },
+  "include": [
+    "../src/**/*.test.ts",
+    "../src/**/*.test.tsx",
+    "./**/*.test.ts",
+    "./**/*.test.tsx",
+    "./setup.ts"
+  ],
+  "exclude": ["../node_modules"]
+}

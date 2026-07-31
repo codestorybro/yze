@@ -1,0 +1,14 @@
+# Repository-local OMP policy. Provider credentials and model preferences stay in ~/.omp.
+tools:
+  approvalMode: always-ask
+
+# This repository uses one checkout and normal Git branches, never agent worktrees.
+task:
+  isolation:
+    mode: none
+
+lsp:
+  enabled: true
+  lazy: true
+  diagnosticsOnWrite: true
+  formatOnWrite: false

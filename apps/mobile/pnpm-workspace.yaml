@@ -1,0 +1,9 @@
+allowBuilds:
+  esbuild: true
+  unrs-resolver: true
+
+# React Native tooling expects a conventional flat node_modules layout.
+nodeLinker: hoisted
+
+# Keep lint/test/start commands read-only with respect to dependency state.
+verifyDepsBeforeRun: false
