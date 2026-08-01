@@ -1,0 +1,9 @@
+/** Semantic corner radii for Yze surfaces and controls. */
+export const radii = {
+  xs: 8,
+  sm: 12,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  pill: 999,
+} as const

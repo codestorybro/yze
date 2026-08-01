@@ -1,5 +1,7 @@
+import { Platform } from "react-native"
 import { NativeTabs } from "expo-router/unstable-native-tabs"
 
+import { NativeTabsScreenChromeProvider } from "@/components/ScreenChromeContext"
 import { useAppTheme } from "@/theme/context"
 
 /**
@@ -13,38 +15,49 @@ export function AppTabs() {
   const {
     theme: { colors },
   } = useAppTheme()
+  const webIndicatorColor = Platform.select({ web: colors.surfaceMuted })
+  const webLabelStyle = Platform.select({
+    web: {
+      default: { color: colors.textDim },
+      selected: { color: colors.tint },
+    },
+  })
 
   return (
-    <NativeTabs
-      backBehavior="history"
-      disableTransparentOnScrollEdge
-      labelVisibilityMode="labeled"
-      tabBarRespectsIMEInsets
-      tintColor={colors.tint}
-    >
-      <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Icon
-          sf={{ default: "house", selected: "house.fill" }}
-          md={{ default: "home", selected: "home" }}
-        />
-        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
+    <NativeTabsScreenChromeProvider>
+      <NativeTabs
+        backBehavior="history"
+        backgroundColor={Platform.select({ web: colors.surfaceRaised })}
+        disableTransparentOnScrollEdge
+        labelVisibilityMode="labeled"
+        labelStyle={webLabelStyle}
+        tabBarRespectsIMEInsets
+        tintColor={colors.tint}
+      >
+        <NativeTabs.Trigger name="index" indicatorColor={webIndicatorColor}>
+          <NativeTabs.Trigger.Icon
+            sf={{ default: "house", selected: "house.fill" }}
+            md={{ default: "home", selected: "home" }}
+          />
+          <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+        </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="places">
-        <NativeTabs.Trigger.Icon
-          sf={{ default: "archivebox", selected: "archivebox.fill" }}
-          md={{ default: "inventory_2", selected: "inventory_2" }}
-        />
-        <NativeTabs.Trigger.Label>Places</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="places" indicatorColor={webIndicatorColor}>
+          <NativeTabs.Trigger.Icon
+            sf={{ default: "archivebox", selected: "archivebox.fill" }}
+            md={{ default: "inventory_2", selected: "inventory_2" }}
+          />
+          <NativeTabs.Trigger.Label>Places</NativeTabs.Trigger.Label>
+        </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="settings">
-        <NativeTabs.Trigger.Icon
-          sf={{ default: "gearshape", selected: "gearshape.fill" }}
-          md={{ default: "settings", selected: "settings" }}
-        />
-        <NativeTabs.Trigger.Label>Settings</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
-    </NativeTabs>
+        <NativeTabs.Trigger name="settings" indicatorColor={webIndicatorColor}>
+          <NativeTabs.Trigger.Icon
+            sf={{ default: "gearshape", selected: "gearshape.fill" }}
+            md={{ default: "settings", selected: "settings" }}
+          />
+          <NativeTabs.Trigger.Label>Settings</NativeTabs.Trigger.Label>
+        </NativeTabs.Trigger>
+      </NativeTabs>
+    </NativeTabsScreenChromeProvider>
   )
 }

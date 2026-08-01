@@ -1,6 +1,7 @@
 import type { TextStyle, ViewStyle } from "react-native"
 import { View } from "react-native"
 
+import { BrandHeader } from "@/components/BrandHeader"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { useAppTheme } from "@/theme/context"
@@ -15,9 +16,10 @@ export function FutureFeatureScreen({ description, title }: FutureFeatureScreenP
   const { themed } = useAppTheme()
 
   return (
-    <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={themed($screenContent)}>
+    <Screen preset="fixed" contentContainerStyle={themed($screenContent)}>
+      <BrandHeader />
       <View style={themed($message)}>
-        <Text preset="heading" text={title} />
+        <Text preset="title" text={title} />
         <Text style={themed($description)} text={description} />
       </View>
     </Screen>
@@ -25,10 +27,17 @@ export function FutureFeatureScreen({ description, title }: FutureFeatureScreenP
 }
 
 const $screenContent: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  justifyContent: "center",
+  width: "100%",
+  maxWidth: 720,
+  alignSelf: "center",
   padding: spacing.lg,
 })
 
-const $message: ThemedStyle<ViewStyle> = ({ spacing }) => ({ gap: spacing.sm })
+const $message: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  flex: 1,
+  maxWidth: 520,
+  justifyContent: "center",
+  gap: spacing.sm,
+})
 
 const $description: ThemedStyle<TextStyle> = ({ colors }) => ({ color: colors.textDim })

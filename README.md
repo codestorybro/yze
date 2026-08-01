@@ -1,11 +1,16 @@
-# Gear Organizer
+# Yze
 
-Visual organizer for technical equipment and the places where it is stored. The repository is being
-rebuilt from the project specification, beginning with a deliberately small mobile foundation.
+**Gear, organized.** Yze is a visual home for technical equipment and the places where it is
+stored. The repository is being rebuilt from the original project specification, beginning with a
+deliberately small mobile foundation.
 
 ## Current status
 
 - Mobile: Ignite-based Expo Router application under `apps/mobile`.
+- Visual foundation: adaptive light/dark theme, native bottom navigation, and a hero-led Yze home
+  screen with honest placeholders for upcoming product actions.
+- Brand assets: initial Yze launcher icon, adaptive splash artwork, and theme-specific organizer
+  hero imagery.
 - API preparation: typed `GET /api/hello` client with loading, success, error, and retry states.
 - Backend and Docker Compose: planned next; see `docs/architecture.md`.
 - Removed legacy Social Mirror features: authentication, partner flows, moods, ratings, calendar,
@@ -122,8 +127,12 @@ Expo starts Metro and opens the application in a browser. Stop it with `Ctrl+C`.
 pnpm android
 ```
 
-The first run generates the uncommitted native project through Expo Continuous Native Generation,
-compiles it, installs it in the emulator, and starts Metro.
+The command resolves the Expo native configuration, regenerates the uncommitted Android project
+through Continuous Native Generation when its fingerprint is stale, compiles it, installs it, and
+starts Metro. The fingerprint includes native dependencies and referenced icon/splash assets, so a
+branding change at the same file path is detected too. The launcher preserves an existing
+`android/local.properties` across a clean prebuild and can detect the standard Android Studio SDK
+location when `ANDROID_HOME` is not exported.
 
 For later sessions, start Metro and press `a` in the Expo terminal:
 
@@ -131,7 +140,9 @@ For later sessions, start Metro and press `a` in the Expo terminal:
 pnpm start
 ```
 
-Run `pnpm android` again whenever a native dependency or native configuration changes.
+Run `pnpm android` again whenever a native dependency, icon, splash, or native configuration
+changes. The clean prebuild runs only when that platform's fingerprint changed; ordinary rebuilds
+reuse the existing Android project.
 
 ### iOS Simulator: first native run
 
@@ -144,13 +155,18 @@ This workflow is available only on macOS:
 pnpm ios
 ```
 
+As on Android, the command regenerates the ignored iOS project only when its resolved native
+configuration or referenced assets changed. The first run after the Yze rebrand replaces the old
+launcher name, icon, and splash before installing the application.
+
 For later sessions, start Metro and press `i` in the Expo terminal:
 
 ```bash
 pnpm start
 ```
 
-Run `pnpm ios` again whenever a native dependency or native configuration changes.
+Run `pnpm ios` again whenever a native dependency, icon, splash, or native configuration changes.
+Ordinary JavaScript and TypeScript changes do not trigger a prebuild.
 
 ### Physical device
 
@@ -240,13 +256,24 @@ pnpm bundle:web
 - **A physical device cannot reach Metro or the future API:** verify that both devices use the same
   network, disconnect an interfering VPN, and allow the connection through the operating-system
   firewall.
-- **A native dependency or native setting changed:** stop Metro, regenerate the native projects,
-  and rebuild the selected platform:
+- **A native dependency, icon, splash, or native setting changed:** stop Metro and run `pnpm
+android` or `pnpm ios`. The launcher detects the change, performs a clean prebuild for that
+  platform, and then rebuilds it. `pnpm prebuild:clean` remains the manual recovery command if a
+  generated native project was edited or corrupted:
 
   ```bash
   pnpm prebuild:clean
   pnpm android # or: pnpm ios
   ```
+
+- **The launcher or launch screen still flashes cached Ignite branding:** the current iOS config
+  uses `UILaunchScreen` specifically to replace snapshots created by the old Ignite storyboard.
+  Stop Metro and install a fresh native build with `pnpm ios:device` (or `pnpm ios` for the
+  simulator). If a device still has a build older than Yze `1.0.1 (2)`, run `pnpm prebuild:clean`
+  before reinstalling. Removing the app and restarting the device is now only a last-resort cleanup
+  for an operating-system cache, not a normal development step. The package and bundle identifiers
+  intentionally remain stable; the visible application name is `Yze`. See Apple's
+  [launch-screen troubleshooting note](https://developer.apple.com/documentation/technotes/tn3118-debugging-your-apps-launch-screen).
 
 - **The API test fails while the UI works:** this is currently expected because the backend is the
   next project phase.

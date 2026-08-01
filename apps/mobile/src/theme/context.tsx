@@ -13,9 +13,6 @@ import {
   DefaultTheme as NavDefaultTheme,
   Theme as NavTheme,
 } from "expo-router/react-navigation"
-import { useMMKVString } from "react-native-mmkv"
-
-import { storage } from "@/utils/storage"
 
 import { setImperativeTheming } from "./context.utils"
 import { darkTheme, lightTheme } from "./theme"
@@ -30,7 +27,6 @@ import type {
 
 export type ThemeContextType = {
   navigationTheme: NavTheme
-  setThemeContextOverride: (newTheme: ThemeContextModeT) => void
   theme: Theme
   themeContext: ImmutableThemeContextModeT
   themed: ThemedFnT
@@ -57,40 +53,15 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
 }) => {
   // The operating system theme:
   const systemColorScheme = useColorScheme()
-  // Our saved theme context: can be "light", "dark", or undefined (system theme)
-  const [themeScheme, setThemeScheme] = useMMKVString("ignite.themeScheme", storage)
 
   /**
-   * This function is used to set the theme context and is exported from the useAppTheme() hook.
-   *  - setThemeContextOverride("dark") sets the app theme to dark no matter what the system theme is.
-   *  - setThemeContextOverride("light") sets the app theme to light no matter what the system theme is.
-   *  - setThemeContextOverride(undefined) the app will follow the operating system theme.
-   */
-  const setThemeContextOverride = useCallback(
-    (newTheme: ThemeContextModeT) => {
-      setThemeScheme(newTheme)
-    },
-    [setThemeScheme],
-  )
-
-  /**
-   * initialContext is the theme context passed in from the app.tsx file and always takes precedence.
-   * themeScheme is the value from MMKV. If undefined, we fall back to the system theme
-   * systemColorScheme is the value from the device. If undefined, we fall back to "light"
+   * Production follows the operating-system appearance so the native splash and first rendered frame
+   * always agree. initialContext remains available for deterministic tests and component previews.
    */
   const themeContext: ImmutableThemeContextModeT = useMemo(() => {
-    const t = initialContext || themeScheme || (!!systemColorScheme ? systemColorScheme : "light")
+    const t = initialContext || (!!systemColorScheme ? systemColorScheme : "light")
     return t === "dark" ? "dark" : "light"
-  }, [initialContext, themeScheme, systemColorScheme])
-
-  const navigationTheme: NavTheme = useMemo(() => {
-    switch (themeContext) {
-      case "dark":
-        return NavDarkTheme
-      default:
-        return NavDefaultTheme
-    }
-  }, [themeContext])
+  }, [initialContext, systemColorScheme])
 
   const theme: Theme = useMemo(() => {
     switch (themeContext) {
@@ -100,6 +71,23 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
         return lightTheme
     }
   }, [themeContext])
+
+  const navigationTheme: NavTheme = useMemo(() => {
+    const baseTheme = themeContext === "dark" ? NavDarkTheme : NavDefaultTheme
+
+    return {
+      ...baseTheme,
+      colors: {
+        ...baseTheme.colors,
+        primary: theme.colors.tint,
+        background: theme.colors.background,
+        card: theme.colors.surface,
+        text: theme.colors.text,
+        border: theme.colors.border,
+        notification: theme.colors.error,
+      },
+    }
+  }, [theme, themeContext])
 
   useEffect(() => {
     setImperativeTheming(theme)
@@ -125,7 +113,6 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
     navigationTheme,
     theme,
     themeContext,
-    setThemeContextOverride,
     themed,
   }
 
