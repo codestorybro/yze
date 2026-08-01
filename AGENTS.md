@@ -50,6 +50,8 @@ This file is the canonical repository guidance for Codex and other coding agents
   of screens, prefer native controls, and keep any capability check inside a semantic component.
 - Use semantic theme tokens rather than raw palette values. Preserve the quiet mineral foundation,
   lime signal color, dominant product imagery, and restrained single-column hierarchy.
+- Review meaningful UI changes against the eight Expo design principles recorded in
+  `docs/design-system.md`, then inspect light/dark screenshots and iterate before handoff.
 
 ## Planned backend networking
 

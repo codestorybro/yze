@@ -5,7 +5,6 @@ import { router } from "expo-router"
 import { BrandHeader } from "@/components/BrandHeader"
 import { Button } from "@/components/Button"
 import { OrganizerHero } from "@/components/OrganizerHero"
-import { QuickAction } from "@/components/QuickAction"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { getHello } from "@/services/api"
@@ -65,8 +64,6 @@ export function GearOrganizerScreen() {
   }
 
   const openPlaces = () => router.push("/places")
-  const openSettings = () => router.push("/settings")
-
   return (
     <Screen
       preset="scroll"
@@ -76,36 +73,17 @@ export function GearOrganizerScreen() {
       <View style={themed($page)}>
         <BrandHeader />
 
-        <View style={themed($heroCopy)}>
-          <Text preset="eyebrow" style={themed($eyebrow)} text="Everything has a place" />
-          <Text preset="display" text="Get Yze." />
-          <Text
-            style={themed($lead)}
-            text="Get your gear organized. Build a visual home for every cable, camera, adapter, and tool."
-          />
-        </View>
-
-        <OrganizerHero />
-
-        <View style={themed($quickActionSection)}>
-          <Text preset="section" text="Quick actions" />
-          <View accessibilityLabel="Quick actions" style={themed($quickActions)}>
-            <QuickAction
-              emphasized
-              accessibilityHint="Opens your Places"
-              fallback="□"
-              icon={{ ios: "archivebox", android: "inventory_2", web: "inventory_2" }}
-              label="Places"
-              onPress={openPlaces}
-            />
-            <QuickAction
-              accessibilityHint="Opens appearance settings"
-              fallback="⚙"
-              icon={{ ios: "gearshape", android: "settings", web: "settings" }}
-              label="Appearance"
-              onPress={openSettings}
+        <View style={themed($heroSection)}>
+          <View style={themed($heroCopy)}>
+            <Text preset="eyebrow" style={themed($eyebrow)} text="Everything has a place" />
+            <Text preset="display" text="Get Yze." />
+            <Text
+              style={themed($lead)}
+              text="Build a visual home for every cable, camera, adapter, and tool."
             />
           </View>
+
+          <OrganizerHero />
         </View>
 
         <View style={themed($nextStepCard)}>
@@ -171,8 +149,6 @@ export function GearOrganizerScreen() {
             text={request.status === "error" ? "Retry API connection" : "Test API connection"}
           />
         </View>
-
-        <Text preset="caption" style={themed($footer)} text="Yze — Gear, organized." />
       </View>
     </Screen>
   )
@@ -187,8 +163,10 @@ const $page: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   width: "100%",
   maxWidth: 768,
   paddingHorizontal: spacing.lg,
-  gap: spacing.xl,
+  gap: spacing.xxl,
 })
+
+const $heroSection: ThemedStyle<ViewStyle> = ({ spacing }) => ({ gap: spacing.lg })
 
 const $heroCopy: ThemedStyle<ViewStyle> = ({ spacing }) => ({ gap: spacing.xs })
 
@@ -197,16 +175,6 @@ const $eyebrow: ThemedStyle<TextStyle> = ({ colors }) => ({ color: colors.tint }
 const $lead: ThemedStyle<TextStyle> = ({ colors }) => ({
   maxWidth: 590,
   color: colors.textDim,
-})
-
-const $quickActionSection: ThemedStyle<ViewStyle> = ({ spacing }) => ({ gap: spacing.md })
-
-const $quickActions: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  width: "66%",
-  minWidth: 220,
-  maxWidth: 260,
-  flexDirection: "row",
-  gap: spacing.sm,
 })
 
 const $nextStepCard: ThemedStyle<ViewStyle> = ({ colors, radii, spacing }) => ({
@@ -288,8 +256,3 @@ const $loadingRow: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 const $successText: ThemedStyle<TextStyle> = ({ colors }) => ({ color: colors.success })
 
 const $errorText: ThemedStyle<TextStyle> = ({ colors }) => ({ color: colors.error })
-
-const $footer: ThemedStyle<TextStyle> = ({ colors }) => ({
-  color: colors.textDim,
-  textAlign: "center",
-})

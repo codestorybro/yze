@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from "react"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type {
   ImageSourcePropType,
   ImageStyle,
@@ -34,6 +34,11 @@ interface RevealGeometry {
   diameter: number
   left: number
   top: number
+}
+
+interface RevealCurtainGeometry extends RevealGeometry {
+  borderWidth: number
+  endScale: number
 }
 
 const splashImages: Record<"light" | "dark", ImageSourcePropType> = {
@@ -72,6 +77,28 @@ export function getRevealGeometry(
 }
 
 /**
+ * Builds one static reveal layer whose seed opening is hidden by the signal dot. The animation can
+ * then stay entirely on the compositor by changing only its transform instead of laying out and
+ * redrawing an increasingly large border on every frame.
+ */
+export function getRevealCurtainGeometry(
+  layout: Pick<LayoutRectangle, "height" | "width">,
+): RevealCurtainGeometry {
+  const reveal = getRevealGeometry(layout, 1)
+  const diameter = reveal.diameter + LOGO_DOT_SIZE
+  const originX = layout.width / 2
+  const originY = layout.height / 2 + LOGO_DOT_Y_OFFSET
+
+  return {
+    borderWidth: reveal.diameter / 2,
+    diameter,
+    endScale: reveal.diameter / LOGO_DOT_SIZE,
+    left: originX - diameter / 2,
+    top: originY - diameter / 2,
+  }
+}
+
+/**
  * Performs a seamless native-to-JS handoff, folds the Yze mark into its signal point, then reveals
  * the already-mounted application through a circle growing from that point.
  */
@@ -91,6 +118,10 @@ export function AppLaunchGate({ children, ready, reducedMotion }: AppLaunchGateP
   const animationWatchdog = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const foldProgress = useSharedValue(0)
   const revealProgress = useSharedValue(0)
+  const revealCurtain = useMemo(
+    () => (layout ? getRevealCurtainGeometry(layout) : undefined),
+    [layout],
+  )
 
   const finishAnimation = useCallback(() => {
     if (animationWatchdog.current) {
@@ -190,49 +221,23 @@ export function AppLaunchGate({ children, ready, reducedMotion }: AppLaunchGateP
     shouldReduceMotion,
   ])
 
-  const $appReveal = useAnimatedStyle(() => {
-    if (!layout) return { height: 0, opacity: 0, width: 0 }
-
-    if (shouldReduceMotion || revealProgress.value >= 1) {
-      return {
-        borderRadius: 0,
-        height: layout.height,
-        left: 0,
-        opacity: 1,
-        overflow: "visible",
-        top: 0,
-        width: layout.width,
-      }
-    }
-
-    const geometry = getRevealGeometry(layout, revealProgress.value)
+  const $revealCurtain = useAnimatedStyle(() => {
+    if (!revealCurtain || shouldReduceMotion) return { opacity: 0 }
 
     return {
-      borderRadius: geometry.diameter / 2,
-      height: geometry.diameter,
-      left: geometry.left,
       opacity: 1,
-      overflow: "hidden",
-      top: geometry.top,
-      width: geometry.diameter,
+      transform: [
+        {
+          scale: interpolate(
+            revealProgress.value,
+            [0, 1],
+            [1, revealCurtain.endScale],
+            Extrapolation.CLAMP,
+          ),
+        },
+      ],
     }
-  }, [layout, shouldReduceMotion])
-
-  const $appContentPosition = useAnimatedStyle(() => {
-    if (!layout) return { height: 0, width: 0 }
-    if (shouldReduceMotion || revealProgress.value >= 1) {
-      return { height: layout.height, left: 0, top: 0, width: layout.width }
-    }
-
-    const geometry = getRevealGeometry(layout, revealProgress.value)
-
-    return {
-      height: layout.height,
-      left: -geometry.left,
-      top: -geometry.top,
-      width: layout.width,
-    }
-  }, [layout, shouldReduceMotion])
+  }, [revealCurtain, shouldReduceMotion])
 
   const $foldingLogo = useAnimatedStyle(() => {
     const progress = foldProgress.value
@@ -267,21 +272,6 @@ export function AppLaunchGate({ children, ready, reducedMotion }: AppLaunchGateP
     )
   }
 
-  const $reducedMotionReveal = layout
-    ? {
-        borderRadius: 0,
-        height: layout.height,
-        left: 0,
-        opacity: 1,
-        overflow: "visible" as const,
-        top: 0,
-        width: layout.width,
-      }
-    : undefined
-  const $reducedMotionContent = layout
-    ? { height: layout.height, left: 0, top: 0, width: layout.width }
-    : undefined
-
   return (
     <View
       collapsable={false}
@@ -290,22 +280,15 @@ export function AppLaunchGate({ children, ready, reducedMotion }: AppLaunchGateP
       testID="app-launch-root"
     >
       {ready && layout ? (
-        <Animated.View
+        <View
           accessibilityElementsHidden={!animationComplete}
           importantForAccessibility={animationComplete ? "auto" : "no-hide-descendants"}
           pointerEvents={animationComplete ? "auto" : "none"}
-          style={[$revealWindow, shouldReduceMotion ? $reducedMotionReveal : $appReveal]}
+          style={$appContent}
           testID="app-launch-content"
         >
-          <Animated.View
-            style={[
-              $appContentFrame,
-              shouldReduceMotion ? $reducedMotionContent : $appContentPosition,
-            ]}
-          >
-            {children}
-          </Animated.View>
-        </Animated.View>
+          {children}
+        </View>
       ) : null}
 
       {!animationComplete ? (
@@ -318,6 +301,26 @@ export function AppLaunchGate({ children, ready, reducedMotion }: AppLaunchGateP
           ]}
           testID="app-launch-artwork"
         >
+          {!shouldReduceMotion ? (
+            <Animated.View
+              style={[
+                $revealCurtainBase,
+                revealCurtain
+                  ? {
+                      borderColor: colors.background,
+                      borderRadius: revealCurtain.diameter / 2,
+                      borderWidth: revealCurtain.borderWidth,
+                      height: revealCurtain.diameter,
+                      left: revealCurtain.left,
+                      top: revealCurtain.top,
+                      width: revealCurtain.diameter,
+                    }
+                  : undefined,
+                $revealCurtain,
+              ]}
+              testID="app-launch-reveal"
+            />
+          ) : null}
           <Animated.Image
             accessibilityIgnoresInvertColors
             fadeDuration={0}
@@ -340,16 +343,14 @@ export function AppLaunchGate({ children, ready, reducedMotion }: AppLaunchGateP
 
 const $container: ViewStyle = {
   flex: 1,
-  overflow: "hidden",
 }
 
-const $revealWindow: ViewStyle = {
+const $appContent: ViewStyle = {
   position: "absolute",
-  zIndex: 1,
-}
-
-const $appContentFrame: ViewStyle = {
-  position: "absolute",
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
 }
 
 const $launchArtwork: ViewStyle = {
@@ -361,6 +362,11 @@ const $launchArtwork: ViewStyle = {
   alignItems: "center",
   justifyContent: "center",
   zIndex: 2,
+}
+
+const $revealCurtainBase: ViewStyle = {
+  position: "absolute",
+  backgroundColor: "transparent",
 }
 
 const $logo: ImageStyle = {

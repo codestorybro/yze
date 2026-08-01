@@ -46,19 +46,16 @@ describe("GearOrganizerScreen", () => {
 
     expect(screen.getByText("Yze")).toBeDefined()
     expect(screen.getByText("Get Yze.")).toBeDefined()
-    expect(screen.getByText("Places")).toBeDefined()
-    expect(screen.getByText("Appearance")).toBeDefined()
+    expect(screen.getByText("Open Places")).toBeDefined()
+    expect(screen.queryByText("Quick actions")).toBeNull()
     expect(screen.getByText("Not tested")).toBeDefined()
   })
 
-  it("keeps visible quick actions connected to real routes", () => {
+  it("keeps one primary next step connected to the real Places route", () => {
     const screen = renderScreen()
 
-    fireEvent.press(screen.getByText("Places"))
+    fireEvent.press(screen.getByText("Open Places"))
     expect(mockedRouterPush).toHaveBeenLastCalledWith("/places")
-
-    fireEvent.press(screen.getByText("Appearance"))
-    expect(mockedRouterPush).toHaveBeenLastCalledWith("/settings")
   })
 
   it("renders loading and then the API success message", async () => {

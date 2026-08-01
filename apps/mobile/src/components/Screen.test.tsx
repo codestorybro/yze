@@ -1,4 +1,4 @@
-import { Platform, processColor, ScrollView, StyleSheet, View } from "react-native"
+import { Platform, ScrollView, StyleSheet, View } from "react-native"
 import { render } from "@testing-library/react-native"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 
@@ -62,14 +62,9 @@ describe("Screen", () => {
     expect(resolveContainerSafeAreaEdges([...edges], true, true, "web")).toEqual(["bottom"])
   })
 
-  it("softens the status-area edge with a non-interactive background fade", () => {
+  it("keeps the status area unobstructed so content can scroll to the physical edge", () => {
     const screen = renderScreen()
-    const fade = screen.getByTestId("screen-top-edge-fade")
-    const fadeStyle = StyleSheet.flatten(fade.props.style)
 
-    expect(fade.props.accessible).toBe(false)
-    expect(fade.props.pointerEvents).toBe("none")
-    expect(fade.props.colors).toEqual(["#F4F5F2", "#F4F5F2", "#F4F5F200"].map(processColor))
-    expect(fadeStyle.height).toBe(safeAreaMetrics.insets.top + spacing.lg)
+    expect(screen.queryByTestId("screen-top-edge-fade")).toBeNull()
   })
 })

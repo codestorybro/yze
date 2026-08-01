@@ -1,11 +1,12 @@
 import { useEffect } from "react"
 import * as SplashScreen from "expo-splash-screen"
 import { act, fireEvent, render, waitFor } from "@testing-library/react-native"
+import type { ReactTestInstance } from "react-test-renderer"
 
 import { Text } from "@/components/Text"
 import { ThemeProvider } from "@/theme/context"
 
-import { AppLaunchGate, getRevealGeometry } from "./AppLaunchGate"
+import { AppLaunchGate, getRevealCurtainGeometry, getRevealGeometry } from "./AppLaunchGate"
 
 jest.mock("expo-splash-screen", () => ({
   hide: jest.fn(),
@@ -40,6 +41,18 @@ function prepareLaunch(screen: ReturnType<typeof renderGate>) {
   fireEvent(screen.getByTestId("app-launch-logo"), "load")
 }
 
+function getAncestorTestIDs(instance: ReactTestInstance) {
+  const testIDs: string[] = []
+  let ancestor = instance.parent
+
+  while (ancestor) {
+    if (typeof ancestor.props.testID === "string") testIDs.push(ancestor.props.testID)
+    ancestor = ancestor.parent
+  }
+
+  return testIDs
+}
+
 describe("AppLaunchGate", () => {
   beforeEach(() => jest.clearAllMocks())
   afterEach(() => jest.useRealTimers())
@@ -70,6 +83,22 @@ describe("AppLaunchGate", () => {
       mockedHide.mock.invocationCallOrder[0],
     )
     expect(mockedHide).toHaveBeenCalledTimes(1)
+  })
+
+  it("keeps native application content outside the animated reveal curtain", () => {
+    const screen = renderGate({ ready: true, reducedMotion: false })
+
+    fireEvent(screen.getByTestId("app-launch-root"), "layout", {
+      nativeEvent: { layout: { height: 844, width: 390, x: 0, y: 0 } },
+    })
+
+    const contentAncestors = getAncestorTestIDs(
+      screen.getByTestId("app-launch-content", { includeHiddenElements: true }),
+    )
+    expect(contentAncestors).toContain("app-launch-root")
+    expect(contentAncestors).not.toContain("app-launch-artwork")
+    expect(contentAncestors).not.toContain("app-launch-reveal")
+    expect(screen.getByTestId("app-launch-reveal")).toBeDefined()
   })
 
   it("fails open when the matching artwork does not report that it loaded", () => {
@@ -132,6 +161,18 @@ describe("AppLaunchGate", () => {
     ]) {
       expect(Math.hypot(x - origin.x, y - origin.y)).toBeLessThan(radius)
     }
+  })
+
+  it("uses a signal-sized static opening and a transform-only expansion", () => {
+    const layout = { height: 844, width: 390 }
+    const reveal = getRevealGeometry(layout, 1)
+    const curtain = getRevealCurtainGeometry(layout)
+    const seedDiameter = curtain.diameter - curtain.borderWidth * 2
+
+    expect(seedDiameter).toBe(8)
+    expect(seedDiameter * curtain.endScale).toBeCloseTo(reveal.diameter)
+    expect(curtain.left + curtain.diameter / 2).toBe(layout.width / 2)
+    expect(curtain.top + curtain.diameter / 2).toBe(layout.height / 2 - 14)
   })
 
   it("keeps its watchdog armed when the root layout changes during launch", () => {

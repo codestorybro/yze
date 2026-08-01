@@ -5,24 +5,28 @@
   "version": "1.0.1",
   "orientation": "portrait",
   "userInterfaceStyle": "automatic",
-  "icon": "./assets/images/app-icon-all.png",
+  "icon": "./assets/images/app-icon-ios-light.png",
   "updates": {
     "fallbackToCacheTimeout": 0
   },
   "assetBundlePatterns": ["**/*"],
   "android": {
-    "icon": "./assets/images/app-icon-android-legacy.png",
+    "icon": "./assets/images/app-icon-ios-light.png",
     "package": "app.gearorganizer",
     "versionCode": 2,
     "adaptiveIcon": {
-      "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground.png",
-      "backgroundColor": "#0B0D0B"
+      "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground-light.png",
+      "backgroundColor": "#FFFFFF",
+      "monochromeImage": "./assets/images/app-icon-android-monochrome.png"
     },
     "allowBackup": false
   },
   "ios": {
     "buildNumber": "2",
-    "icon": "./assets/images/app-icon-ios.png",
+    "icon": {
+      "light": "./assets/images/app-icon-ios-light.png",
+      "dark": "./assets/images/app-icon-ios-dark.png"
+    },
     "supportsTablet": true,
     "bundleIdentifier": "app.gearorganizer"
   },
@@ -32,6 +36,7 @@
   },
   "plugins": [
     "./plugins/withYzeIosLaunchScreen",
+    "./plugins/withYzeAndroidThemedIcon",
     "expo-localization",
     "expo-font",
     [

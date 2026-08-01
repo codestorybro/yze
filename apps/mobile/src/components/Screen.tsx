@@ -9,7 +9,6 @@ import {
   View,
   ViewStyle,
 } from "react-native"
-import { LinearGradient } from "expo-linear-gradient"
 import { StatusBar, StatusBarProps, StatusBarStyle } from "expo-status-bar"
 import { useScrollToTop } from "expo-router/react-navigation"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
@@ -37,10 +36,6 @@ interface BaseScreenProps {
    * Override the default edges for the safe area. Defaults to top and bottom.
    */
   safeAreaEdges?: ExtendedEdge[]
-  /**
-   * Fade scrolling content beneath the status area. Defaults to true for scrolling screens.
-   */
-  topEdgeFade?: boolean
   /**
    * Standard end-of-content breathing room, independent from the native tab-bar inset.
    */
@@ -209,7 +204,6 @@ export function Screen(props: ScreenProps) {
     safeAreaEdges = $defaultSafeAreaEdges,
     StatusBarProps,
     systemBarStyle,
-    topEdgeFade = true,
   } = props
   const insets = useSafeAreaInsets()
   const { nativeTabs } = useScreenChrome()
@@ -221,16 +215,13 @@ export function Screen(props: ScreenProps) {
     Platform.OS,
   )
   const shouldRespectTopEdge = safeAreaEdges.includes("top")
-  const shouldFadeTopEdge = scrolling && topEdgeFade && shouldRespectTopEdge
   const screenBackground = backgroundColor || colors.background
-  const fadeDepth = shouldFadeTopEdge ? spacing.lg : 0
   const topContentInset = scrolling
-    ? (isIos ? 0 : shouldRespectTopEdge ? insets.top : 0) + fadeDepth
+    ? shouldRespectTopEdge
+      ? (isIos ? 0 : insets.top) + spacing.lg
+      : 0
     : 0
   const bottomContentInset = scrolling && bottomClearance === "standard" ? spacing.xl : 0
-  const topFadeHeight = insets.top + spacing.lg
-  const topFadeStop = topFadeHeight > 0 ? insets.top / topFadeHeight : 0
-  const transparentScreenBackground = toTransparentColor(screenBackground)
 
   const $containerInsets = useSafeAreaInsetsStyle(containerSafeAreaEdges)
 
@@ -257,17 +248,6 @@ export function Screen(props: ScreenProps) {
           />
         )}
       </KeyboardAvoidingView>
-
-      {shouldFadeTopEdge && insets.top > 0 ? (
-        <LinearGradient
-          accessible={false}
-          colors={[screenBackground, screenBackground, transparentScreenBackground]}
-          locations={[0, topFadeStop, 1]}
-          pointerEvents="none"
-          style={[$topEdgeFade, { height: topFadeHeight }]}
-          testID="screen-top-edge-fade"
-        />
-      ) : null}
     </View>
   )
 }
@@ -302,18 +282,4 @@ const $scrollContentContainer: ViewStyle = {
 
 const $scrollInnerStyle: ViewStyle = {
   flexGrow: 1,
-}
-
-const $topEdgeFade: ViewStyle = {
-  position: "absolute",
-  top: 0,
-  right: 0,
-  left: 0,
-  zIndex: 1,
-}
-
-function toTransparentColor(color: string) {
-  const hex = color.match(/^#([\da-f]{6})(?:[\da-f]{2})?$/i)
-
-  return hex ? `#${hex[1]}00` : color
 }
