@@ -1,26 +1,32 @@
 {
-  "name": "Gear Organizer",
+  "name": "Yze",
   "slug": "gear-organizer",
   "scheme": "gearorganizer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "orientation": "portrait",
   "userInterfaceStyle": "automatic",
-  "icon": "./assets/images/app-icon-all.png",
+  "icon": "./assets/images/app-icon-ios-light.png",
   "updates": {
     "fallbackToCacheTimeout": 0
   },
   "assetBundlePatterns": ["**/*"],
   "android": {
-    "icon": "./assets/images/app-icon-android-legacy.png",
+    "icon": "./assets/images/app-icon-ios-light.png",
     "package": "app.gearorganizer",
+    "versionCode": 2,
     "adaptiveIcon": {
-      "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground.png",
-      "backgroundImage": "./assets/images/app-icon-android-adaptive-background.png"
+      "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground-light.png",
+      "backgroundColor": "#FFFFFF",
+      "monochromeImage": "./assets/images/app-icon-android-monochrome.png"
     },
     "allowBackup": false
   },
   "ios": {
-    "icon": "./assets/images/app-icon-ios.png",
+    "buildNumber": "2",
+    "icon": {
+      "light": "./assets/images/app-icon-ios-light.png",
+      "dark": "./assets/images/app-icon-ios-dark.png"
+    },
     "supportsTablet": true,
     "bundleIdentifier": "app.gearorganizer"
   },
@@ -29,15 +35,21 @@
     "bundler": "metro"
   },
   "plugins": [
+    "./plugins/withYzeIosLaunchScreen",
+    "./plugins/withYzeAndroidThemedIcon",
     "expo-localization",
     "expo-font",
     [
       "expo-splash-screen",
       {
-        "image": "./assets/images/app-icon-android-adaptive-foreground.png",
-        "imageWidth": 300,
+        "image": "./assets/images/brand/yze-splash-light.png",
+        "imageWidth": 240,
         "resizeMode": "contain",
-        "backgroundColor": "#191015"
+        "backgroundColor": "#F4F5F2",
+        "dark": {
+          "image": "./assets/images/brand/yze-splash-dark.png",
+          "backgroundColor": "#0B0D0B"
+        }
       }
     ],
     "expo-build-properties",

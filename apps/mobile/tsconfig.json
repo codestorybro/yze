@@ -16,6 +16,7 @@
     "target": "esnext",
     "lib": ["esnext", "dom"],
     "skipLibCheck": true,
+    "types": ["node"],
     "resolveJsonModule": true,
     "paths": {
       "@/*": ["./src/*"],

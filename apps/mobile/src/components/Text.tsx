@@ -11,7 +11,19 @@ import { typography } from "@/theme/typography"
 
 type Sizes = keyof typeof $sizeStyles
 type Weights = keyof typeof typography.primary
-type Presets = "default" | "bold" | "heading" | "subheading" | "formLabel" | "formHelper"
+type Presets =
+  | "default"
+  | "bold"
+  | "display"
+  | "title"
+  | "heading"
+  | "section"
+  | "subheading"
+  | "label"
+  | "eyebrow"
+  | "caption"
+  | "formLabel"
+  | "formHelper"
 
 export interface TextProps extends RNTextProps {
   /**
@@ -80,13 +92,13 @@ export const Text = forwardRef(function Text(props: TextProps, ref: ForwardedRef
 })
 
 const $sizeStyles = {
-  xxl: { fontSize: 36, lineHeight: 44 } satisfies TextStyle,
-  xl: { fontSize: 24, lineHeight: 34 } satisfies TextStyle,
-  lg: { fontSize: 20, lineHeight: 32 } satisfies TextStyle,
+  xxl: { fontSize: 40, lineHeight: 44 } satisfies TextStyle,
+  xl: { fontSize: 30, lineHeight: 36 } satisfies TextStyle,
+  lg: { fontSize: 20, lineHeight: 26 } satisfies TextStyle,
   md: { fontSize: 18, lineHeight: 26 } satisfies TextStyle,
   sm: { fontSize: 16, lineHeight: 24 } satisfies TextStyle,
-  xs: { fontSize: 14, lineHeight: 21 } satisfies TextStyle,
-  xxs: { fontSize: 12, lineHeight: 18 } satisfies TextStyle,
+  xs: { fontSize: 14, lineHeight: 20 } satisfies TextStyle,
+  xxs: { fontSize: 12, lineHeight: 16 } satisfies TextStyle,
 }
 
 const $fontWeightStyles = Object.entries(typography.primary).reduce((acc, [weight, fontFamily]) => {
@@ -102,15 +114,33 @@ const $baseStyle: ThemedStyle<TextStyle> = (theme) => ({
 const $presets: Record<Presets, ThemedStyleArray<TextStyle>> = {
   default: [$baseStyle],
   bold: [$baseStyle, { ...$fontWeightStyles.bold }],
-  heading: [
+  display: [
     $baseStyle,
     {
       ...$sizeStyles.xxl,
-      ...$fontWeightStyles.bold,
+      ...$fontWeightStyles.semiBold,
+      letterSpacing: -1.5,
     },
   ],
-  subheading: [$baseStyle, { ...$sizeStyles.lg, ...$fontWeightStyles.medium }],
-  formLabel: [$baseStyle, { ...$fontWeightStyles.medium }],
-  formHelper: [$baseStyle, { ...$sizeStyles.sm, ...$fontWeightStyles.normal }],
+  title: [$baseStyle, { ...$sizeStyles.xl, ...$fontWeightStyles.semiBold, letterSpacing: -0.8 }],
+  heading: [$baseStyle, { ...$sizeStyles.xl, ...$fontWeightStyles.semiBold, letterSpacing: -0.8 }],
+  section: [$baseStyle, { ...$sizeStyles.lg, ...$fontWeightStyles.semiBold, letterSpacing: -0.2 }],
+  subheading: [
+    $baseStyle,
+    { ...$sizeStyles.lg, ...$fontWeightStyles.semiBold, letterSpacing: -0.2 },
+  ],
+  label: [$baseStyle, { ...$sizeStyles.xs, ...$fontWeightStyles.medium }],
+  eyebrow: [
+    $baseStyle,
+    {
+      ...$sizeStyles.xxs,
+      ...$fontWeightStyles.semiBold,
+      letterSpacing: 1.2,
+      textTransform: "uppercase",
+    },
+  ],
+  caption: [$baseStyle, { ...$sizeStyles.xxs, ...$fontWeightStyles.medium }],
+  formLabel: [$baseStyle, { ...$sizeStyles.xs, ...$fontWeightStyles.medium }],
+  formHelper: [$baseStyle, { ...$sizeStyles.xs, ...$fontWeightStyles.normal }],
 }
 const $rtlStyle: TextStyle = isRTL ? { writingDirection: "rtl" } : {}

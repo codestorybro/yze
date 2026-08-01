@@ -4,7 +4,7 @@ export default function Settings() {
   return (
     <FutureFeatureScreen
       title="Settings"
-      description="Preferences will appear here when the product requires its first configurable behavior."
+      description="Yze follows your system light or dark appearance. Additional preferences are not available yet."
     />
   )
 }

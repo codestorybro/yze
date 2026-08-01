@@ -6,20 +6,32 @@ import mockFile from "./mockFile"
 
 // libraries to mock
 jest.doMock("react-native", () => {
+  const { createElement } = jest.requireActual<typeof import("react")>("react")
+  const MockImageView = ReactNative.View as unknown as typeof ReactNative.Image
+  const MockImage = (props: ReactNative.ImageProps) =>
+    createElement(MockImageView, {
+      accessibilityLabel: props.accessibilityLabel,
+      onError: props.onError,
+      onLoad: props.onLoad,
+      style: props.style,
+      testID: props.testID,
+    })
+
+  Object.assign(MockImage, ReactNative.Image, {
+    resolveAssetSource: jest.fn((_source) => mockFile),
+    getSize: jest.fn(
+      (
+        _uri: string,
+        success: (width: number, height: number) => void,
+        _failure?: (_error: any) => void,
+      ) => success(100, 100),
+    ),
+  })
+
   // Extend ReactNative
   return Object.setPrototypeOf(
     {
-      Image: {
-        ...ReactNative.Image,
-        resolveAssetSource: jest.fn((_source) => mockFile),
-        getSize: jest.fn(
-          (
-            uri: string,
-            success: (width: number, height: number) => void,
-            failure?: (_error: any) => void, // eslint-disable-line @typescript-eslint/no-unused-vars
-          ) => success(100, 100),
-        ),
-      },
+      Image: MockImage,
     },
     ReactNative,
   )

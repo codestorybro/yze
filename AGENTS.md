@@ -1,10 +1,11 @@
-# Gear Organizer agent guide
+# Yze agent guide
 
 This file is the canonical repository guidance for Codex and other coding agents.
 
 ## Product and scope
 
-- Build **Gear Organizer**, a visual organizer for technical equipment and storage places.
+- Build **Yze**, a visual organizer for technical equipment and storage places. Its brand lockup is
+  **Yze — Gear, organized.**
 - Treat `docs/GEAR_ORGANIZER_PROJECT_SPEC.md` as the product source of truth.
 - The current branch is **Phase 0: mobile cleanup and toolchain refresh**. The target milestone is a
   thin mobile-to-API vertical slice, but the backend and Docker layer are not implemented yet. Do not
@@ -47,6 +48,10 @@ This file is the canonical repository guidance for Codex and other coding agents
 - Public Expo environment variables are not secrets.
 - Follow `docs/design-system.md` for adaptive platform surfaces. Keep Liquid Glass and OS checks out
   of screens, prefer native controls, and keep any capability check inside a semantic component.
+- Use semantic theme tokens rather than raw palette values. Preserve the quiet mineral foundation,
+  lime signal color, dominant product imagery, and restrained single-column hierarchy.
+- Review meaningful UI changes against the eight Expo design principles recorded in
+  `docs/design-system.md`, then inspect light/dark screenshots and iterate before handoff.
 
 ## Planned backend networking
 

@@ -4,6 +4,8 @@ import { render } from "@testing-library/react-native"
 import { AppTabs } from "@/components/navigation/AppTabs"
 import { ThemeProvider } from "@/theme/context"
 
+let mockNativeTabsProps: Record<string, unknown> | undefined
+
 jest.mock("expo-router/unstable-native-tabs", () => {
   const { Text: NativeText, View } = jest.requireActual("react-native")
 
@@ -19,7 +21,10 @@ jest.mock("expo-router/unstable-native-tabs", () => {
   Trigger.Icon = TriggerIcon
   Trigger.Label = TriggerLabel
 
-  const NativeTabs = ({ children }: { children: ReactNode }) => <View>{children}</View>
+  const NativeTabs = ({ children, ...props }: { children: ReactNode }) => {
+    mockNativeTabsProps = props
+    return <View>{children}</View>
+  }
   NativeTabs.Trigger = Trigger
 
   return { NativeTabs }
@@ -39,5 +44,9 @@ describe("AppTabs", () => {
     expect(screen.getByText("Places")).toBeDefined()
     expect(screen.getByTestId("tab-settings")).toBeDefined()
     expect(screen.getByText("Settings")).toBeDefined()
+    expect(mockNativeTabsProps).toMatchObject({
+      disableTransparentOnScrollEdge: true,
+    })
+    expect(mockNativeTabsProps).not.toHaveProperty("blurEffect")
   })
 })

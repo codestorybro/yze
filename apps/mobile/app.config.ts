@@ -33,7 +33,7 @@ export default ({ config }: ConfigContext): Partial<ExpoConfig> => {
           ? {
               NSAppTransportSecurity: { NSAllowsLocalNetworking: true },
               NSLocalNetworkUsageDescription:
-                "Gear Organizer connects to your development API on the local network.",
+                "Yze connects to your development API on the local network.",
             }
           : {}),
       },

@@ -4,7 +4,7 @@ export default function Places() {
   return (
     <FutureFeatureScreen
       title="Places"
-      description="Rooms, shelves, boxes, and nested storage places will be designed in a later product slice."
+      description="Your rooms, shelves, boxes, and nested storage places will live here. Places are not available yet."
     />
   )
 }

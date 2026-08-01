@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react"
-import { Slot, SplashScreen, ThemeProvider as NavigationThemeProvider } from "expo-router"
+import { Slot, ThemeProvider as NavigationThemeProvider } from "expo-router"
+import * as SplashScreen from "expo-splash-screen"
 import { useFonts } from "@expo-google-fonts/space-grotesk"
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 
-import { initI18n } from "@/i18n"
+import { AppLaunchGate } from "@/components/AppLaunchGate"
+import { initializeI18nSafely } from "@/i18n/initializeSafely"
 import { ThemeProvider, useAppTheme } from "@/theme/context"
 import { customFontsToLoad } from "@/theme/typography"
 
-SplashScreen.preventAutoHideAsync()
+void SplashScreen.preventAutoHideAsync()
 
 if (__DEV__) {
   // Load Reactotron configuration in development. We don't want to
@@ -21,7 +23,15 @@ export default function Root() {
   const [isI18nInitialized, setIsI18nInitialized] = useState(false)
 
   useEffect(() => {
-    initI18n().then(() => setIsI18nInitialized(true))
+    let isMounted = true
+
+    void initializeI18nSafely().then(() => {
+      if (isMounted) setIsI18nInitialized(true)
+    })
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   const loaded = fontsLoaded && isI18nInitialized
@@ -30,20 +40,12 @@ export default function Root() {
     if (fontError) throw fontError
   }, [fontError])
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync()
-    }
-  }, [loaded])
-
-  if (!loaded) {
-    return null
-  }
-
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <ThemeProvider>
-        <RootNavigation />
+        <AppLaunchGate ready={loaded}>
+          <RootNavigation />
+        </AppLaunchGate>
       </ThemeProvider>
     </SafeAreaProvider>
   )

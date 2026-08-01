@@ -1,85 +1,80 @@
+/**
+ * Yze's light palette stays deliberately quiet so equipment photography and the lime signal color
+ * can carry the visual focus. Application code should prefer the semantic roles exported below.
+ * The numbered palette remains available for compatibility with the Ignite primitives while they
+ * migrate to semantic roles.
+ */
 const palette = {
   neutral100: "#FFFFFF",
-  neutral200: "#F4F2F1",
-  neutral300: "#D7CEC9",
-  neutral400: "#B6ACA6",
-  neutral500: "#978F8A",
-  neutral600: "#564E4A",
-  neutral700: "#3C3836",
-  neutral800: "#191015",
-  neutral900: "#000000",
+  neutral200: "#F4F5F2",
+  neutral300: "#E8EBE4",
+  neutral400: "#D5DAD0",
+  neutral500: "#A2A99E",
+  neutral600: "#666B63",
+  neutral700: "#393D37",
+  neutral800: "#11130F",
+  neutral900: "#080A07",
 
-  primary100: "#F4E0D9",
-  primary200: "#E8C1B4",
-  primary300: "#DDA28E",
-  primary400: "#D28468",
-  primary500: "#C76542",
-  primary600: "#A54F31",
+  primary100: "#F1FAD7",
+  primary200: "#DEF6A7",
+  primary300: "#C9F276",
+  primary400: "#B8F05A",
+  primary500: "#4F7210",
+  primary600: "#3C590A",
 
-  secondary100: "#DCDDE9",
-  secondary200: "#BCC0D6",
-  secondary300: "#9196B9",
-  secondary400: "#626894",
-  secondary500: "#41476E",
+  secondary100: "#F0F2ED",
+  secondary200: "#DCE1D8",
+  secondary300: "#BEC6B8",
+  secondary400: "#8E9988",
+  secondary500: "#66715F",
 
-  accent100: "#FFEED4",
-  accent200: "#FFE1B2",
-  accent300: "#FDD495",
-  accent400: "#FBC878",
-  accent500: "#FFBB50",
+  accent100: "#F3FBDD",
+  accent200: "#E5F7BC",
+  accent300: "#D4F392",
+  accent400: "#C6F16F",
+  accent500: "#B8F05A",
 
-  angry100: "#F2D6CD",
-  angry500: "#C03403",
+  angry100: "#FEE4E2",
+  angry500: "#B42318",
 
-  overlay20: "rgba(25, 16, 21, 0.2)",
-  overlay50: "rgba(25, 16, 21, 0.5)",
+  overlay20: "rgba(17, 19, 15, 0.2)",
+  overlay50: "rgba(17, 19, 15, 0.5)",
 } as const
 
 export const colors = {
-  /**
-   * The palette is available to use, but prefer using the name.
-   * This is only included for rare, one-off cases. Try to use
-   * semantic names as much as possible.
-   */
   palette,
-  /**
-   * A helper for making something see-thru.
-   */
   transparent: "rgba(0, 0, 0, 0)",
-  /**
-   * The default text color in many components.
-   */
-  text: palette.neutral800,
-  /**
-   * Secondary text information.
-   */
-  textDim: palette.neutral600,
-  /**
-   * The default color of the screen background.
-   */
-  background: palette.neutral200,
-  /**
-   * The default border color.
-   */
-  border: palette.neutral400,
-  /**
-   * The main tinting color.
-   */
-  tint: palette.primary500,
-  /**
-   * The inactive tinting color.
-   */
-  tintInactive: palette.neutral300,
-  /**
-   * A subtle color used for lines.
-   */
-  separator: palette.neutral300,
-  /**
-   * Error messages.
-   */
-  error: palette.angry500,
-  /**
-   * Error Background.
-   */
-  errorBackground: palette.angry100,
+
+  text: "#11130F",
+  textDim: "#666B63",
+  textInverse: "#F7F9F5",
+
+  background: "#F4F5F2",
+  surface: "#FFFFFF",
+  surfaceMuted: "#E8EBE4",
+  surfaceRaised: "#FFFFFF",
+  surfaceInverse: "#11130F",
+
+  border: "#D5DAD0",
+  controlBorder: "#898F85",
+  separator: "#E2E6DE",
+
+  // The accessible interaction tint is intentionally darker than the lime brand signal on light UI.
+  tint: "#4F7210",
+  tintPressed: "#3C590A",
+  tintSubtle: "#E5F3C7",
+  tintInactive: "#868D82",
+  onTint: "#FFFFFF",
+  signal: "#B8F05A",
+  onSignal: "#11130F",
+
+  success: "#287A43",
+  successBackground: "#E0F2E5",
+  warning: "#815A00",
+  warningBackground: "#FFF0C2",
+  error: "#B42318",
+  errorBackground: "#FEE4E2",
+
+  overlay20: "rgba(17, 19, 15, 0.2)",
+  overlay50: "rgba(17, 19, 15, 0.5)",
 } as const
