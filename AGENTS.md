@@ -16,13 +16,14 @@ This file is the canonical repository guidance for Codex and other coding agents
 
 ## Git workflow
 
-- Never implement directly on `main`.
-- Use a normal Git branch for every task, with names such as `feature/...`, `fix/...`, or `chore/...`.
+- Implement subsequent changes directly on `main`; do not create a separate branch for each task.
 - Do not create or use Git worktrees in this repository.
 - OMP reads this file and `.omp/config.yml`. Do not override the repository setting that disables
   task isolation/worktrees.
 - Before editing, inspect the current branch and working-tree state. Preserve unrelated user changes.
-- Keep each branch focused and leave validation results in the handoff.
+- Divide work into focused commits and always include a proposed commit message in the handoff.
+  Never create commits: the user reviews the changes and commits them manually.
+- Leave validation results in the handoff.
 - Only one terminal/agent should write to the shared checkout at a time. Other model sessions may
   review, investigate, or propose diffs, then hand ownership back before edits begin.
 - Treat this Codex chat as the default integrator. Treat a separate OMP session as read-only unless
