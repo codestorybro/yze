@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
-import { Slot, SplashScreen } from "expo-router"
+import { Slot, SplashScreen, ThemeProvider as NavigationThemeProvider } from "expo-router"
 import { useFonts } from "@expo-google-fonts/space-grotesk"
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 
 import { initI18n } from "@/i18n"
-import { ThemeProvider } from "@/theme/context"
+import { ThemeProvider, useAppTheme } from "@/theme/context"
 import { customFontsToLoad } from "@/theme/typography"
 
 SplashScreen.preventAutoHideAsync()
@@ -43,8 +43,18 @@ export default function Root() {
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <ThemeProvider>
-        <Slot />
+        <RootNavigation />
       </ThemeProvider>
     </SafeAreaProvider>
+  )
+}
+
+function RootNavigation() {
+  const { navigationTheme } = useAppTheme()
+
+  return (
+    <NavigationThemeProvider value={navigationTheme}>
+      <Slot />
+    </NavigationThemeProvider>
   )
 }

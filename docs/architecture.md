@@ -6,6 +6,8 @@ Gear Organizer is being rebuilt as a small monorepo. The first implemented appli
 `apps/mobile`, generated from Ignite 11.5.0 and upgraded to the current stable Expo SDK. It uses:
 
 - Expo Router for file-based navigation;
+- Expo Router native tabs behind `src/components/navigation/AppTabs.tsx` for adaptive bottom
+  navigation;
 - React Native and strict TypeScript;
 - Ignite's theme and reusable UI primitives;
 - `apisauce` behind a typed service boundary;
@@ -15,11 +17,18 @@ Gear Organizer is being rebuilt as a small monorepo. The first implemented appli
 The initial screen describes technical gear and storage places and owns only presentation state.
 Network details and response validation live in `src/services/api`.
 
+Platform-native visual effects are progressive enhancements behind semantic component boundaries.
+The rules, supported component categories, fallback requirements, and first reference implementation
+are documented in [`design-system.md`](./design-system.md).
+
 ```text
-src/app/index.tsx
-  -> src/screens/GearOrganizerScreen.tsx
-    -> src/services/api/index.ts
-      -> GET {EXPO_PUBLIC_API_URL}/api/hello
+src/app/_layout.tsx
+  -> src/app/(tabs)/_layout.tsx
+    -> src/components/navigation/AppTabs.tsx
+      -> src/app/(tabs)/index.tsx
+        -> src/screens/GearOrganizerScreen.tsx
+          -> src/services/api/index.ts
+            -> GET {EXPO_PUBLIC_API_URL}/api/hello
 ```
 
 ## Phase 0 boundary and planned backend

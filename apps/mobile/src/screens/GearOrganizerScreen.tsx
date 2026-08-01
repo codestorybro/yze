@@ -52,11 +52,7 @@ export function GearOrganizerScreen() {
   }
 
   return (
-    <Screen
-      preset="auto"
-      safeAreaEdges={["top", "bottom"]}
-      contentContainerStyle={themed($screenContent)}
-    >
+    <Screen preset="auto" safeAreaEdges={["top"]} contentContainerStyle={themed($screenContent)}>
       <View style={themed($intro)}>
         <Text preset="heading" text="Gear Organizer" />
         <Text
