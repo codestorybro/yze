@@ -3,9 +3,9 @@ import type { ViewStyle } from "react-native"
 import { View } from "react-native"
 import { Href, router } from "expo-router"
 
+import { SheetScrollView } from "@/components/navigation/SheetContent"
 import { FeatureHeader } from "@/components/organizer/FeatureHeader"
 import { QuickAction } from "@/components/QuickAction"
-import { Screen } from "@/components/Screen"
 import { getPlace } from "@/services/api"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
@@ -33,12 +33,7 @@ export function AddContentScreen({ placeId, placeName }: AddContentScreenProps) 
   }, [placeId, placeName])
 
   return (
-    <Screen
-      preset="scroll"
-      safeAreaEdges={["bottom"]}
-      ScrollViewProps={{ showsVerticalScrollIndicator: false }}
-      contentContainerStyle={themed($screen)}
-    >
+    <SheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={themed($screen)}>
       <View style={themed($page)}>
         <FeatureHeader
           eyebrow="Add content"
@@ -79,7 +74,7 @@ export function AddContentScreen({ placeId, placeName }: AddContentScreenProps) 
           />
         </View>
       </View>
-    </Screen>
+    </SheetScrollView>
   )
 }
 

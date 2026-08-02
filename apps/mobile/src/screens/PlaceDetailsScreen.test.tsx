@@ -6,22 +6,27 @@ import type { Item, PlaceDetails, PlaceSummary } from "@/services/api/types"
 import { ThemeProvider } from "@/theme/context"
 
 let mockResource: Record<string, any>
+let mockListProps: Record<string, any>
 
 jest.mock("@/hooks/useFocusedApiResource", () => ({ useFocusedApiResource: () => mockResource }))
 jest.mock("expo-router", () => ({ router: { back: jest.fn(), push: jest.fn() } }))
 jest.mock("@/components/organizer/ListScreen", () => {
   const { View } = jest.requireActual("react-native")
   return {
-    ListScreen: ({ data, ListEmptyComponent, ListHeaderComponent, renderItem }: any) => (
-      <View>
-        {ListHeaderComponent}
-        {data.length
-          ? data.map((item: { key: string }, index: number) => (
-              <View key={item.key}>{renderItem({ item, index })}</View>
-            ))
-          : ListEmptyComponent}
-      </View>
-    ),
+    ListScreen: (props: any) => {
+      mockListProps = props
+      const { data, ListEmptyComponent, ListHeaderComponent, renderItem } = props
+      return (
+        <View>
+          {ListHeaderComponent}
+          {data.length
+            ? data.map((item: { key: string }, index: number) => (
+                <View key={item.key}>{renderItem({ item, index })}</View>
+              ))
+            : ListEmptyComponent}
+        </View>
+      )
+    },
   }
 })
 jest.mock("@/components/organizer/FeatureHeader", () => {
@@ -83,6 +88,7 @@ describe("PlaceDetailsScreen", () => {
     expect(screen.getByText("Upper drawer")).toBeDefined()
     expect(screen.getByText("Gear in this Place")).toBeDefined()
     expect(screen.getByText("USB-C cable")).toBeDefined()
+    expect(mockListProps.scrollEnabled).toBe(true)
 
     fireEvent.press(screen.getByText("Upper drawer"))
     expect(router.push).toHaveBeenCalledWith("/places/child")
@@ -101,6 +107,7 @@ describe("PlaceDetailsScreen", () => {
     expect(screen.getByText("Ready for something")).toBeDefined()
     expect(screen.queryByText("Add content")).toBeNull()
     expect(screen.queryByText("Add to this Place")).toBeNull()
+    expect(mockListProps.scrollEnabled).toBe(false)
   })
 })
 

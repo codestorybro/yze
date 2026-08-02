@@ -253,7 +253,9 @@ The Places tab is a visual map rather than an administrative list:
 - `FormField` is the single semantic native text-input boundary, including labels, helper text,
   errors, contrast, and touch sizing;
 - `ListScreen` is the virtualized counterpart to `Screen`. It owns automatic iOS insets, Android's
-  top system inset, end clearance, pull-to-refresh geometry, and tab scroll-to-top integration.
+  top system inset, end clearance, pull-to-refresh geometry, tab scroll-to-top integration, and
+  disables vertical bounce when content is shorter than the viewport. Confirmed empty map/detail
+  states disable scrolling entirely;
 
 The root view uses a two-column Place map. A Place detail level mixes full-width child Place cards
 with compact Item cards and never fetches the whole tree. Breadcrumbs retain the complete accessible
@@ -268,12 +270,15 @@ and Item details expose icon-only **Delete**, **Move**, and **Edit** actions wit
 Web uses compact semantic fallbacks because Stack toolbars are native-only. Screens never select
 these materials themselves.
 
-Creation, selection, movement, and editing are presented as native form sheets at an 80% detent.
-Their content begins at the top of the sheet and remains scrollable with the keyboard open. The
-single fixed detent is intentional: a sheet should not unexpectedly become a full-screen page while
-the user traverses the hierarchy. Sheet content must not inherit the device status-bar inset or the
-leading navigation clearance used by full-screen detail pages; the sheet host already owns that
-chrome.
+Creation, selection, movement, and editing are presented as native form sheets that open at an 80%
+detent. A second 100% detent gives the native gesture a stable expansion target and prevents sheet
+content from disappearing during an upward drag. Their content begins at the top of the sheet and
+remains scrollable with the keyboard open. Sheet content must not inherit the device status-bar
+inset or the leading navigation clearance used by full-screen detail pages; the sheet host already
+owns that chrome. `SheetScrollView` and `SheetList` keep their native scrollable as the first content
+view of the route. Do not wrap sheet scrollables in the full-screen `Screen` hierarchy: the native
+sheet coordinator must see them directly to preserve content while changing detents or keyboard
+state.
 
 Creation uses progressive disclosure. A Place needs only a name; photo URL and description expand on
 demand. An Item begins with name, icon, optional photo URL, visible preselected destination, and Save.
@@ -282,12 +287,13 @@ mutations preserve every field and expose backend validation beside the relevant
 
 Short spring press feedback explains that a Place can be entered. Confirmed insertions and removals
 use Reanimated layout transitions with `ReduceMotion.System`. A global, accessible toast is the
-authoritative success confirmation and remains visible after a sheet closes. Success haptics are a
-non-blocking enhancement attempted only after the API response; a missing or stale native module
-must never prevent navigation after persistence. Do not animate every label, block interaction with
-long sequences, or imply persistence before it succeeds. Place and Item content surfaces remain
-opaque semantic cards on every platform; Liquid Glass stays with native navigation and truly
-floating controls.
+authoritative success confirmation and remains visible after a sheet closes. Successful create,
+edit, move, attach, and delete operations request exactly one best-effort haptic pulse after the API
+response: a medium impact on iOS and the native confirmation effect on Android. A missing or stale
+native module must never prevent navigation after persistence. Do not animate every label, block
+interaction with long sequences, or imply persistence before it succeeds. Place and Item content
+surfaces remain opaque semantic cards on every platform; Liquid Glass stays with native navigation
+and truly floating controls.
 
 ## Launch and screen-edge behavior
 

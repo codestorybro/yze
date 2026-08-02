@@ -28,6 +28,7 @@ export function PlacesScreen() {
     <ListScreen
       data={places}
       numColumns={2}
+      scrollEnabled={!confirmedEmpty}
       keyExtractor={(place) => place.id}
       columnWrapperStyle={themed($columns)}
       contentContainerStyle={themed($content)}
@@ -35,8 +36,6 @@ export function PlacesScreen() {
         <View style={themed($header)}>
           <FeatureHeader
             eyebrow={confirmedEmpty ? "Your visual map" : "Visual map"}
-            onBrandPress={() => router.navigate("/" as Href)}
-            showBrand
             title={confirmedEmpty ? "Start with one real place" : "Places"}
             subtitle={
               confirmedEmpty

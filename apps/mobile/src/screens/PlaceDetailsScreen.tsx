@@ -62,6 +62,7 @@ export function PlaceDetailsScreen({ placeId }: PlaceDetailsScreenProps) {
     <ListScreen
       data={contents}
       keyExtractor={(entry) => entry.key}
+      scrollEnabled={!place || contents.length > 0}
       contentContainerStyle={themed($content)}
       ListHeaderComponent={
         place ? (

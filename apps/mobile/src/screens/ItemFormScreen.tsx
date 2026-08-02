@@ -5,11 +5,11 @@ import { router } from "expo-router"
 
 import { Button } from "@/components/Button"
 import { useToast } from "@/components/feedback/ToastProvider"
+import { SheetScrollView } from "@/components/navigation/SheetContent"
 import { ContentState } from "@/components/organizer/ContentState"
 import { FeatureHeader } from "@/components/organizer/FeatureHeader"
 import { FormField } from "@/components/organizer/FormField"
 import { IconPicker } from "@/components/organizer/IconPicker"
-import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import {
   emptyItemDraft,
@@ -107,20 +107,16 @@ export function ItemFormScreen({ itemId, placeId, placeName }: ItemFormScreenPro
 
   if (loading) {
     return (
-      <Screen preset="fixed" safeAreaEdges={["bottom"]} contentContainerStyle={themed($loading)}>
+      <SheetScrollView contentContainerStyle={themed($loading)}>
         <ActivityIndicator color={colors.tint} size="large" />
         <Text text="Loading Item…" />
-      </Screen>
+      </SheetScrollView>
     )
   }
 
   if (loadError) {
     return (
-      <Screen
-        preset="fixed"
-        safeAreaEdges={["bottom"]}
-        contentContainerStyle={themed($loadFailure)}
-      >
+      <SheetScrollView contentContainerStyle={themed($loadFailure)}>
         <FeatureHeader reserveNavigationSpace={false} title="Edit Item" />
         <ContentState
           title="This Item is unavailable"
@@ -132,16 +128,14 @@ export function ItemFormScreen({ itemId, placeId, placeName }: ItemFormScreenPro
             setReloadKey((current) => current + 1)
           }}
         />
-      </Screen>
+      </SheetScrollView>
     )
   }
 
   return (
-    <Screen
-      preset="scroll"
-      safeAreaEdges={["bottom"]}
+    <SheetScrollView
       keyboardShouldPersistTaps="handled"
-      ScrollViewProps={{ showsVerticalScrollIndicator: false }}
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={themed($screen)}
     >
       <View style={themed($page)}>
@@ -314,7 +308,7 @@ export function ItemFormScreen({ itemId, placeId, placeName }: ItemFormScreenPro
           />
         </View>
       </View>
-    </Screen>
+    </SheetScrollView>
   )
 }
 

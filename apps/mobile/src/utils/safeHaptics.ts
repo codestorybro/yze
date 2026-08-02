@@ -1,3 +1,4 @@
+import { Platform } from "react-native"
 import * as Haptics from "expo-haptics"
 
 /**
@@ -10,7 +11,11 @@ import * as Haptics from "expo-haptics"
  */
 export async function notifySuccess(): Promise<void> {
   try {
-    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+    if (Platform.OS === "ios") {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    } else if (Platform.OS === "android") {
+      await Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Confirm)
+    }
   } catch {
     // Best-effort feedback: the visible toast remains the authoritative confirmation.
   }

@@ -27,6 +27,7 @@ function ListScreenInner<T>(
       <FlatList
         {...props}
         ref={listRef}
+        alwaysBounceVertical={false}
         automaticallyAdjustContentInsets
         automaticallyAdjustsScrollIndicatorInsets
         contentInsetAdjustmentBehavior="automatic"

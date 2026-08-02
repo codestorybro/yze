@@ -6,8 +6,13 @@ import { SymbolView } from "expo-symbols"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 
+import type { FloatingBackButtonProps } from "./FloatingBackButton.types"
+
 /** Android fallback for the fixed native-header Back control. */
-export function FloatingBackButton() {
+export function FloatingBackButton({
+  accessibilityLabel = "Back",
+  onPress = () => router.back(),
+}: FloatingBackButtonProps) {
   const {
     theme: { colors },
     themed,
@@ -16,10 +21,10 @@ export function FloatingBackButton() {
   return (
     <Stack.Toolbar asChild placement="left">
       <Pressable
-        accessibilityLabel="Back"
+        accessibilityLabel={accessibilityLabel}
         accessibilityRole="button"
         hitSlop={8}
-        onPress={() => router.back()}
+        onPress={onPress}
         style={({ pressed }) => [themed($button), pressed && $pressed]}
       >
         <SymbolView

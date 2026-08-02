@@ -6,9 +6,11 @@ import { ThemeProvider } from "@/theme/context"
 
 jest.mock("expo-router", () => ({ router: { replace: jest.fn() } }))
 jest.mock("@/services/api", () => ({ getPlace: jest.fn() }))
-jest.mock("@/components/Screen", () => {
+jest.mock("@/components/navigation/SheetContent", () => {
   const { View } = jest.requireActual("react-native")
-  return { Screen: ({ children }: { children: React.ReactNode }) => <View>{children}</View> }
+  return {
+    SheetScrollView: ({ children }: { children: React.ReactNode }) => <View>{children}</View>,
+  }
 })
 jest.mock("@/components/organizer/FeatureHeader", () => {
   const { Text } = jest.requireActual("react-native")

@@ -13,8 +13,10 @@ jest.mock("@/components/feedback/ToastProvider", () => ({
   useToast: () => ({ showToast: mockShowToast }),
 }))
 jest.mock("expo-haptics", () => ({
-  NotificationFeedbackType: { Success: "success" },
-  notificationAsync: jest.fn().mockResolvedValue(undefined),
+  AndroidHaptics: { Confirm: "confirm" },
+  ImpactFeedbackStyle: { Medium: "medium" },
+  impactAsync: jest.fn().mockResolvedValue(undefined),
+  performAndroidHapticsAsync: jest.fn().mockResolvedValue(undefined),
 }))
 jest.mock("@/services/api", () => ({
   getChildPlaces: jest.fn(),
@@ -26,10 +28,10 @@ jest.mock("@/components/organizer/FeatureHeader", () => {
   const { Text } = jest.requireActual("react-native")
   return { FeatureHeader: ({ title }: { title: string }) => <Text>{title}</Text> }
 })
-jest.mock("@/components/organizer/ListScreen", () => {
+jest.mock("@/components/navigation/SheetContent", () => {
   const { View } = jest.requireActual("react-native")
   return {
-    ListScreen: ({
+    SheetList: ({
       data,
       ListEmptyComponent,
       ListFooterComponent,

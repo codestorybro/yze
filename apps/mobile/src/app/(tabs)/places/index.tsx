@@ -1,11 +1,16 @@
 import { Href, router } from "expo-router"
 
 import { ContextualToolbar } from "@/components/navigation/ContextualToolbar"
+import { FloatingBackButton } from "@/components/navigation/FloatingBackButton"
 import { PlacesScreen } from "@/screens/PlacesScreen"
 
 export default function Places() {
   return (
     <>
+      <FloatingBackButton
+        accessibilityLabel="Back to Home"
+        onPress={() => router.dismissTo("/" as Href)}
+      />
       <PlacesScreen />
       <ContextualToolbar
         actions={[
@@ -16,9 +21,9 @@ export default function Places() {
             onPress: () => router.push("/places/place-form" as Href),
           },
           {
-            accessibilityLabel: "Manage Places",
-            fallback: "M",
-            icon: { ios: "slider.horizontal.3", android: "tune", web: "tune" },
+            accessibilityLabel: "Choose a Place to edit",
+            fallback: "E",
+            icon: { ios: "pencil", android: "edit", web: "edit" },
             onPress: () => router.push("/places/place-picker?mode=manage" as Href),
           },
         ]}

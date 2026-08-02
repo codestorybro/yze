@@ -24,6 +24,8 @@ jest.mock("expo-router", () => {
 })
 
 describe("FloatingBackButton", () => {
+  beforeEach(() => jest.clearAllMocks())
+
   it("exposes one accessible Back action owned by the native header", () => {
     const screen = render(
       <ThemeProvider>
@@ -33,5 +35,18 @@ describe("FloatingBackButton", () => {
 
     fireEvent.press(screen.getByLabelText("Back"))
     expect(router.back).toHaveBeenCalledTimes(1)
+  })
+
+  it("supports a semantic destination instead of relying on navigation history", () => {
+    const goHome = jest.fn()
+    const screen = render(
+      <ThemeProvider>
+        <FloatingBackButton accessibilityLabel="Back to Home" onPress={goHome} />
+      </ThemeProvider>,
+    )
+
+    fireEvent.press(screen.getByLabelText("Back to Home"))
+    expect(goHome).toHaveBeenCalledTimes(1)
+    expect(router.back).not.toHaveBeenCalled()
   })
 })

@@ -34,9 +34,9 @@ describe("ContextualToolbar", () => {
               onPress: add,
             },
             {
-              accessibilityLabel: "Manage Places",
-              fallback: "M",
-              icon: { ios: "slider.horizontal.3", android: "tune", web: "tune" },
+              accessibilityLabel: "Choose a Place to edit",
+              fallback: "E",
+              icon: { ios: "pencil", android: "edit", web: "edit" },
               onPress: manage,
             },
           ]}
@@ -45,7 +45,7 @@ describe("ContextualToolbar", () => {
     )
 
     fireEvent.press(screen.getByLabelText("Add Place"))
-    fireEvent.press(screen.getByLabelText("Manage Places"))
+    fireEvent.press(screen.getByLabelText("Choose a Place to edit"))
     expect(add).toHaveBeenCalledTimes(1)
     expect(manage).toHaveBeenCalledTimes(1)
   })

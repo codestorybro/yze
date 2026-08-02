@@ -6,7 +6,12 @@ import { SymbolView } from "expo-symbols"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 
-export function FloatingBackButton() {
+import type { FloatingBackButtonProps } from "./FloatingBackButton.types"
+
+export function FloatingBackButton({
+  accessibilityLabel = "Back",
+  onPress = () => router.back(),
+}: FloatingBackButtonProps) {
   const {
     theme: { colors },
     themed,
@@ -14,10 +19,10 @@ export function FloatingBackButton() {
 
   return (
     <Pressable
-      accessibilityLabel="Back"
+      accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
       hitSlop={8}
-      onPress={() => router.back()}
+      onPress={onPress}
       style={({ pressed }) => [themed($button), pressed && $pressed]}
     >
       <SymbolView

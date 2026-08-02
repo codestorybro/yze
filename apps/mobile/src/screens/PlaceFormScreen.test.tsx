@@ -16,8 +16,10 @@ jest.mock("@/components/feedback/ToastProvider", () => ({
   useToast: () => ({ showToast: mockShowToast }),
 }))
 jest.mock("expo-haptics", () => ({
-  NotificationFeedbackType: { Success: "success" },
-  notificationAsync: jest.fn().mockResolvedValue(undefined),
+  AndroidHaptics: { Confirm: "confirm" },
+  ImpactFeedbackStyle: { Medium: "medium" },
+  impactAsync: jest.fn().mockResolvedValue(undefined),
+  performAndroidHapticsAsync: jest.fn().mockResolvedValue(undefined),
 }))
 jest.mock("@/services/api", () => ({
   createPlace: jest.fn(),
@@ -25,9 +27,11 @@ jest.mock("@/services/api", () => ({
   getPlace: jest.fn(),
   updatePlace: jest.fn(),
 }))
-jest.mock("@/components/Screen", () => {
+jest.mock("@/components/navigation/SheetContent", () => {
   const { View } = jest.requireActual("react-native")
-  return { Screen: ({ children }: { children: React.ReactNode }) => <View>{children}</View> }
+  return {
+    SheetScrollView: ({ children }: { children: React.ReactNode }) => <View>{children}</View>,
+  }
 })
 jest.mock("@/components/organizer/FeatureHeader", () => {
   const { Text } = jest.requireActual("react-native")
@@ -37,9 +41,7 @@ jest.mock("@/components/organizer/FeatureHeader", () => {
 const mockedGetPlace = getPlace as jest.MockedFunction<typeof getPlace>
 const mockedCreatePlace = createPlace as jest.MockedFunction<typeof createPlace>
 const mockedUpdatePlace = updatePlace as jest.MockedFunction<typeof updatePlace>
-const mockedNotification = Haptics.notificationAsync as jest.MockedFunction<
-  typeof Haptics.notificationAsync
->
+const mockedImpact = Haptics.impactAsync as jest.MockedFunction<typeof Haptics.impactAsync>
 
 describe("PlaceFormScreen", () => {
   beforeEach(() => jest.clearAllMocks())
@@ -61,7 +63,7 @@ describe("PlaceFormScreen", () => {
 
   it("creates a nested Place and closes the sheet even when native haptics rejects", async () => {
     mockedCreatePlace.mockResolvedValue({ kind: "ok", data: place() })
-    mockedNotification.mockRejectedValueOnce(new Error("Native method unavailable"))
+    mockedImpact.mockRejectedValueOnce(new Error("Native method unavailable"))
     const screen = render(
       <ThemeProvider>
         <PlaceFormScreen parentPlaceId="desk" parentPlaceName="Desk" />

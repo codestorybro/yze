@@ -5,10 +5,10 @@ import { Href, router } from "expo-router"
 
 import { Button } from "@/components/Button"
 import { useToast } from "@/components/feedback/ToastProvider"
+import { SheetScrollView } from "@/components/navigation/SheetContent"
 import { ContentState } from "@/components/organizer/ContentState"
 import { FeatureHeader } from "@/components/organizer/FeatureHeader"
 import { FormField } from "@/components/organizer/FormField"
-import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { createPlace, deletePlace, getPlace, updatePlace } from "@/services/api"
 import { apiFailureMessage } from "@/services/api/problemMessage"
@@ -130,20 +130,16 @@ export function PlaceFormScreen({ parentPlaceId, parentPlaceName, placeId }: Pla
 
   if (loading) {
     return (
-      <Screen preset="fixed" safeAreaEdges={["bottom"]} contentContainerStyle={themed($loading)}>
+      <SheetScrollView contentContainerStyle={themed($loading)}>
         <ActivityIndicator color={colors.tint} size="large" />
         <Text text="Loading Place…" />
-      </Screen>
+      </SheetScrollView>
     )
   }
 
   if (loadError) {
     return (
-      <Screen
-        preset="fixed"
-        safeAreaEdges={["bottom"]}
-        contentContainerStyle={themed($loadFailure)}
-      >
+      <SheetScrollView contentContainerStyle={themed($loadFailure)}>
         <FeatureHeader reserveNavigationSpace={false} title="Edit Place" />
         <ContentState
           title="This Place is unavailable"
@@ -155,16 +151,14 @@ export function PlaceFormScreen({ parentPlaceId, parentPlaceName, placeId }: Pla
             setReloadKey((current) => current + 1)
           }}
         />
-      </Screen>
+      </SheetScrollView>
     )
   }
 
   return (
-    <Screen
-      preset="scroll"
-      safeAreaEdges={["bottom"]}
+    <SheetScrollView
       keyboardShouldPersistTaps="handled"
-      ScrollViewProps={{ showsVerticalScrollIndicator: false }}
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={themed($screen)}
     >
       <View style={themed($page)}>
@@ -257,7 +251,7 @@ export function PlaceFormScreen({ parentPlaceId, parentPlaceName, placeId }: Pla
           </View>
         ) : null}
       </View>
-    </Screen>
+    </SheetScrollView>
   )
 }
 

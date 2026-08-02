@@ -30,8 +30,8 @@ export default function PlacesLayout() {
     ...headerOptions,
     headerShown: false,
     presentation: "formSheet" as const,
-    sheetAllowedDetents: [0.8],
-    sheetExpandsWhenScrolledToEdge: false,
+    sheetAllowedDetents: [0.8, 1],
+    sheetExpandsWhenScrolledToEdge: true,
     sheetGrabberVisible: true,
     sheetInitialDetentIndex: 0,
   }
@@ -44,7 +44,7 @@ export default function PlacesLayout() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="index" />
+      <Stack.Screen name="index" options={headerOptions} />
       <Stack.Screen name="[placeId]" options={headerOptions} />
       <Stack.Screen name="item/[itemId]" options={headerOptions} />
       <Stack.Screen name="add" options={sheetOptions} />

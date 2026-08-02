@@ -38,10 +38,12 @@ and no screen calls `fetch` directly.
 
 Within the Places Stack, the global native tab bar is hidden while route-level native Stack
 toolbars provide contextual actions. `FloatingBackButton` owns the fixed Back control in transparent
-Stack headers, and native form-sheet routes share one 80% detent. `ContextualToolbar` and
+Stack headers, and native form-sheet routes open at 80% with a stable full-height expansion detent. `ContextualToolbar` and
 `FloatingBackButton` isolate the native implementations and provide web fallbacks; feature screens
 contain no platform/version checks. Form-sheet screens opt out of the full-screen status-bar and
-Back-button content clearances so their content remains aligned to the sheet itself.
+Back-button content clearances so their content remains aligned to the sheet itself. Their shared
+`SheetScrollView`/`SheetList` boundary renders a scrollable as the route's first native content view,
+allowing `react-native-screens` to coordinate detents and keyboard insets reliably.
 
 ```text
 (tabs)/places/index

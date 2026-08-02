@@ -6,6 +6,7 @@ import type { PlaceSummary } from "@/services/api/types"
 import { ThemeProvider } from "@/theme/context"
 
 let mockResource: Record<string, any>
+let mockListProps: Record<string, any>
 
 jest.mock("@/hooks/useFocusedApiResource", () => ({
   useFocusedApiResource: () => mockResource,
@@ -14,16 +15,20 @@ jest.mock("expo-router", () => ({ router: { navigate: jest.fn(), push: jest.fn()
 jest.mock("@/components/organizer/ListScreen", () => {
   const { View } = jest.requireActual("react-native")
   return {
-    ListScreen: ({ data, ListEmptyComponent, ListHeaderComponent, renderItem }: any) => (
-      <View>
-        {ListHeaderComponent}
-        {data.length
-          ? data.map((item: unknown, index: number) => (
-              <View key={(item as { id: string }).id}>{renderItem({ item, index })}</View>
-            ))
-          : ListEmptyComponent}
-      </View>
-    ),
+    ListScreen: (props: any) => {
+      mockListProps = props
+      const { data, ListEmptyComponent, ListHeaderComponent, renderItem } = props
+      return (
+        <View>
+          {ListHeaderComponent}
+          {data.length
+            ? data.map((item: unknown, index: number) => (
+                <View key={(item as { id: string }).id}>{renderItem({ item, index })}</View>
+              ))
+            : ListEmptyComponent}
+        </View>
+      )
+    },
   }
 })
 jest.mock("@/components/organizer/FeatureHeader", () => {
@@ -83,6 +88,7 @@ describe("PlacesScreen", () => {
 
     expect(screen.getByText("Start with one real place")).toBeDefined()
     expect(screen.queryByText("Create your first Place")).toBeNull()
+    expect(mockListProps.scrollEnabled).toBe(false)
   })
 
   it("renders and opens visual root Places", () => {
@@ -93,6 +99,7 @@ describe("PlacesScreen", () => {
     expect(router.push).toHaveBeenCalledWith("/places/place-1")
     expect(screen.getByText("Camera case")).toBeDefined()
     expect(screen.getByText("Places")).toBeDefined()
+    expect(mockListProps.scrollEnabled).toBe(true)
   })
 
   it("keeps API errors recoverable", () => {

@@ -6,8 +6,8 @@ import { SymbolView } from "expo-symbols"
 
 import { Button } from "@/components/Button"
 import { useToast } from "@/components/feedback/ToastProvider"
+import { SheetList } from "@/components/navigation/SheetContent"
 import { FeatureHeader } from "@/components/organizer/FeatureHeader"
-import { ListScreen } from "@/components/organizer/ListScreen"
 import { Text } from "@/components/Text"
 import { getChildPlaces, getRootPlaces, moveItem, movePlace } from "@/services/api"
 import { apiFailureMessage } from "@/services/api/problemMessage"
@@ -118,7 +118,7 @@ export function MoveContentScreen({ currentPlaceId, entityId, kind }: MoveConten
     path.length === 0 ? "All root Places" : path.map((place) => place.name).join(" / ")
 
   return (
-    <ListScreen
+    <SheetList
       data={loading ? [] : places}
       keyExtractor={(place) => place.id}
       contentContainerStyle={themed($screen)}

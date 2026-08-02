@@ -13,8 +13,10 @@ jest.mock("@/components/feedback/ToastProvider", () => ({
   useToast: () => ({ showToast: mockShowToast }),
 }))
 jest.mock("expo-haptics", () => ({
-  NotificationFeedbackType: { Success: "success" },
-  notificationAsync: jest.fn().mockResolvedValue(undefined),
+  AndroidHaptics: { Confirm: "confirm" },
+  ImpactFeedbackStyle: { Medium: "medium" },
+  impactAsync: jest.fn().mockResolvedValue(undefined),
+  performAndroidHapticsAsync: jest.fn().mockResolvedValue(undefined),
 }))
 jest.mock("@/services/api", () => ({
   createItem: jest.fn(),
@@ -22,9 +24,11 @@ jest.mock("@/services/api", () => ({
   getPlace: jest.fn(),
   updateItem: jest.fn(),
 }))
-jest.mock("@/components/Screen", () => {
+jest.mock("@/components/navigation/SheetContent", () => {
   const { View } = jest.requireActual("react-native")
-  return { Screen: ({ children }: { children: React.ReactNode }) => <View>{children}</View> }
+  return {
+    SheetScrollView: ({ children }: { children: React.ReactNode }) => <View>{children}</View>,
+  }
 })
 jest.mock("@/components/organizer/FeatureHeader", () => ({ FeatureHeader: () => null }))
 jest.mock("@/components/organizer/FormField", () => {

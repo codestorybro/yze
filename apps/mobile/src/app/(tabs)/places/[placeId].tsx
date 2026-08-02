@@ -21,9 +21,9 @@ export default function PlaceDetailsRoute() {
             onPress: () => router.push(`/places/add?placeId=${id}` as Href),
           },
           {
-            accessibilityLabel: "Manage this Place",
-            fallback: "M",
-            icon: { ios: "slider.horizontal.3", android: "tune", web: "tune" },
+            accessibilityLabel: "Edit this Place",
+            fallback: "E",
+            icon: { ios: "pencil", android: "edit", web: "edit" },
             onPress: () => router.push(`/places/place-form?placeId=${id}` as Href),
           },
         ]}
