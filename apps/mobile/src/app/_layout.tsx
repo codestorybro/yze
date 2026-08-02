@@ -5,6 +5,7 @@ import { useFonts } from "@expo-google-fonts/space-grotesk"
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 
 import { AppLaunchGate } from "@/components/AppLaunchGate"
+import { ToastProvider } from "@/components/feedback/ToastProvider"
 import { initializeI18nSafely } from "@/i18n/initializeSafely"
 import { ThemeProvider, useAppTheme } from "@/theme/context"
 import { customFontsToLoad } from "@/theme/typography"
@@ -43,9 +44,11 @@ export default function Root() {
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <ThemeProvider>
-        <AppLaunchGate ready={loaded}>
-          <RootNavigation />
-        </AppLaunchGate>
+        <ToastProvider>
+          <AppLaunchGate ready={loaded}>
+            <RootNavigation />
+          </AppLaunchGate>
+        </ToastProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   )

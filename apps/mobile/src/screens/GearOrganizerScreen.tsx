@@ -8,7 +8,7 @@ import { OrganizerHero } from "@/components/OrganizerHero"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { getHello } from "@/services/api"
-import type { GeneralApiProblem } from "@/services/api/apiProblem"
+import type { ApiFailure, GeneralApiProblem } from "@/services/api/apiProblem"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 
@@ -28,6 +28,14 @@ const problemMessages: Record<GeneralApiProblem["kind"], string> = {
   "timeout": "The API request timed out.",
   "unauthorized": "The API requires authorization.",
   "unknown": "An unexpected API error occurred.",
+}
+
+function apiFailureMessage(problem: ApiFailure) {
+  if (problem.kind === "validation" || problem.kind === "conflict" || problem.kind === "domain") {
+    return problem.message
+  }
+
+  return problemMessages[problem.kind]
 }
 
 export function GearOrganizerScreen() {
@@ -54,7 +62,7 @@ export function GearOrganizerScreen() {
         return
       }
 
-      setRequest({ status: "error", message: problemMessages[result.kind] })
+      setRequest({ status: "error", message: apiFailureMessage(result) })
     } catch (error) {
       setRequest({
         status: "error",

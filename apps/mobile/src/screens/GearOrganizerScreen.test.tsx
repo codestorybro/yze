@@ -44,7 +44,7 @@ describe("GearOrganizerScreen", () => {
   it("presents the Yze visual hierarchy without invented gear data", () => {
     const screen = renderScreen()
 
-    expect(screen.getByText("Yze")).toBeDefined()
+    expect(screen.getByLabelText("Yze")).toBeDefined()
     expect(screen.getByText("Get Yze.")).toBeDefined()
     expect(screen.getByText("Open Places")).toBeDefined()
     expect(screen.queryByText("Quick actions")).toBeNull()

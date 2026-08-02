@@ -7,12 +7,15 @@ deliberately small mobile foundation.
 ## Current status
 
 - Mobile: Ignite-based Expo Router application under `apps/mobile`.
-- Visual foundation: adaptive light/dark theme, native bottom navigation, and a hero-led Yze home
-  screen with honest placeholders for upcoming product actions.
+- Core experience: persistent root and arbitrarily nested Places, mixed Place/Item contents, creation,
+  editing, movement, safe deletion, and a curated Item icon catalogue.
+- Visual foundation: adaptive light/dark theme, native bottom navigation, visual Place maps,
+  object-like Item cards, meaningful reduced-motion-aware transitions, and semantic photo fallbacks.
 - Brand assets: initial Yze launcher icon, adaptive splash artwork, and theme-specific organizer
   hero imagery.
-- API preparation: typed `GET /api/hello` client with loading, success, error, and retry states.
-- Backend and Docker Compose: planned next; see `docs/architecture.md`.
+- API: ASP.NET Core 10 Minimal API with typed DTOs, Problem Details errors, hierarchy protection, and
+  a connectivity endpoint.
+- Persistence: EF Core 10 + SQLite, an initial Places/Items migration, and a named Docker volume.
 - Removed legacy Social Mirror features: authentication, partner flows, moods, ratings, calendar,
   and their mock API.
 
@@ -23,6 +26,8 @@ Install the common tools before continuing:
 - Git.
 - Node.js 24 LTS. The repository's `.nvmrc` selects this major version.
 - Corepack, used to install the exact pnpm version declared by the mobile project.
+- Docker Desktop for the recommended cross-platform backend workflow, or the .NET 10 SDK for local
+  backend development and migration tooling.
 
 For a native Android build, also install Android Studio, an Android SDK, and create an emulator.
 For a native iOS build, use macOS with Xcode, Xcode Command Line Tools, CocoaPods, and an iOS
@@ -68,12 +73,49 @@ pnpm --version
 pnpm install --frozen-lockfile
 ```
 
-`node --version` should report `v24.x`, and `pnpm --version` should report `11.18.0`. All commands in
-the following sections assume the terminal remains in `apps/mobile`.
+`node --version` should report `v24.x`, and `pnpm --version` should report `11.18.0`. Mobile commands
+in the following sections run from `apps/mobile`; backend commands run from the repository root.
 
-### 3. Verify automatic development networking
+### 3. Start the backend
 
-The development commands automatically detect the computer's LAN IPv4 address and expose the future
+Open a second terminal in the repository root and start the API:
+
+```bash
+docker compose up --build api
+```
+
+Wait for the health check, then verify it from another terminal:
+
+```bash
+curl --fail http://localhost:8080/health
+```
+
+The response should be `{"status":"healthy"}`. Compose stores the SQLite database in the named
+`yze-data` volume, so Places and Items survive container recreation. `Ctrl+C` stops the foreground
+container. `docker compose down` removes the container while preserving data.
+
+If the .NET 10 SDK is installed locally, backend build, tests, and migrations are also available:
+
+```bash
+dotnet tool restore
+dotnet restore apps/backend/Yze.slnx
+dotnet build apps/backend/Yze.slnx --no-restore
+dotnet test apps/backend/Yze.slnx --no-build
+dotnet ef database update --project apps/backend/Yze.Api --startup-project apps/backend/Yze.Api
+```
+
+Run the API without Docker with `dotnet run --project apps/backend/Yze.Api`; the development profile
+listens on `0.0.0.0:8080`, so simulators and LAN devices use the same address strategy as Compose.
+
+Without a host .NET SDK, run the same integration suite through the Docker test stage:
+
+```bash
+docker build --target test --tag yze-backend-test apps/backend
+```
+
+### 4. Verify automatic development networking
+
+The development commands automatically detect the computer's LAN IPv4 address and expose the Yze
 API to every target through one URL, for example `http://192.168.1.42:8080`. A local `.env` file is
 not required, and there is no separate URL to select for Android Emulator, iOS Simulator, or a
 physical device.
@@ -103,8 +145,8 @@ pnpm start
 `EXPO_PUBLIC_*` values are included in the client bundle and must never contain secrets. Do not
 commit a real LAN address.
 
-The backend is not implemented yet. The application itself can be opened, but pressing **Test API
-connection** will show the expected error state until an API is running at the printed URL.
+Keep the Compose API running while developing. The Home connection check and the Places/Items flows
+use the same printed URL.
 
 ## Run the application
 
@@ -253,7 +295,7 @@ pnpm bundle:web
 - **No development build is installed:** use `pnpm android` or `pnpm ios` before `pnpm start`.
 - **The wrong LAN interface was detected:** set `EXPO_PUBLIC_API_URL` for the terminal session using
   one of the override examples above.
-- **A physical device cannot reach Metro or the future API:** verify that both devices use the same
+- **A physical device cannot reach Metro or the API:** verify that both devices use the same
   network, disconnect an interfering VPN, and allow the connection through the operating-system
   firewall.
 - **A native dependency, icon, splash, or native setting changed:** stop Metro and run `pnpm
@@ -275,12 +317,13 @@ android` or `pnpm ios`. The launcher detects the change, performs a clean prebui
   intentionally remain stable; the visible application name is `Yze`. See Apple's
   [launch-screen troubleshooting note](https://developer.apple.com/documentation/technotes/tn3118-debugging-your-apps-launch-screen).
 
-- **The API test fails while the UI works:** this is currently expected because the backend is the
-  next project phase.
+- **The API or Places screen cannot connect:** run `docker compose ps`, verify that `api` is healthy,
+  and confirm `curl http://localhost:8080/health` succeeds. For a physical device, also verify the
+  host firewall and the LAN address printed by `pnpm dev:info`.
 
-## Future backend networking requirement
+## Backend networking
 
-The local backend must listen on all network interfaces at `0.0.0.0:8080`, not only on
+The local backend listens on all network interfaces at `0.0.0.0:8080`, not only on
 `127.0.0.1`/`localhost`. Docker must publish host port `8080` to container port `8080`. Otherwise,
 physical devices and emulators cannot reach the API through the LAN URL printed by the mobile
 development launcher. This requirement applies only to local development; deployed environments
@@ -288,10 +331,11 @@ must use HTTPS.
 
 ## Agent workflow
 
-All implementation happens on normal branches, never directly on `main` and never in Git
-worktrees. `AGENTS.md` is the shared repository instruction file. Keep this Codex chat as the
-integrating session; a second model-switching terminal should review or investigate while the
-integrator is writing, so two agents do not mutate the same checkout concurrently.
+Implementation happens directly on `main`, never in Git worktrees. Changes are divided into focused
+commits, but the user reviews and creates every commit manually. `AGENTS.md` is the shared repository
+instruction file. Keep this Codex chat as the integrating session; a second model-switching terminal
+should review or investigate while the integrator is writing, so two agents do not mutate the same
+checkout concurrently.
 
 ### OMP terminal
 
@@ -311,11 +355,12 @@ Use `/model` to switch the active model, `Ctrl+P` to cycle configured models, or
 session with `omp --model <model>`. While Codex is implementing, a useful OMP reviewer prompt is:
 
 ```text
-Review the current branch against AGENTS.md and docs/GEAR_ORGANIZER_PROJECT_SPEC.md.
+Review the current changes against AGENTS.md and docs/places-items.md.
 Do not modify files. Rank actionable findings P0-P3 and finish with a ship/block verdict.
 ```
 
 Optional zsh completion can be enabled in `~/.zshrc` with `eval "$(omp completions zsh)"`.
 
-See `docs/GEAR_ORGANIZER_PROJECT_SPEC.md` for the product scope and `docs/architecture.md` for the
-current technical boundary.
+See `docs/places-items.md` for the current domain/API contract, `docs/design-system.md` for visual
+rules, and `docs/architecture.md` for the technical boundary. `docs/GEAR_ORGANIZER_PROJECT_SPEC.md`
+is retained as the historical bootstrap brief.

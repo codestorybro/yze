@@ -38,6 +38,77 @@ export type GeneralApiProblem =
    */
   | { kind: "bad-data" }
 
+export type ApiFailure =
+  | GeneralApiProblem
+  | {
+      kind: "validation"
+      code: string
+      message: string
+      errors: Record<string, string[]>
+    }
+  | {
+      kind: "conflict"
+      code: string
+      message: string
+    }
+  | {
+      kind: "domain"
+      code: string
+      message: string
+      status: number
+    }
+
+interface ProblemPayload {
+  code?: unknown
+  detail?: unknown
+  errors?: unknown
+  title?: unknown
+}
+
+export function getApiFailure(response: ApiResponse<unknown>): ApiFailure {
+  const payload = isRecord(response.data) ? (response.data as ProblemPayload) : undefined
+  const code = typeof payload?.code === "string" ? payload.code : undefined
+  const message =
+    typeof payload?.detail === "string"
+      ? payload.detail
+      : typeof payload?.title === "string"
+        ? payload.title
+        : "The request could not be completed."
+
+  if (response.status === 400 && payload && isFieldErrors(payload.errors)) {
+    return {
+      kind: "validation",
+      code: code ?? "validation_failed",
+      message,
+      errors: payload.errors,
+    }
+  }
+
+  if (response.status === 409 && code) {
+    return { kind: "conflict", code, message }
+  }
+
+  if (response.status && code) {
+    return { kind: "domain", code, message, status: response.status }
+  }
+
+  return getGeneralApiProblem(response) ?? { kind: "unknown", temporary: true }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+}
+
+function isFieldErrors(value: unknown): value is Record<string, string[]> {
+  return (
+    isRecord(value) &&
+    Object.values(value).every(
+      (messages) =>
+        Array.isArray(messages) && messages.every((message) => typeof message === "string"),
+    )
+  )
+}
+
 /**
  * Attempts to get a common cause of problems from an api response.
  *

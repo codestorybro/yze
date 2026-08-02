@@ -1,5 +1,6 @@
 import { Platform, TextStyle, View, ViewStyle } from "react-native"
 
+import { BrandMark } from "@/components/BrandMark"
 import { Text } from "@/components/Text"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
@@ -14,10 +15,7 @@ export function BrandHeader({ badge }: BrandHeaderProps) {
 
   return (
     <View style={[themed($container), $webNavigationOffset]}>
-      <View style={$wordmark}>
-        <View style={themed($brandSignal)} />
-        <Text style={themed($wordmarkText)} text="Yze" />
-      </View>
+      <BrandMark />
       {!!badge && (
         <View style={themed($badge)}>
           <Text preset="caption" style={themed($badgeText)} text={badge} />
@@ -33,26 +31,6 @@ const $container: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   alignItems: "center",
   justifyContent: "space-between",
   gap: spacing.sm,
-})
-
-const $wordmark: ViewStyle = {
-  flexDirection: "row",
-  alignItems: "center",
-}
-
-const $brandSignal: ThemedStyle<ViewStyle> = ({ colors, radii }) => ({
-  width: 8,
-  height: 8,
-  marginEnd: 10,
-  borderRadius: radii.pill,
-  backgroundColor: colors.signal,
-})
-
-const $wordmarkText: ThemedStyle<TextStyle> = ({ typography }) => ({
-  fontFamily: typography.primary.semiBold,
-  fontSize: 27,
-  lineHeight: 32,
-  letterSpacing: -1.1,
 })
 
 const $badge: ThemedStyle<ViewStyle> = ({ colors, radii, spacing }) => ({

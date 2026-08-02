@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Platform } from "react-native"
 import { NativeTabs } from "expo-router/unstable-native-tabs"
 
@@ -12,6 +13,7 @@ import { useAppTheme } from "@/theme/context"
  * decisions inside this boundary rather than in routes or screens.
  */
 export function AppTabs() {
+  const [hidden, setHidden] = useState(false)
   const {
     theme: { colors },
   } = useAppTheme()
@@ -24,11 +26,12 @@ export function AppTabs() {
   })
 
   return (
-    <NativeTabsScreenChromeProvider>
+    <NativeTabsScreenChromeProvider hidden={hidden} setHidden={setHidden}>
       <NativeTabs
         backBehavior="history"
         backgroundColor={Platform.select({ web: colors.surfaceRaised })}
         disableTransparentOnScrollEdge
+        hidden={hidden}
         labelVisibilityMode="labeled"
         labelStyle={webLabelStyle}
         tabBarRespectsIMEInsets

@@ -6,13 +6,11 @@ This file is the canonical repository guidance for Codex and other coding agents
 
 - Build **Yze**, a visual organizer for technical equipment and storage places. Its brand lockup is
   **Yze — Gear, organized.**
-- Treat `docs/GEAR_ORGANIZER_PROJECT_SPEC.md` as the product source of truth.
-- The current branch is **Phase 0: mobile cleanup and toolchain refresh**. The target milestone is a
-  thin mobile-to-API vertical slice, but the backend and Docker layer are not implemented yet. Do not
-  add authentication, persistence, Places/Items CRUD, image upload, or cloud infrastructure unless
-  the task explicitly expands the scope.
-- Keep the repository ready for the planned `.NET 10` backend under `apps/backend`, but do not invent
-  backend behavior ahead of the specification.
+- Treat `docs/places-items.md` as the current Places/Items product and API contract.
+  `docs/GEAR_ORGANIZER_PROJECT_SPEC.md` is the historical bootstrap brief.
+- The current milestone contains the first persisted Places/Items vertical slice. Do not expand it
+  into authentication, sharing, media upload, offline synchronization, scanning, AI recognition, or
+  cloud infrastructure unless a task explicitly changes that boundary.
 
 ## Git workflow
 
@@ -32,7 +30,7 @@ This file is the canonical repository guidance for Codex and other coding agents
 ## Repository layout
 
 - `apps/mobile` — Expo + React Native + TypeScript application based on Ignite.
-- `apps/backend` — planned ASP.NET Core API; it may not exist yet.
+- `apps/backend` — ASP.NET Core 10 Minimal API, EF Core, SQLite, migrations, and integration tests.
 - `docs` — product specification, architecture notes, and decisions.
 
 ## Mobile conventions
@@ -53,13 +51,27 @@ This file is the canonical repository guidance for Codex and other coding agents
   lime signal color, dominant product imagery, and restrained single-column hierarchy.
 - Review meaningful UI changes against the eight Expo design principles recorded in
   `docs/design-system.md`, then inspect light/dark screenshots and iterate before handoff.
+- Keep Place/Item server state behind `useFocusedApiResource` and `src/services/api`. Do not add a
+  second cache/query layer without first replacing this boundary deliberately.
+- Persist semantic Item `iconKey` values and render them through the explicit catalogue mapping.
+  Unknown keys must use the `generic-device` fallback.
+- Do not persist local photo URIs. Until a media service exists, accept only optional HTTPS URLs
+  and always provide a no-photo/error fallback.
 
-## Planned backend networking
+## Backend conventions and networking
 
-- The future local ASP.NET Core API must listen on all interfaces at `0.0.0.0:8080`, not only on
+- The local ASP.NET Core API listens on all interfaces at `0.0.0.0:8080`, not only on
   loopback, so emulators and physical devices can use the mobile launcher's LAN URL.
 - Docker Compose must publish host port `8080` to container port `8080`.
 - Keep this clear-text, all-interface binding development-only. Deployed environments use HTTPS.
+- Keep permissive CORS development-only; production origins require an explicit policy.
+- Extend the existing Minimal API directly; do not add CQRS, MediatR, generic repositories, or
+  speculative domain tables.
+- Keep EF entities internal to persistence and return explicit DTOs. Use Problem Details with stable
+  machine-readable `code` values and field errors for validation.
+- Preserve Place hierarchy invariants in the backend: no self-parenting, descendant cycles, or
+  cascading deletion of non-empty Places.
+- Add an EF migration and update the model snapshot for every schema change.
 
 ## Validation
 
@@ -75,6 +87,20 @@ pnpm expo:doctor
 
 For changes that affect bundling, also run `pnpm bundle:web`. Native changes require a fresh CNG
 prebuild/development build before release.
+
+For backend changes, run either local .NET 10 checks:
+
+```bash
+dotnet restore apps/backend/Yze.slnx
+dotnet build apps/backend/Yze.slnx --no-restore
+dotnet test apps/backend/Yze.slnx --no-build
+```
+
+or the deterministic Docker test stage when the host SDK is unavailable:
+
+```bash
+docker build --target test --tag yze-backend-test apps/backend
+```
 
 ## Documentation
 

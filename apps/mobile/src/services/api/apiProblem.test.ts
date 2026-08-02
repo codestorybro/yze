@@ -1,6 +1,6 @@
 import { ApiErrorResponse } from "apisauce"
 
-import { getGeneralApiProblem } from "./apiProblem"
+import { getApiFailure, getGeneralApiProblem } from "./apiProblem"
 
 test("handles connection errors", () => {
   expect(getGeneralApiProblem({ problem: "CONNECTION_ERROR" } as ApiErrorResponse<null>)).toEqual({
@@ -70,4 +70,39 @@ test("handles other client errors", () => {
 
 test("handles cancellation errors", () => {
   expect(getGeneralApiProblem({ problem: "CANCEL_ERROR" } as ApiErrorResponse<null>)).toBeNull()
+})
+
+test("preserves structured validation errors", () => {
+  expect(
+    getApiFailure({
+      ok: false,
+      problem: "CLIENT_ERROR",
+      status: 400,
+      data: {
+        code: "validation_failed",
+        detail: "Fix the highlighted fields.",
+        errors: { name: ["This field is required."] },
+      },
+    } as ApiErrorResponse<unknown>),
+  ).toEqual({
+    kind: "validation",
+    code: "validation_failed",
+    message: "Fix the highlighted fields.",
+    errors: { name: ["This field is required."] },
+  })
+})
+
+test("preserves machine-readable domain conflicts", () => {
+  expect(
+    getApiFailure({
+      ok: false,
+      problem: "CLIENT_ERROR",
+      status: 409,
+      data: { code: "place_not_empty", detail: "Move its contents first." },
+    } as ApiErrorResponse<unknown>),
+  ).toEqual({
+    kind: "conflict",
+    code: "place_not_empty",
+    message: "Move its contents first.",
+  })
 })

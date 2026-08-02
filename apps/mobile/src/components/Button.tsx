@@ -14,7 +14,7 @@ import type { ThemedStyle, ThemedStyleArray } from "@/theme/types"
 
 import { Text, TextProps } from "./Text"
 
-type Presets = "default" | "primary" | "secondary" | "ghost"
+type Presets = "default" | "primary" | "secondary" | "ghost" | "danger"
 
 export interface ButtonAccessoryProps {
   style: StyleProp<any>
@@ -230,6 +230,15 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
     }),
   ],
   ghost: [$styles.row, $baseViewStyle, ({ colors }) => ({ backgroundColor: colors.transparent })],
+  danger: [
+    $styles.row,
+    $baseViewStyle,
+    ({ colors }) => ({
+      borderWidth: 1,
+      borderColor: colors.error,
+      backgroundColor: colors.errorBackground,
+    }),
+  ],
 }
 
 const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
@@ -237,6 +246,7 @@ const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
   primary: [$baseTextStyle, ({ colors }) => ({ color: colors.onTint })],
   secondary: [$baseTextStyle],
   ghost: [$baseTextStyle, ({ colors }) => ({ color: colors.tint })],
+  danger: [$baseTextStyle, ({ colors }) => ({ color: colors.error })],
 }
 
 const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
@@ -244,6 +254,7 @@ const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
   primary: () => ({ opacity: 0.82 }),
   secondary: ({ colors }) => ({ backgroundColor: colors.surfaceMuted }),
   ghost: ({ colors }) => ({ backgroundColor: colors.tintSubtle }),
+  danger: () => ({ opacity: 0.75 }),
 }
 
 const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
@@ -251,4 +262,5 @@ const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
   primary: () => ({ opacity: 0.9 }),
   secondary: () => ({ opacity: 0.9 }),
   ghost: () => ({ opacity: 0.9 }),
+  danger: () => ({ opacity: 0.9 }),
 }

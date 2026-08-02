@@ -1,14 +1,28 @@
-import { createContext, PropsWithChildren, useContext } from "react"
+import { createContext, Dispatch, PropsWithChildren, SetStateAction, useContext } from "react"
 
 interface ScreenChromeContextValue {
   nativeTabs: boolean
+  setNativeTabsHidden: Dispatch<SetStateAction<boolean>>
 }
 
-const ScreenChromeContext = createContext<ScreenChromeContextValue>({ nativeTabs: false })
+const noop = () => undefined
+const ScreenChromeContext = createContext<ScreenChromeContextValue>({
+  nativeTabs: false,
+  setNativeTabsHidden: noop,
+})
 
-export function NativeTabsScreenChromeProvider({ children }: PropsWithChildren) {
+interface NativeTabsScreenChromeProviderProps extends PropsWithChildren {
+  hidden?: boolean
+  setHidden?: Dispatch<SetStateAction<boolean>>
+}
+
+export function NativeTabsScreenChromeProvider({
+  children,
+  hidden = false,
+  setHidden = noop,
+}: NativeTabsScreenChromeProviderProps) {
   return (
-    <ScreenChromeContext.Provider value={{ nativeTabs: true }}>
+    <ScreenChromeContext.Provider value={{ nativeTabs: !hidden, setNativeTabsHidden: setHidden }}>
       {children}
     </ScreenChromeContext.Provider>
   )
