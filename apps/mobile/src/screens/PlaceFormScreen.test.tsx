@@ -120,6 +120,7 @@ function place(): PlaceSummary {
 function placeDetails(): PlaceDetails {
   return {
     ...place(),
+    isRoot: false,
     parentPlaceId: "desk",
     ancestry: [{ id: "desk", name: "Desk" }],
     children: [],

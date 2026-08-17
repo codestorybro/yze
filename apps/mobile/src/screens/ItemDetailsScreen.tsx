@@ -81,6 +81,7 @@ export function ItemDetailsScreen({ itemId }: ItemDetailsScreenProps) {
       <View style={themed($page)}>
         <FeatureHeader
           eyebrow="Item"
+          reserveNavigationSpace={false}
           title={item.name}
           subtitle={
             [item.brand, item.model].filter(Boolean).join(" · ") || "A physical object in your map."
@@ -100,13 +101,17 @@ export function ItemDetailsScreen({ itemId }: ItemDetailsScreenProps) {
 
         <View style={themed($placeCard)}>
           <View style={$flex}>
-            <Text preset="eyebrow" style={themed($muted)} text="Current Place" />
+            <Text
+              preset="eyebrow"
+              style={themed($muted)}
+              text={place.isRoot ? "Organizer root" : "Current Place"}
+            />
             <Text preset="section" text={place.name} />
           </View>
           <Button
             preset="ghost"
-            onPress={() => router.push(`/places/${place.id}` as Href)}
-            text="Open"
+            onPress={() => router.push((place.isRoot ? "/places" : `/places/${place.id}`) as Href)}
+            text={place.isRoot ? "Open map" : "Open"}
           />
         </View>
 

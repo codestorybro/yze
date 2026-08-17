@@ -7,6 +7,7 @@ import type { ThemedStyle } from "@/theme/types"
 
 interface QuickActionProps {
   accessibilityHint: string
+  disabled?: boolean
   emphasized?: boolean
   fallback: string
   icon: SymbolViewProps["name"]
@@ -17,6 +18,7 @@ interface QuickActionProps {
 /** A compact, platform-symbol-based command used below the primary product hero. */
 export function QuickAction({
   accessibilityHint,
+  disabled = false,
   emphasized = false,
   fallback,
   icon,
@@ -33,9 +35,11 @@ export function QuickAction({
       accessibilityHint={accessibilityHint}
       accessibilityLabel={label}
       accessibilityRole="button"
+      accessibilityState={{ disabled }}
+      disabled={disabled}
       hitSlop={4}
       onPress={onPress}
-      style={({ pressed }) => [themed($action), pressed && $pressed]}
+      style={({ pressed }) => [themed($action), disabled && $disabled, pressed && $pressed]}
     >
       <View style={themed(emphasized ? $emphasizedIconFrame : $iconFrame)}>
         <SymbolView
@@ -97,3 +101,4 @@ const $pressed: ViewStyle = {
   opacity: 0.72,
   transform: [{ scale: 0.98 }],
 }
+const $disabled: ViewStyle = { opacity: 0.42 }

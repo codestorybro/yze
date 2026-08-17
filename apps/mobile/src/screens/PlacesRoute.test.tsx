@@ -10,20 +10,8 @@ const mockActions: Array<{
 }> = []
 
 jest.mock("expo-router", () => ({
-  router: { dismissTo: jest.fn(), push: jest.fn() },
+  router: { push: jest.fn() },
 }))
-jest.mock("@/components/navigation/FloatingBackButton", () => {
-  const { Pressable } = jest.requireActual("react-native")
-  return {
-    FloatingBackButton: ({
-      accessibilityLabel,
-      onPress,
-    }: {
-      accessibilityLabel: string
-      onPress: () => void
-    }) => <Pressable accessibilityLabel={accessibilityLabel} onPress={onPress} />,
-  }
-})
 jest.mock("@/components/navigation/ContextualToolbar", () => {
   const { Pressable, Text, View } = jest.requireActual("react-native")
   return {
@@ -53,11 +41,18 @@ describe("PlacesRoute", () => {
     mockActions.length = 0
   })
 
-  it("returns explicitly to Home instead of depending on stack history", () => {
+  it("uses the persistent bottom tabs for root navigation and has no redundant Back button", () => {
     const screen = render(<PlacesRoute />)
 
-    fireEvent.press(screen.getByLabelText("Back to Home"))
-    expect(router.dismissTo).toHaveBeenCalledWith("/")
+    expect(screen.queryByLabelText("Back to Home")).toBeNull()
+    expect(mockActions).toHaveLength(2)
+  })
+
+  it("adds content directly under the organizer root", () => {
+    const screen = render(<PlacesRoute />)
+
+    fireEvent.press(screen.getByLabelText("Add Place or Item"))
+    expect(router.push).toHaveBeenCalledWith("/places/add?root=true")
   })
 
   it("uses a pencil action to choose the Place to edit", () => {

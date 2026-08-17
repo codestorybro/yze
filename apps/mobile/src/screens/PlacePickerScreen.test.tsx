@@ -1,9 +1,10 @@
 import { router } from "expo-router"
 import { fireEvent, render, waitFor } from "@testing-library/react-native"
 
+import type { OrganizerTreeRow } from "@/features/organizer/organizerTree"
 import { PlacePickerScreen } from "@/screens/PlacePickerScreen"
-import { getChildPlaces, getPlace, getRootPlaces, movePlace } from "@/services/api"
-import type { PlaceDetails, PlaceSummary } from "@/services/api/types"
+import { getOrganizerTree, movePlace } from "@/services/api"
+import type { OrganizerTree } from "@/services/api/types"
 import { ThemeProvider } from "@/theme/context"
 import { notifySuccess } from "@/utils/safeHaptics"
 
@@ -15,66 +16,97 @@ jest.mock("@/components/feedback/ToastProvider", () => ({
 }))
 jest.mock("@/utils/safeHaptics", () => ({ notifySuccess: jest.fn() }))
 jest.mock("@/services/api", () => ({
-  getChildPlaces: jest.fn(),
-  getPlace: jest.fn(),
-  getRootPlaces: jest.fn(),
+  getOrganizerTree: jest.fn(),
   movePlace: jest.fn(),
 }))
-jest.mock("@/components/organizer/FeatureHeader", () => {
-  const { Text } = jest.requireActual("react-native")
-  return { FeatureHeader: ({ title }: { title: string }) => <Text>{title}</Text> }
-})
-jest.mock("@/components/navigation/SheetContent", () => {
-  const { View } = jest.requireActual("react-native")
+jest.mock("@/components/organizer/FeatureHeader", () => ({
+  FeatureHeader: ({ subtitle, title }: { subtitle?: string; title: string }) => {
+    const { Text, View } = jest.requireActual("react-native")
+    return (
+      <View>
+        <Text>{title}</Text>
+        {subtitle ? <Text>{subtitle}</Text> : null}
+      </View>
+    )
+  },
+}))
+jest.mock("@/components/navigation/SheetContent", () => ({
+  SheetScrollView: ({ children }: { children: React.ReactNode }) => {
+    const { View } = jest.requireActual("react-native")
+    return <View>{children}</View>
+  },
+}))
+jest.mock("@/components/organizer/OrganizerTreeView", () => {
+  const { Pressable, Text, View } = jest.requireActual("react-native")
   return {
-    SheetList: ({
-      data,
-      ListEmptyComponent,
-      ListFooterComponent,
+    OrganizerTreeView: ({
       ListHeaderComponent,
-      renderItem,
+      floatingFooter,
+      onSelect,
+      selectedId,
+      selectionAllowed,
+      tree,
     }: any) => (
       <View>
         {ListHeaderComponent}
-        {data.length
-          ? data.map((item: PlaceSummary, index: number) => (
-              <View key={item.id}>{renderItem({ item, index })}</View>
-            ))
-          : ListEmptyComponent}
-        {ListFooterComponent}
+        {floatingFooter}
+        {tree.places.map((place: OrganizerTree["places"][number]) => {
+          const row = mockPlaceRow(place)
+          const disabled = !selectionAllowed(row)
+          return (
+            <Pressable
+              accessibilityLabel={`Select ${row.name}`}
+              accessibilityRole="radio"
+              accessibilityState={{ checked: selectedId === row.id, disabled }}
+              disabled={disabled}
+              key={row.id}
+              onPress={() => onSelect(row)}
+            >
+              <Text>{row.name}</Text>
+            </Pressable>
+          )
+        })}
+      </View>
+    ),
+  }
+})
+jest.mock("@/components/organizer/TreeSelectionBar", () => {
+  const { Pressable, Text, View } = jest.requireActual("react-native")
+  return {
+    TreeSelectionBar: ({ actionLabel, error, onPress, title }: any) => (
+      <View>
+        <Text>{title}</Text>
+        <Pressable onPress={onPress}>
+          <Text>{actionLabel}</Text>
+        </Pressable>
+        {error ? <Text>{error}</Text> : null}
       </View>
     ),
   }
 })
 
-const mockedGetRootPlaces = getRootPlaces as jest.MockedFunction<typeof getRootPlaces>
-const mockedGetChildPlaces = getChildPlaces as jest.MockedFunction<typeof getChildPlaces>
-const mockedGetPlace = getPlace as jest.MockedFunction<typeof getPlace>
+const mockedGetOrganizerTree = getOrganizerTree as jest.MockedFunction<typeof getOrganizerTree>
 const mockedMovePlace = movePlace as jest.MockedFunction<typeof movePlace>
 const mockedNotifySuccess = notifySuccess as jest.MockedFunction<typeof notifySuccess>
 
 describe("PlacePickerScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockedGetRootPlaces.mockResolvedValue({
-      kind: "ok",
-      data: [
-        summary("Ancestor", "ancestor", 1),
-        summary("Destination", "destination", 1),
-        summary("Candidate", "candidate"),
-      ],
-    })
-    mockedGetPlace.mockResolvedValue({ kind: "ok", data: destination() })
-    mockedMovePlace.mockResolvedValue({ kind: "ok", data: summary("Candidate", "candidate") })
+    mockedGetOrganizerTree.mockResolvedValue({ kind: "ok", data: organizerTree() })
+    mockedMovePlace.mockResolvedValue({ kind: "ok", data: {} as never })
   })
 
-  it("moves a selected existing Place into the destination and confirms success", async () => {
+  it("shows the whole hierarchy and moves a valid Place into the destination", async () => {
     const screen = renderPicker()
 
     await waitFor(() => expect(screen.getByLabelText("Select Candidate")).toBeDefined())
+    expect(screen.getByText("Ancestor")).toBeDefined()
+    expect(screen.getByText("Destination")).toBeDefined()
     expect(screen.getByLabelText("Select Ancestor").props.accessibilityState.disabled).toBe(true)
-    expect(screen.getByLabelText("Browse inside Ancestor")).toBeDefined()
     expect(screen.getByLabelText("Select Destination").props.accessibilityState.disabled).toBe(true)
+    expect(screen.getByLabelText("Select Existing child").props.accessibilityState.disabled).toBe(
+      true,
+    )
 
     fireEvent.press(screen.getByLabelText("Select Candidate"))
     fireEvent.press(screen.getByText("Move here"))
@@ -87,7 +119,7 @@ describe("PlacePickerScreen", () => {
     })
   })
 
-  it("opens the selected Place for management without mutating its hierarchy", async () => {
+  it("opens a selected Place for editing without changing the hierarchy", async () => {
     const screen = render(
       <ThemeProvider>
         <PlacePickerScreen mode="manage" />
@@ -96,58 +128,45 @@ describe("PlacePickerScreen", () => {
 
     await waitFor(() => expect(screen.getByLabelText("Select Candidate")).toBeDefined())
     fireEvent.press(screen.getByLabelText("Select Candidate"))
-    fireEvent.press(screen.getByText("Manage Place"))
+    fireEvent.press(screen.getByText("Edit Place"))
 
     expect(router.replace).toHaveBeenCalledWith("/places/place-form?placeId=candidate")
     expect(mockedMovePlace).not.toHaveBeenCalled()
   })
 
-  it("retries the current hierarchy level without mixing root data into its breadcrumb", async () => {
-    const branch = summary("Branch", "branch", 1)
-    mockedGetChildPlaces
-      .mockResolvedValueOnce({ kind: "ok", data: [branch] })
-      .mockResolvedValueOnce({ kind: "cannot-connect", temporary: true })
-      .mockResolvedValueOnce({ kind: "ok", data: [branch] })
-    const screen = renderPicker()
+  it("maps the visible organizer root to a null Place parent", async () => {
+    const screen = render(
+      <ThemeProvider>
+        <PlacePickerScreen
+          destinationPlaceId="root"
+          destinationPlaceName="All gear"
+          mode="attach"
+        />
+      </ThemeProvider>,
+    )
 
-    await waitFor(() => expect(screen.getByLabelText("Browse inside Ancestor")).toBeDefined())
-    fireEvent.press(screen.getByLabelText("Browse inside Ancestor"))
-    await waitFor(() => expect(screen.getByLabelText("Browse inside Branch")).toBeDefined())
-    fireEvent.press(screen.getByLabelText("Browse inside Branch"))
-
-    await waitFor(() => expect(screen.getByText("Try again")).toBeDefined())
-    fireEvent.press(screen.getByText("Try again"))
+    await waitFor(() => expect(screen.getByLabelText("Select Destination")).toBeDefined())
+    fireEvent.press(screen.getByLabelText("Select Destination"))
+    fireEvent.press(screen.getByText("Move here"))
 
     await waitFor(() => {
-      expect(mockedGetChildPlaces.mock.calls.map(([parentId]) => parentId)).toEqual([
-        "ancestor",
-        "branch",
-        "ancestor",
-      ])
-      expect(screen.getByText("Ancestor")).toBeDefined()
-      expect(screen.getByLabelText("Select Branch")).toBeDefined()
-      expect(screen.queryByLabelText("Select Candidate")).toBeNull()
+      expect(mockedMovePlace).toHaveBeenCalledWith("destination", null)
+      expect(mockShowToast).toHaveBeenCalledWith("Place moved into All gear")
     })
   })
 
-  it("reloads destination details after an initial error before enabling selections", async () => {
-    mockedGetPlace
+  it("retries loading the complete hierarchy after an API failure", async () => {
+    mockedGetOrganizerTree
       .mockResolvedValueOnce({ kind: "cannot-connect", temporary: true })
-      .mockResolvedValueOnce({ kind: "ok", data: destination() })
+      .mockResolvedValueOnce({ kind: "ok", data: organizerTree() })
     const screen = renderPicker()
 
     await waitFor(() => expect(screen.getByText("Try again")).toBeDefined())
     fireEvent.press(screen.getByText("Try again"))
 
     await waitFor(() => {
-      expect(mockedGetPlace).toHaveBeenCalledTimes(2)
-      expect(screen.getByLabelText("Select Destination").props.accessibilityState.disabled).toBe(
-        true,
-      )
-      expect(screen.getByLabelText("Select Ancestor").props.accessibilityState.disabled).toBe(true)
-      expect(screen.getByLabelText("Select Candidate").props.accessibilityState.disabled).toBe(
-        false,
-      )
+      expect(mockedGetOrganizerTree).toHaveBeenCalledTimes(2)
+      expect(screen.getByLabelText("Select Candidate")).toBeDefined()
     })
   })
 })
@@ -164,30 +183,41 @@ function renderPicker() {
   )
 }
 
-function destination(): PlaceDetails {
+function organizerTree(): OrganizerTree {
   return {
-    id: "destination",
-    name: "Destination",
-    parentPlaceId: "ancestor",
-    photoUrl: null,
-    description: null,
-    createdAt: "2026-08-01T10:00:00Z",
-    updatedAt: "2026-08-01T10:00:00Z",
-    ancestry: [{ id: "ancestor", name: "Ancestor" }],
-    children: [summary("Existing child", "child")],
+    root: { id: "root", name: "All gear", childPlaceCount: 2, itemCount: 0 },
+    places: [
+      place("Ancestor", "ancestor", "root"),
+      place("Destination", "destination", "ancestor"),
+      place("Existing child", "existing", "destination"),
+      place("Candidate", "candidate", "root"),
+    ],
     items: [],
   }
 }
 
-function summary(name: string, id: string, childPlaceCount = 0): PlaceSummary {
+function place(name: string, id: string, parentPlaceId: string) {
   return {
     id,
     name,
+    parentPlaceId,
     photoUrl: null,
     description: null,
-    childPlaceCount,
-    itemCount: 0,
     createdAt: "2026-08-01T10:00:00Z",
     updatedAt: "2026-08-01T10:00:00Z",
+  }
+}
+
+function mockPlaceRow(place: OrganizerTree["places"][number]): OrganizerTreeRow {
+  return {
+    id: place.id,
+    kind: "place",
+    name: place.name,
+    parentId: place.parentPlaceId,
+    depth: 1,
+    connections: [],
+    childCount: 0,
+    expandable: false,
+    expanded: true,
   }
 }

@@ -1,4 +1,13 @@
-import type { Item, PlaceDetails, PlacePath, PlaceSummary } from "./types"
+import type {
+  Item,
+  OrganizerItemNode,
+  OrganizerPlaceNode,
+  OrganizerRootNode,
+  OrganizerTree,
+  PlaceDetails,
+  PlacePath,
+  PlaceSummary,
+} from "./types"
 
 export function isPlaceSummary(value: unknown): value is PlaceSummary {
   if (!isRecord(value)) return false
@@ -20,6 +29,7 @@ export function isPlaceDetails(value: unknown): value is PlaceDetails {
 
   return (
     isString(value.id) &&
+    typeof value.isRoot === "boolean" &&
     isString(value.name) &&
     isNullableString(value.parentPlaceId) &&
     isNullableString(value.photoUrl) &&
@@ -64,12 +74,59 @@ export function isItem(value: unknown): value is Item {
   )
 }
 
+export function isOrganizerTree(value: unknown): value is OrganizerTree {
+  if (!isRecord(value)) return false
+
+  return (
+    isOrganizerRootNode(value.root) &&
+    Array.isArray(value.places) &&
+    value.places.every(isOrganizerPlaceNode) &&
+    Array.isArray(value.items) &&
+    value.items.every(isOrganizerItemNode)
+  )
+}
+
 export function isArrayOf<T>(guard: (value: unknown) => value is T) {
   return (value: unknown): value is T[] => Array.isArray(value) && value.every(guard)
 }
 
 function isPlacePath(value: unknown): value is PlacePath {
   return isRecord(value) && isString(value.id) && isString(value.name)
+}
+
+function isOrganizerRootNode(value: unknown): value is OrganizerRootNode {
+  return (
+    isRecord(value) &&
+    isString(value.id) &&
+    isString(value.name) &&
+    isNonNegativeNumber(value.childPlaceCount) &&
+    isNonNegativeNumber(value.itemCount)
+  )
+}
+
+function isOrganizerPlaceNode(value: unknown): value is OrganizerPlaceNode {
+  return (
+    isRecord(value) &&
+    isString(value.id) &&
+    isString(value.parentPlaceId) &&
+    isString(value.name) &&
+    isNullableString(value.photoUrl) &&
+    isNullableString(value.description) &&
+    isString(value.createdAt) &&
+    isString(value.updatedAt)
+  )
+}
+
+function isOrganizerItemNode(value: unknown): value is OrganizerItemNode {
+  return (
+    isRecord(value) &&
+    isString(value.id) &&
+    isString(value.placeId) &&
+    isString(value.name) &&
+    isString(value.iconKey) &&
+    typeof value.quantity === "number" &&
+    value.quantity > 0
+  )
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

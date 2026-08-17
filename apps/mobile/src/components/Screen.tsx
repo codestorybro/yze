@@ -109,7 +109,14 @@ function ScreenWithoutScrolling(props: ScreenProps) {
   const { style, contentContainerStyle, children, preset } = props
   return (
     <View style={[$outerStyle, style]}>
-      <View style={[$innerStyle, preset === "fixed" && $justifyFlexEnd, contentContainerStyle]}>
+      <View
+        style={[
+          $innerStyle,
+          $fixedInnerStyle,
+          preset === "fixed" && $justifyFlexEnd,
+          contentContainerStyle,
+        ]}
+      >
         {children}
       </View>
     </View>
@@ -159,7 +166,12 @@ function ScreenWithScrolling(props: ScrollingScreenImplementationProps) {
       {topContentInset > 0 ? (
         <View style={{ height: topContentInset }} testID="screen-top-content-inset" />
       ) : null}
-      <View style={[$innerStyle, $scrollInnerStyle, contentContainerStyle]}>{children}</View>
+      <View
+        style={[$innerStyle, $scrollInnerStyle, contentContainerStyle]}
+        testID="screen-scroll-inner"
+      >
+        {children}
+      </View>
       {bottomContentInset > 0 ? (
         <View style={{ height: bottomContentInset }} testID="screen-bottom-content-inset" />
       ) : null}
@@ -271,10 +283,11 @@ const $justifyFlexEnd: ViewStyle = {
 }
 
 const $innerStyle: ViewStyle = {
-  flex: 1,
   justifyContent: "flex-start",
   alignItems: "stretch",
 }
+
+const $fixedInnerStyle: ViewStyle = { flex: 1 }
 
 const $scrollContentContainer: ViewStyle = {
   flexGrow: 1,
@@ -282,4 +295,5 @@ const $scrollContentContainer: ViewStyle = {
 
 const $scrollInnerStyle: ViewStyle = {
   flexGrow: 1,
+  flexShrink: 0,
 }

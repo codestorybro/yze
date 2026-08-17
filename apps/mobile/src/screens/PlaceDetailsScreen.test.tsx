@@ -114,6 +114,7 @@ describe("PlaceDetailsScreen", () => {
 function details(): PlaceDetails {
   return {
     id: "root",
+    isRoot: false,
     name: "Desk",
     parentPlaceId: null,
     photoUrl: null,

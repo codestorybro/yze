@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using Yze.Api.Domain;
 using Yze.Api.Features;
 using Xunit;
 
@@ -65,6 +66,73 @@ public sealed class PlacesItemsApiTests
 
         Assert.Equal(1, retrieved!.Quantity);
         Assert.Equal("cable", retrieved.IconKey);
+    }
+
+    [Fact]
+    public async Task ReturnsTheCompleteOrganizerTreeFromTheImmutableRoot()
+    {
+        using var factory = new YzeApiFactory();
+        using var client = factory.CreateClient();
+        var studio = await CreatePlace(client, "Studio");
+        var drawer = await CreatePlace(client, "Drawer", studio.Id);
+        var rootItem = await CreateItem(client, OrganizerRoot.Id);
+        var nestedItem = await CreateItem(client, drawer.Id);
+
+        var tree = await client.GetFromJsonAsync<OrganizerTreeResponse>("/api/organizer/tree");
+
+        Assert.NotNull(tree);
+        Assert.Equal(OrganizerRoot.Id, tree.Root.Id);
+        Assert.Equal("All gear", tree.Root.Name);
+        Assert.Equal(1, tree.Root.ChildPlaceCount);
+        Assert.Equal(1, tree.Root.ItemCount);
+        Assert.Equal(OrganizerRoot.Id, tree.Places.Single(place => place.Id == studio.Id).ParentPlaceId);
+        Assert.Equal(studio.Id, tree.Places.Single(place => place.Id == drawer.Id).ParentPlaceId);
+        Assert.Contains(tree.Items, item => item.Id == rootItem.Id && item.PlaceId == OrganizerRoot.Id);
+        Assert.Contains(tree.Items, item => item.Id == nestedItem.Id && item.PlaceId == drawer.Id);
+    }
+
+    [Fact]
+    public async Task CreatesAndMovesAnItemDirectlyUnderTheOrganizerRoot()
+    {
+        using var factory = new YzeApiFactory();
+        using var client = factory.CreateClient();
+        var place = await CreatePlace(client, "Travel case");
+        var item = await CreateItem(client, place.Id);
+
+        var move = await client.PutAsJsonAsync(
+            $"/api/items/{item.Id}/place",
+            new MoveItemRequest(OrganizerRoot.Id));
+        var moved = await move.Content.ReadFromJsonAsync<ItemResponse>();
+        var createdAtRoot = await CreateItem(client, OrganizerRoot.Id);
+
+        Assert.Equal(HttpStatusCode.OK, move.StatusCode);
+        Assert.Equal(OrganizerRoot.Id, moved!.PlaceId);
+        Assert.Equal(OrganizerRoot.Id, createdAtRoot.PlaceId);
+    }
+
+    [Theory]
+    [InlineData("update")]
+    [InlineData("move")]
+    [InlineData("delete")]
+    public async Task RejectsMutatingTheOrganizerRoot(string operation)
+    {
+        using var factory = new YzeApiFactory();
+        using var client = factory.CreateClient();
+
+        var response = operation switch
+        {
+            "update" => await client.PutAsJsonAsync(
+                $"/api/places/{OrganizerRoot.Id}",
+                new UpdatePlaceRequest("Renamed", null, null)),
+            "move" => await client.PutAsJsonAsync(
+                $"/api/places/{OrganizerRoot.Id}/parent",
+                new MovePlaceRequest(null)),
+            _ => await client.DeleteAsync($"/api/places/{OrganizerRoot.Id}"),
+        };
+        var problem = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal("organizer_root_immutable", problem.GetProperty("code").GetString());
     }
 
     [Theory]

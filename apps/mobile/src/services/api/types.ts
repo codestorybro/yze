@@ -24,6 +24,7 @@ export interface PlacePath {
 
 export interface PlaceDetails {
   id: string
+  isRoot: boolean
   name: string
   parentPlaceId: string | null
   photoUrl: string | null
@@ -33,6 +34,37 @@ export interface PlaceDetails {
   ancestry: PlacePath[]
   children: PlaceSummary[]
   items: Item[]
+}
+
+export interface OrganizerRootNode {
+  id: string
+  name: string
+  childPlaceCount: number
+  itemCount: number
+}
+
+export interface OrganizerPlaceNode {
+  id: string
+  parentPlaceId: string
+  name: string
+  photoUrl: string | null
+  description: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface OrganizerItemNode {
+  id: string
+  placeId: string
+  name: string
+  iconKey: string
+  quantity: number
+}
+
+export interface OrganizerTree {
+  root: OrganizerRootNode
+  places: OrganizerPlaceNode[]
+  items: OrganizerItemNode[]
 }
 
 export interface PlaceWriteRequest {

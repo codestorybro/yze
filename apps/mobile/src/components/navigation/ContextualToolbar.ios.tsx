@@ -1,8 +1,9 @@
 import { Fragment } from "react"
 import type { TextStyle, ViewStyle } from "react-native"
-import { Pressable, View } from "react-native"
+import { Platform, Pressable, View } from "react-native"
 import { Stack } from "expo-router"
 import { SymbolView } from "expo-symbols"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { Text } from "@/components/Text"
 import { useAppTheme } from "@/theme/context"
@@ -11,15 +12,23 @@ import type { ThemedStyle } from "@/theme/types"
 import type { ContextualToolbarAction, ContextualToolbarProps } from "./ContextualToolbar.types"
 import { useNativeTabAccessory } from "./useNativeTabAccessory"
 
-/** Native Stack toolbar for detail routes, with a trailing dock above visible Android tabs. */
+/** iOS 26 uses the native tab accessory; older iOS receives a quiet trailing fallback dock. */
 export function ContextualToolbar({ actions }: ContextualToolbarProps) {
   const nativeTabs = useNativeTabAccessory(actions)
-  const { themed } = useAppTheme()
+  const insets = useSafeAreaInsets()
+  const {
+    theme: { spacing },
+  } = useAppTheme()
   if (actions.length === 0) return null
+
+  if (nativeTabs && iosMajorVersion() >= 26) return null
 
   if (nativeTabs) {
     return (
-      <View pointerEvents="box-none" style={themed($floatingHost)}>
+      <View
+        pointerEvents="box-none"
+        style={[$floatingHost, { bottom: insets.bottom + spacing.sm }]}
+      >
         <ToolbarDock actions={actions} />
       </View>
     )
@@ -55,7 +64,6 @@ function ToolbarButton({ action }: { action: ContextualToolbarAction }) {
     theme: { colors },
     themed,
   } = useAppTheme()
-
   return (
     <Pressable
       accessibilityLabel={action.accessibilityLabel}
@@ -83,15 +91,18 @@ function ToolbarButton({ action }: { action: ContextualToolbarAction }) {
   )
 }
 
+function iosMajorVersion() {
+  return Number.parseInt(String(Platform.Version).split(".")[0] ?? "0", 10)
+}
+
 export type { ContextualToolbarAction }
 
-const $floatingHost: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+const $floatingHost: ViewStyle = {
   position: "absolute",
   zIndex: 100,
   right: 24,
-  bottom: spacing.md,
   alignItems: "flex-end",
-})
+}
 const $dock: ThemedStyle<ViewStyle> = ({ colors, radii, spacing }) => ({
   flexDirection: "row",
   alignItems: "center",
@@ -101,7 +112,10 @@ const $dock: ThemedStyle<ViewStyle> = ({ colors, radii, spacing }) => ({
   borderColor: colors.controlBorder,
   borderRadius: radii.pill,
   backgroundColor: colors.surfaceRaised,
-  elevation: 6,
+  shadowColor: colors.overlay50,
+  shadowOffset: { width: 0, height: 8 },
+  shadowOpacity: 0.14,
+  shadowRadius: 18,
 })
 const $button: ThemedStyle<ViewStyle> = ({ radii }) => ({
   width: 48,

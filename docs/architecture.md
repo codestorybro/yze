@@ -29,6 +29,8 @@ The mobile app retains its Ignite foundation and uses:
 - `EXPO_PUBLIC_API_URL` as the explicit public backend base URL;
 - Reanimated for short layout/spring transitions, a root toast host for persistent mutation
   feedback, and best-effort Expo Haptics after confirmed mutations;
+- React Native Gesture Handler plus Reanimated for the organizer tree's long-press drag and drop,
+  continuous edge autoscroll, branch expansion, and Reduce Motion-aware layout transitions;
 - `expo-symbols` with an explicit semantic `iconKey` catalogue and generic fallback;
 - `scripts/development.mjs` for one automatic LAN URL across simulators and physical devices.
 
@@ -36,21 +38,32 @@ Routes stay thin. Feature composition lives in `src/screens`, reusable Place/Ite
 `src/components/organizer`, form serialization and icon mapping live in `src/features/organizer`,
 and no screen calls `fetch` directly.
 
-Within the Places Stack, the global native tab bar is hidden while route-level native Stack
-toolbars provide contextual actions. `FloatingBackButton` owns the fixed Back control in transparent
-Stack headers, and native form-sheet routes open at 80% with a stable full-height expansion detent. `ContextualToolbar` and
-`FloatingBackButton` isolate the native implementations and provide web fallbacks; feature screens
-contain no platform/version checks. Form-sheet screens opt out of the full-screen status-bar and
-Back-button content clearances so their content remains aligned to the sheet itself. Their shared
-`SheetScrollView`/`SheetList` boundary renders a scrollable as the route's first native content view,
-allowing `react-native-screens` to coordinate detents and keyboard insets reliably.
+The Places root retains the global native tab bar. Its trailing Add/Manage control group is a native
+bottom accessory on iOS 26 and a semantic floating dock above the native tabs on older iOS and
+Android; the native tab host owns the real tab-bar inset, so feature code never assumes its height.
+Nested Place, Item, and sheet paths hide global tabs and use route-level Stack controls.
+`FloatingBackButton` owns the fixed Back control in transparent Stack headers, while
+`unstable_settings.initialRouteName = "index"` gives cold deep links a valid Back destination.
+
+Native form-sheet routes open at 80% with a stable full-height expansion detent.
+`ContextualToolbar`, `NativeTabAccessory`, and `FloatingBackButton` isolate platform adaptations and
+provide web fallbacks; feature screens contain no platform/version checks. Form-sheet screens opt
+out of full-screen status-bar and Back-button content clearances so their content remains aligned to
+the sheet itself. Their shared `SheetScrollView`/`SheetList` boundary renders a scrollable as the
+route's first native content view, allowing `react-native-screens` to coordinate detents and keyboard
+insets reliably. Tree-selection sheets render their confirmation as a fixed sibling overlay, keeping
+the native list first and the action visible after a deep selection.
 
 ```text
 (tabs)/places/index
   -> PlacesScreen
     -> useFocusedApiResource
       -> services/api
-        -> GET /api/places
+        -> GET /api/organizer/tree
+          -> immutable root + flat Place/Item nodes
+    -> OrganizerTreeView
+      -> flatten + expand/collapse + drag target validation
+      -> PUT Place parent / PUT Item place
 
 (tabs)/places/[placeId]
   -> PlaceDetailsScreen
@@ -67,6 +80,11 @@ and refetches when a route regains focus. A successful form closes only after pe
 the source route then reloads. Moving content therefore refreshes the source immediately and the
 destination the next time it becomes visible.
 
+The organizer root adds one bounded optimistic override above that resource: a legal drag updates
+the flat tree immediately, the API remains authoritative, failure discards the override, and a new
+resource response supersedes it by identity. This is interaction state, not a second persistent
+cache.
+
 If future features require cross-screen optimistic updates, offline synchronization, or background
 refetch, replace this boundary with one shared query solution rather than building another cache in
 parallel.
@@ -77,11 +95,18 @@ parallel.
 `YzeDbContext` without CQRS, MediatR, generic repositories, or speculative application layers.
 Persistence entities never leave the API; endpoint contracts are explicit records.
 
-The domain contains only `Place` and `Item`. A Place has a restrictive self-reference and Items have
-a restrictive required Place reference. Cycle checks walk only the proposed ancestry, Place details
+The domain contains only `Place` and `Item`. One seeded Place with a stable reserved UUID is the
+system-owned organizer root; keeping it inside the existing model lets Items remain attached to a
+required Place without adding another domain table or nullable foreign key. Root mutations are
+rejected by the endpoint boundary. A Place has a restrictive self-reference and Items have a
+restrictive required Place reference. Cycle checks walk only the proposed ancestry, Place details
 load one direct level, and summary counts are projected by SQL. Moving a Place uses a serializable
 transaction. Deleting a non-empty Place is checked in the domain flow and protected again by foreign
 keys.
+
+`GET /api/organizer/tree` returns one flat, read-optimized projection in two ordered queries: compact
+Place nodes and compact Item nodes. Mobile reconstructs the hierarchy without N+1 calls. Full Item
+metadata remains exclusive to Item/detail endpoints.
 
 Errors use ASP.NET Core Problem Details with stable machine-readable codes. Mobile preserves field
 errors and domain conflicts rather than flattening every 4xx response. The permissive browser CORS
@@ -91,9 +116,10 @@ explicitly when a web deployment exists.
 ### Persistence
 
 SQLite provides durable local persistence without adding another service. The first EF migration is
-`InitialPlacesAndItems`; indexes exist on `Places.ParentPlaceId` and `Items.PlaceId`. Tags are a small
-JSON array in one text column, dates use `DateOnly`, timestamps use UTC `DateTimeOffset`, and prices
-use `decimal(19,4)`.
+`InitialPlacesAndItems`; `AddOrganizerRoot` seeds the fixed root and reparents legacy top-level
+Places. Its reversible path preserves root Items in a recovery Place. Indexes exist on
+`Places.ParentPlaceId` and `Items.PlaceId`. Tags are a small JSON array in one text column, dates use
+`DateOnly`, timestamps use UTC `DateTimeOffset`, and prices use `decimal(19,4)`.
 
 The API runs at `0.0.0.0:8080`. `compose.yaml` publishes port `8080` and mounts the named `yze-data`
 volume at `/data`. This clear-text binding is development-only; deployed environments use HTTPS.
@@ -107,7 +133,7 @@ Screens consume semantic tokens and never select raw palette values.
 ```text
 theme tokens
   -> shared primitives (Screen, ListScreen, Text, Button, FormField)
-  -> domain surfaces (PlaceCard, ItemCard, ItemIcon, RemotePhoto)
+  -> domain surfaces (OrganizerTreeView, PlaceCard, ItemCard, ItemIcon, RemotePhoto)
   -> platform-adaptive controls (AppTabs and native Stack presentation)
   -> route screens
 ```
@@ -134,6 +160,8 @@ platform-specific prebuild.
 - No authentication, users, tenancy, sharing, or collaboration.
 - No binary image upload; only optional remote HTTPS URLs and visual fallbacks.
 - No offline synchronization or competing persistent API cache.
-- No QR/barcode/OCR/AI recognition, analytics dashboard, or drag-and-drop physics.
+- No QR/barcode/OCR/AI recognition or analytics dashboard.
+- Drag and drop reparents nodes only; manual sibling ordering and persisted drag coordinates remain
+  outside the current domain.
 - SQLite and automatic startup migration assume one local API instance; production scaling requires
   an explicit database/deployment decision.

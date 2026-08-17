@@ -24,6 +24,7 @@ public sealed record PlaceSummaryResponse(
 
 public sealed record PlaceDetailsResponse(
     Guid Id,
+    bool IsRoot,
     string Name,
     Guid? ParentPlaceId,
     string? PhotoUrl,
@@ -33,6 +34,33 @@ public sealed record PlaceDetailsResponse(
     IReadOnlyList<PlacePathResponse> Ancestry,
     IReadOnlyList<PlaceSummaryResponse> Children,
     IReadOnlyList<ItemResponse> Items);
+
+public sealed record OrganizerRootResponse(
+    Guid Id,
+    string Name,
+    int ChildPlaceCount,
+    int ItemCount);
+
+public sealed record OrganizerPlaceResponse(
+    Guid Id,
+    Guid ParentPlaceId,
+    string Name,
+    string? PhotoUrl,
+    string? Description,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset UpdatedAt);
+
+public sealed record OrganizerItemResponse(
+    Guid Id,
+    Guid PlaceId,
+    string Name,
+    string IconKey,
+    int Quantity);
+
+public sealed record OrganizerTreeResponse(
+    OrganizerRootResponse Root,
+    IReadOnlyList<OrganizerPlaceResponse> Places,
+    IReadOnlyList<OrganizerItemResponse> Items);
 
 public sealed record ItemWriteRequest(
     string? Name,

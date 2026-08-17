@@ -5,6 +5,9 @@ import { AppTabs } from "@/components/navigation/AppTabs"
 import { ThemeProvider } from "@/theme/context"
 
 let mockNativeTabsProps: Record<string, unknown> | undefined
+let mockPathname = "/"
+
+jest.mock("expo-router", () => ({ usePathname: () => mockPathname }))
 
 jest.mock("expo-router/unstable-native-tabs", () => {
   const { Text: NativeText, View } = jest.requireActual("react-native")
@@ -26,11 +29,19 @@ jest.mock("expo-router/unstable-native-tabs", () => {
     return <View>{children}</View>
   }
   NativeTabs.Trigger = Trigger
+  const BottomAccessory = ({ children }: { children: ReactNode }) => <View>{children}</View>
+  BottomAccessory.usePlacement = () => "regular"
+  NativeTabs.BottomAccessory = BottomAccessory
 
   return { NativeTabs }
 })
 
 describe("AppTabs", () => {
+  beforeEach(() => {
+    mockPathname = "/"
+    mockNativeTabsProps = undefined
+  })
+
   it("declares the stable top-level destinations", () => {
     const screen = render(
       <ThemeProvider>
@@ -46,7 +57,34 @@ describe("AppTabs", () => {
     expect(screen.getByText("Settings")).toBeDefined()
     expect(mockNativeTabsProps).toMatchObject({
       disableTransparentOnScrollEdge: true,
+      hidden: false,
     })
     expect(mockNativeTabsProps).not.toHaveProperty("blurEffect")
+  })
+
+  it("keeps tabs on the Places root and hides them for nested content", () => {
+    mockPathname = "/places"
+    const screen = render(
+      <ThemeProvider>
+        <AppTabs />
+      </ThemeProvider>,
+    )
+    expect(mockNativeTabsProps).toMatchObject({ hidden: false })
+
+    mockPathname = "/places/"
+    screen.rerender(
+      <ThemeProvider>
+        <AppTabs />
+      </ThemeProvider>,
+    )
+    expect(mockNativeTabsProps).toMatchObject({ hidden: false })
+
+    mockPathname = "/places/studio"
+    screen.rerender(
+      <ThemeProvider>
+        <AppTabs />
+      </ThemeProvider>,
+    )
+    expect(mockNativeTabsProps).toMatchObject({ hidden: true })
   })
 })

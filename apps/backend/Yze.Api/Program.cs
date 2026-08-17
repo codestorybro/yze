@@ -67,6 +67,7 @@ app.MapGet("/health", async (YzeDbContext db, CancellationToken cancellationToke
 
 app.MapPlaceEndpoints();
 app.MapItemEndpoints();
+app.MapOrganizerEndpoints();
 
 app.Run();
 

@@ -1,8 +1,7 @@
 import { render } from "@testing-library/react-native"
 
-import PlacesLayout from "@/app/(tabs)/places/_layout"
+import PlacesLayout, { unstable_settings } from "@/app/(tabs)/places/_layout"
 
-const mockSetNativeTabsHidden = jest.fn()
 const mockScreenOptions = new Map<string, Record<string, unknown>>()
 
 jest.mock("expo-router", () => {
@@ -16,15 +15,8 @@ jest.mock("expo-router", () => {
     return null
   }
   Stack.Screen = StackScreen
-
-  return {
-    Stack,
-    useFocusEffect: (effect: () => void) => effect(),
-  }
+  return { Stack }
 })
-jest.mock("@/components/ScreenChromeContext", () => ({
-  useScreenChrome: () => ({ setNativeTabsHidden: mockSetNativeTabsHidden }),
-}))
 jest.mock("@/theme/context", () => ({
   useAppTheme: () => ({ theme: { colors: { background: "white", text: "black" } } }),
 }))
@@ -49,13 +41,13 @@ describe("PlacesLayout", () => {
     }
   })
 
-  it("keeps a transparent native header available for the root Back control", () => {
+  it("leaves the root header hidden because persistent tabs own root navigation", () => {
     render(<PlacesLayout />)
 
-    expect(mockScreenOptions.get("index")).toMatchObject({
-      headerBackVisible: false,
-      headerShown: true,
-      headerTransparent: true,
-    })
+    expect(mockScreenOptions.get("index")).toEqual({ headerShown: false })
+  })
+
+  it("anchors nested deep links to the Places root so native Back always has a destination", () => {
+    expect(unstable_settings).toEqual({ initialRouteName: "index" })
   })
 })

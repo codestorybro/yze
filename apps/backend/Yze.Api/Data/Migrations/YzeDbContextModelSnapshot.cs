@@ -57,6 +57,14 @@ public sealed class YzeDbContextModelSnapshot : ModelSnapshot
             place.HasKey("Id");
             place.HasIndex("ParentPlaceId");
             place.ToTable("Places");
+
+            place.HasData(new
+            {
+                Id = new Guid("0198d0c0-5f37-7c13-9a7b-7a6500000001"),
+                CreatedAt = new DateTimeOffset(2026, 8, 2, 0, 0, 0, TimeSpan.Zero),
+                Name = "All gear",
+                UpdatedAt = new DateTimeOffset(2026, 8, 2, 0, 0, 0, TimeSpan.Zero),
+            });
         });
 
         modelBuilder.Entity("Yze.Api.Domain.Item", item =>

@@ -1,3 +1,4 @@
+import { forwardRef, type ReactElement, type Ref } from "react"
 import type { FlatListProps, ScrollViewProps, ViewStyle } from "react-native"
 import { FlatList, Platform, ScrollView } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
@@ -34,7 +35,10 @@ export function SheetScrollView({ contentContainerStyle, style, ...props }: Scro
   )
 }
 
-export function SheetList<T>({ contentContainerStyle, style, ...props }: FlatListProps<T>) {
+function SheetListInner<T>(
+  { contentContainerStyle, style, ...props }: FlatListProps<T>,
+  ref: Ref<FlatList<T>>,
+) {
   const {
     theme: { colors, spacing },
   } = useAppTheme()
@@ -43,6 +47,7 @@ export function SheetList<T>({ contentContainerStyle, style, ...props }: FlatLis
   return (
     <FlatList
       {...props}
+      ref={ref}
       alwaysBounceVertical={false}
       automaticallyAdjustContentInsets={false}
       automaticallyAdjustKeyboardInsets
@@ -59,6 +64,10 @@ export function SheetList<T>({ contentContainerStyle, style, ...props }: FlatLis
     />
   )
 }
+
+export const SheetList = forwardRef(SheetListInner) as <T>(
+  props: FlatListProps<T> & { ref?: Ref<FlatList<T>> },
+) => ReactElement
 
 const $scrollable: ViewStyle = { flex: 1 }
 const $content: ViewStyle = { flexGrow: 1 }

@@ -10,13 +10,14 @@ import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import { getApiBaseUrl } from "@/config/api"
 
 import { getApiFailure } from "./apiProblem"
-import { isArrayOf, isItem, isPlaceDetails, isPlaceSummary } from "./contracts"
+import { isArrayOf, isItem, isOrganizerTree, isPlaceDetails, isPlaceSummary } from "./contracts"
 import type {
   ApiConfig,
   ApiResult,
   HelloResponse,
   Item,
   ItemWriteRequest,
+  OrganizerTree,
   PlaceDetails,
   PlaceSummary,
   PlaceWriteRequest,
@@ -66,6 +67,11 @@ export class Api {
   async getRootPlaces(): Promise<ApiResult<PlaceSummary[]>> {
     const response = await this.apisauce.get<unknown>("/api/places")
     return this.result(response, isArrayOf(isPlaceSummary))
+  }
+
+  async getOrganizerTree(): Promise<ApiResult<OrganizerTree>> {
+    const response = await this.apisauce.get<unknown>("/api/organizer/tree")
+    return this.result(response, isOrganizerTree)
   }
 
   async getPlace(id: string): Promise<ApiResult<PlaceDetails>> {
@@ -143,6 +149,7 @@ export class Api {
 
 export const getHello = () => new Api().getHello()
 export const getRootPlaces = () => new Api().getRootPlaces()
+export const getOrganizerTree = () => new Api().getOrganizerTree()
 export const getPlace = (id: string) => new Api().getPlace(id)
 export const getChildPlaces = (id: string) => new Api().getChildPlaces(id)
 export const createPlace = (request: PlaceWriteRequest) => new Api().createPlace(request)

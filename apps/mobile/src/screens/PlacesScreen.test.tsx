@@ -1,31 +1,66 @@
 import { router } from "expo-router"
-import { fireEvent, render } from "@testing-library/react-native"
+import { act, fireEvent, render, waitFor } from "@testing-library/react-native"
 
 import { PlacesScreen } from "@/screens/PlacesScreen"
-import type { PlaceSummary } from "@/services/api/types"
+import { moveItem, movePlace } from "@/services/api"
+import type { OrganizerTree } from "@/services/api/types"
 import { ThemeProvider } from "@/theme/context"
+import { notifySuccess } from "@/utils/safeHaptics"
 
 let mockResource: Record<string, any>
-let mockListProps: Record<string, any>
+let mockTreeProps: Record<string, any>
+const mockShowToast = jest.fn()
 
 jest.mock("@/hooks/useFocusedApiResource", () => ({
   useFocusedApiResource: () => mockResource,
 }))
-jest.mock("expo-router", () => ({ router: { navigate: jest.fn(), push: jest.fn() } }))
+jest.mock("expo-router", () => ({ router: { push: jest.fn() } }))
+jest.mock("@/components/feedback/ToastProvider", () => ({
+  useToast: () => ({ showToast: mockShowToast }),
+}))
+jest.mock("@/services/api", () => ({
+  getOrganizerTree: jest.fn(),
+  moveItem: jest.fn(),
+  movePlace: jest.fn(),
+}))
+jest.mock("@/utils/safeHaptics", () => ({ notifySuccess: jest.fn() }))
 jest.mock("@/components/organizer/ListScreen", () => {
   const { View } = jest.requireActual("react-native")
   return {
-    ListScreen: (props: any) => {
-      mockListProps = props
-      const { data, ListEmptyComponent, ListHeaderComponent, renderItem } = props
+    ListScreen: ({ ListEmptyComponent, ListHeaderComponent }: any) => (
+      <View>
+        {ListHeaderComponent}
+        {ListEmptyComponent}
+      </View>
+    ),
+  }
+})
+jest.mock("@/components/organizer/OrganizerTreeView", () => {
+  const { Pressable, Text, View } = jest.requireActual("react-native")
+  return {
+    OrganizerTreeView: (props: any) => {
+      mockTreeProps = props
       return (
         <View>
-          {ListHeaderComponent}
-          {data.length
-            ? data.map((item: unknown, index: number) => (
-                <View key={(item as { id: string }).id}>{renderItem({ item, index })}</View>
-              ))
-            : ListEmptyComponent}
+          {props.ListHeaderComponent}
+          {props.tree.places.map((place: { id: string; name: string }) => (
+            <Pressable
+              accessibilityLabel={`Open ${place.name}`}
+              key={place.id}
+              onPress={() => props.onOpenPlace(place.id)}
+            >
+              <Text>{place.name}</Text>
+            </Pressable>
+          ))}
+          {props.tree.items.map((item: { id: string; name: string }) => (
+            <Pressable
+              accessibilityLabel={`Open ${item.name}`}
+              key={item.id}
+              onPress={() => props.onOpenItem(item.id)}
+            >
+              <Text>{item.name}</Text>
+            </Pressable>
+          ))}
         </View>
       )
     },
@@ -34,16 +69,6 @@ jest.mock("@/components/organizer/ListScreen", () => {
 jest.mock("@/components/organizer/FeatureHeader", () => {
   const { Text } = jest.requireActual("react-native")
   return { FeatureHeader: ({ title }: { title: string }) => <Text>{title}</Text> }
-})
-jest.mock("@/components/organizer/PlaceCard", () => {
-  const { Pressable, Text } = jest.requireActual("react-native")
-  return {
-    PlaceCard: ({ onPress, place }: { onPress: () => void; place: PlaceSummary }) => (
-      <Pressable onPress={onPress} accessibilityRole="button">
-        <Text>{place.name}</Text>
-      </Pressable>
-    ),
-  }
 })
 jest.mock("@/components/organizer/ContentState", () => {
   const { Pressable, Text, View } = jest.requireActual("react-native")
@@ -62,6 +87,10 @@ jest.mock("@/components/organizer/ContentState", () => {
   }
 })
 
+const mockedMoveItem = moveItem as jest.MockedFunction<typeof moveItem>
+const mockedMovePlace = movePlace as jest.MockedFunction<typeof movePlace>
+const mockedNotifySuccess = notifySuccess as jest.MockedFunction<typeof notifySuccess>
+
 function renderScreen() {
   return render(
     <ThemeProvider>
@@ -73,36 +102,55 @@ function renderScreen() {
 describe("PlacesScreen", () => {
   beforeEach(() => {
     mockResource = {
-      data: [],
+      data: tree(),
       error: null,
       loading: false,
-      refresh: jest.fn(),
+      refresh: jest.fn().mockResolvedValue(undefined),
       refreshing: false,
       retry: jest.fn(),
     }
+    mockedMoveItem.mockResolvedValue({ kind: "ok", data: {} as never })
+    mockedMovePlace.mockResolvedValue({ kind: "ok", data: {} as never })
     jest.clearAllMocks()
   })
 
-  it("moves the empty-state copy into the primary header without a duplicate CTA", () => {
+  it("starts from the immutable root without forcing artificial scrolling", async () => {
+    mockResource.data = { ...tree(), places: [], items: [] }
     const screen = renderScreen()
 
-    expect(screen.getByText("Start with one real place")).toBeDefined()
-    expect(screen.queryByText("Create your first Place")).toBeNull()
-    expect(mockListProps.scrollEnabled).toBe(false)
+    await waitFor(() => expect(screen.getByText("Start with something real")).toBeDefined())
+    expect(mockTreeProps.scrollEnabled).toBeUndefined()
+    expect(mockTreeProps.tree.root.name).toBe("All gear")
   })
 
-  it("renders and opens visual root Places", () => {
-    mockResource.data = [place("Desk"), place("Camera case", "place-2")]
+  it("opens both Places and Items from the same hierarchy", async () => {
     const screen = renderScreen()
 
-    fireEvent.press(screen.getByText("Desk"))
-    expect(router.push).toHaveBeenCalledWith("/places/place-1")
-    expect(screen.getByText("Camera case")).toBeDefined()
-    expect(screen.getByText("Places")).toBeDefined()
-    expect(mockListProps.scrollEnabled).toBe(true)
+    await waitFor(() => expect(screen.getByText("Your gear tree")).toBeDefined())
+    fireEvent.press(screen.getByLabelText("Open Studio"))
+    fireEvent.press(screen.getByLabelText("Open Camera"))
+
+    expect(router.push).toHaveBeenCalledWith("/places/studio")
+    expect(router.push).toHaveBeenCalledWith("/places/item/camera")
   })
 
-  it("keeps API errors recoverable", () => {
+  it("persists one drag move and gives one success feedback", async () => {
+    renderScreen()
+    await waitFor(() => expect(mockTreeProps.onMove).toBeDefined())
+
+    await act(async () => {
+      await mockTreeProps.onMove({ kind: "item", id: "camera" }, "studio")
+    })
+
+    expect(mockedMoveItem).toHaveBeenCalledTimes(1)
+    expect(mockedMoveItem).toHaveBeenCalledWith("camera", "studio")
+    expect(mockedNotifySuccess).toHaveBeenCalledTimes(1)
+    expect(mockShowToast).toHaveBeenCalledWith("Item moved to Studio")
+    expect(mockResource.refresh).toHaveBeenCalledTimes(1)
+  })
+
+  it("keeps initial API errors recoverable", () => {
+    mockResource.data = null
     mockResource.error = "Backend unavailable"
     const screen = renderScreen()
 
@@ -111,15 +159,29 @@ describe("PlacesScreen", () => {
   })
 })
 
-function place(name: string, id = "place-1"): PlaceSummary {
+function tree(): OrganizerTree {
+  const timestamp = "2026-08-02T10:00:00Z"
   return {
-    id,
-    name,
-    photoUrl: null,
-    description: null,
-    childPlaceCount: 0,
-    itemCount: 0,
-    createdAt: "2026-08-01T10:00:00Z",
-    updatedAt: "2026-08-01T10:00:00Z",
+    root: { id: "root", name: "All gear", childPlaceCount: 1, itemCount: 1 },
+    places: [
+      {
+        id: "studio",
+        parentPlaceId: "root",
+        name: "Studio",
+        photoUrl: null,
+        description: null,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      },
+    ],
+    items: [
+      {
+        id: "camera",
+        placeId: "root",
+        name: "Camera",
+        iconKey: "camera",
+        quantity: 1,
+      },
+    ],
   }
 }

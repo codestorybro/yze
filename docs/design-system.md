@@ -214,6 +214,12 @@ Router's native tabs instead of drawing a custom tab bar:
 - Android receives the native Android navigation bar and Material symbols;
 - web receives Expo Router's functional fallback.
 
+The Places root keeps those destinations visible. Its Add/Manage actions use
+`NativeTabs.BottomAccessory` on iOS 26 and a small trailing semantic dock on fallback platforms.
+The native host owns tab and accessory geometry; Yze does not measure or duplicate a presumed tab
+height with constants. Nested Places content hides the global destinations and changes to the
+detail-specific toolbar.
+
 The routes and screens know only about destinations. They contain no platform or OS-version checks.
 `NativeTabs` is currently an alpha Expo Router API, so all direct usage stays inside `AppTabs`. If
 its API changes, only that boundary should need migration. See the
@@ -240,10 +246,22 @@ creation remains inside the Places experience, preserving one clear focal Home a
 
 ## Reference experience: Places and Items
 
-The Places tab is a visual map rather than an administrative list:
+The Places tab is an interactive hierarchy rather than an administrative list:
 
-- `PlaceCard` is a large container surface. Photo, fallback artwork, name, direct child counts, and a
-  directional cue establish that it can be entered;
+- `OrganizerTreeView` reconstructs the flat API projection below the fixed **All gear** root. Quiet
+  connector rails, depth indentation, semantic Place/Item visuals, and progressive expand/collapse
+  communicate structure without turning every row into a heavy card;
+- the root has one locked visual state and no mutation affordance. Places use the container symbol;
+  Items always render their persisted semantic `iconKey` through `ItemIcon`;
+- long press and drag reparents a Place or Item. Legal containers highlight, collapsed Places expand
+  on hover, and holding near an edge autoscrolls continuously. The motion uses compositor transforms
+  and system Reduce Motion behavior; layout transitions live on a wrapper so they never overwrite
+  the active drag transform;
+- drag and drop has an equivalent accessible **Move** action. Selection mode uses radio semantics,
+  exposes invalid branches as disabled, reports hierarchy depth, and keeps expand/collapse state
+  available to assistive technology;
+- `PlaceCard` is a large container surface on detail levels. Photo, fallback artwork, name, direct
+  child counts, and a directional cue establish that it can be entered;
 - `ItemCard` is denser and object-like. Its semantic Item icon, identity, quantity, and direction are
   visually subordinate to Place containers;
 - `RemotePhoto` owns loading failure and the no-photo path. A broken image placeholder must never
@@ -254,21 +272,25 @@ The Places tab is a visual map rather than an administrative list:
   errors, contrast, and touch sizing;
 - `ListScreen` is the virtualized counterpart to `Screen`. It owns automatic iOS insets, Android's
   top system inset, end clearance, pull-to-refresh geometry, tab scroll-to-top integration, and
-  disables vertical bounce when content is shorter than the viewport. Confirmed empty map/detail
-  states disable scrolling entirely;
+  disables vertical bounce when content is shorter than the viewport. It does not force content to
+  fill the viewport, so a short hierarchy cannot scroll through artificial empty space. A confirmed
+  empty Place detail disables scrolling; the root remains overflow-safe for large text.
 
-The root view uses a two-column Place map. A Place detail level mixes full-width child Place cards
-with compact Item cards and never fetches the whole tree. Breadcrumbs retain the complete accessible
-path but visually collapse long ancestry to the last useful context.
+The root view fetches one lightweight tree projection and renders Places and Items in the same
+hierarchy. A Place detail still fetches only its direct contents and mixes full-width child Place
+cards with compact Item cards. Breadcrumbs retain the complete accessible path but visually collapse
+long ancestry to the last useful context. Item and Place detail content begins at the common safe top
+offset; scroll wrappers grow beyond the viewport without `flex: 1`, keeping the final content above
+the contextual toolbar instead of clipping it.
 
-Inside Places, persistent global tabs yield to contextual native controls. `FloatingBackButton`
-owns Back in the transparent Stack header, so the control stays fixed while content scrolls beneath
-it. It uses the native Liquid Glass header item on iOS 26, standard UIKit material on older iOS, and
-a tonal floating surface on Android. `ContextualToolbar` uses the native bottom Stack toolbar: the
-root exposes **Add** and **Manage**, Place details expose the same actions in their current context,
-and Item details expose icon-only **Delete**, **Move**, and **Edit** actions with accessible labels.
-Web uses compact semantic fallbacks because Stack toolbars are native-only. Screens never select
-these materials themselves.
+At the Places root, global native tabs remain the primary way back to Home or Settings. A separate
+trailing toolbar above them exposes **Add** and **Manage** without replacing navigation. On nested
+routes, `FloatingBackButton` owns Back in the transparent Stack header, so the control stays fixed
+while content scrolls beneath it. It uses the native Liquid Glass header item on iOS 26, standard
+UIKit material on older iOS, and a tonal floating surface on Android. Place details expose contextual
+Add/Edit actions, and Item details expose icon-only **Delete**, **Move**, and **Edit** actions with
+accessible labels. Web uses compact semantic fallbacks because Stack toolbars are native-only.
+Screens never select these materials themselves.
 
 Creation, selection, movement, and editing are presented as native form sheets that open at an 80%
 detent. A second 100% detent gives the native gesture a stable expansion target and prevents sheet
@@ -280,20 +302,26 @@ view of the route. Do not wrap sheet scrollables in the full-screen `Screen` hie
 sheet coordinator must see them directly to preserve content while changing detents or keyboard
 state.
 
+Move and existing-Place selection render the same complete tree instead of requiring repeated
+level-by-level navigation. Selecting a deep node must not move the user away from its context: one
+fixed `TreeSelectionBar` above the sheet's safe bottom shows the destination and confirmation action,
+while a footer spacer keeps the last tree node unobscured. The bar remains a sibling of the native
+list, preserving the sheet's first-scrollable boundary.
+
 Creation uses progressive disclosure. A Place needs only a name; photo URL and description expand on
 demand. An Item begins with name, icon, optional photo URL, visible preselected destination, and Save.
 Identification, purchase/warranty, and organization groups appear only after **Add details**. Failed
 mutations preserve every field and expose backend validation beside the relevant input.
 
-Short spring press feedback explains that a Place can be entered. Confirmed insertions and removals
-use Reanimated layout transitions with `ReduceMotion.System`. A global, accessible toast is the
-authoritative success confirmation and remains visible after a sheet closes. Successful create,
-edit, move, attach, and delete operations request exactly one best-effort haptic pulse after the API
-response: a medium impact on iOS and the native confirmation effect on Android. A missing or stale
-native module must never prevent navigation after persistence. Do not animate every label, block
-interaction with long sequences, or imply persistence before it succeeds. Place and Item content
-surfaces remain opaque semantic cards on every platform; Liquid Glass stays with native navigation
-and truly floating controls.
+Short spring press feedback explains that a Place can be entered. Confirmed insertions, removals,
+and hierarchy changes use Reanimated layout transitions with `ReduceMotion.System`. A global,
+accessible toast is the authoritative success confirmation and remains visible after a sheet closes.
+Successful create, edit, move, attach, and delete operations request exactly one best-effort haptic
+pulse after the API response: a medium impact on iOS and the native confirmation effect on Android.
+A missing or stale native module must never prevent navigation after persistence. Do not animate
+every label, block interaction with long sequences, or imply persistence before it succeeds. Place
+and Item content surfaces remain opaque semantic cards on every platform; Liquid Glass stays with
+native navigation and truly floating controls.
 
 ## Launch and screen-edge behavior
 

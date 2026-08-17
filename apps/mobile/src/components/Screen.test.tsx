@@ -67,4 +67,13 @@ describe("Screen", () => {
 
     expect(screen.queryByTestId("screen-top-edge-fade")).toBeNull()
   })
+
+  it("lets scroll content grow beyond the viewport without clipping its bottom", () => {
+    const screen = renderScreen()
+    const innerStyle = StyleSheet.flatten(screen.getByTestId("screen-scroll-inner").props.style)
+
+    expect(innerStyle.flex).toBeUndefined()
+    expect(innerStyle.flexGrow).toBe(1)
+    expect(innerStyle.flexShrink).toBe(0)
+  })
 })

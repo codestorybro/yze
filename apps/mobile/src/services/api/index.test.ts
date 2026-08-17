@@ -1,6 +1,6 @@
 import type { ApiResponse } from "apisauce"
 
-import type { HelloResponse, Item, PlaceSummary } from "./types"
+import type { HelloResponse, Item, OrganizerTree, PlaceSummary } from "./types"
 
 import { Api } from "."
 
@@ -53,6 +53,38 @@ describe("Api organizer endpoints", () => {
       .mockResolvedValue({ ok: true, data: [{ id: "only-id" }] } as ApiResponse<unknown>)
 
     await expect(api.getRootPlaces()).resolves.toEqual({ kind: "bad-data" })
+  })
+
+  it("loads and validates the complete organizer tree", async () => {
+    const tree: OrganizerTree = {
+      root: { id: "root-1", name: "All gear", childPlaceCount: 1, itemCount: 0 },
+      places: [
+        {
+          id: "place-1",
+          parentPlaceId: "root-1",
+          name: "Desk",
+          photoUrl: null,
+          description: null,
+          createdAt: "2026-08-01T10:00:00Z",
+          updatedAt: "2026-08-01T10:00:00Z",
+        },
+      ],
+      items: [
+        {
+          id: "item-1",
+          placeId: "place-1",
+          name: "Cable",
+          iconKey: "cable",
+          quantity: 1,
+        },
+      ],
+    }
+    const get = jest
+      .spyOn(api.apisauce, "get")
+      .mockResolvedValue({ ok: true, data: tree } as ApiResponse<OrganizerTree>)
+
+    await expect(api.getOrganizerTree()).resolves.toEqual({ kind: "ok", data: tree })
+    expect(get).toHaveBeenCalledWith("/api/organizer/tree")
   })
 
   it("creates an Item inside the selected Place", async () => {

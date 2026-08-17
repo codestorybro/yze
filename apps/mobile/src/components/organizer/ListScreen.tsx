@@ -51,4 +51,4 @@ export const ListScreen = forwardRef(ListScreenInner) as <T>(
 
 const $screen: ViewStyle = { flex: 1 }
 const $list: ViewStyle = { flex: 1 }
-const $content: ViewStyle = { flexGrow: 1 }
+const $content: ViewStyle = {}

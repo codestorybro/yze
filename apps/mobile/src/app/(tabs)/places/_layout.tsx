@@ -1,22 +1,13 @@
-import { useCallback } from "react"
-import { Stack, useFocusEffect } from "expo-router"
+import { Stack } from "expo-router"
 
-import { useScreenChrome } from "@/components/ScreenChromeContext"
 import { useAppTheme } from "@/theme/context"
+
+export const unstable_settings = { initialRouteName: "index" }
 
 export default function PlacesLayout() {
   const {
     theme: { colors },
   } = useAppTheme()
-  const { setNativeTabsHidden } = useScreenChrome()
-
-  useFocusEffect(
-    useCallback(() => {
-      setNativeTabsHidden(true)
-      return () => setNativeTabsHidden(false)
-    }, [setNativeTabsHidden]),
-  )
-
   const headerOptions = {
     headerBackButtonDisplayMode: "minimal" as const,
     headerBackVisible: false,
@@ -44,7 +35,7 @@ export default function PlacesLayout() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="index" options={headerOptions} />
+      <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="[placeId]" options={headerOptions} />
       <Stack.Screen name="item/[itemId]" options={headerOptions} />
       <Stack.Screen name="add" options={sheetOptions} />

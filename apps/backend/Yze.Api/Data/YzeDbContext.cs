@@ -22,6 +22,13 @@ public sealed class YzeDbContext(DbContextOptions<YzeDbContext> options) : DbCon
             .WithMany(value => value.ChildPlaces)
             .HasForeignKey(value => value.ParentPlaceId)
             .OnDelete(DeleteBehavior.Restrict);
+        place.HasData(new Place
+        {
+            Id = OrganizerRoot.Id,
+            Name = OrganizerRoot.Name,
+            CreatedAt = OrganizerRoot.CreatedAt,
+            UpdatedAt = OrganizerRoot.CreatedAt,
+        });
 
         var item = modelBuilder.Entity<Item>();
         item.ToTable("Items");

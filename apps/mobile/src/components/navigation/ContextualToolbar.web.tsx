@@ -56,9 +56,10 @@ const $host: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   position: "absolute",
   zIndex: 100,
   right: 0,
-  bottom: spacing.lg,
+  bottom: 92,
   left: 0,
-  alignItems: "center",
+  alignItems: "flex-end",
+  paddingHorizontal: spacing.lg,
 })
 const $toolbar: ThemedStyle<ViewStyle> = ({ colors, radii, spacing }) => ({
   flexDirection: "row",

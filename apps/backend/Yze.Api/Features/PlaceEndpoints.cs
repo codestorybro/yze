@@ -23,7 +23,7 @@ public static class PlaceEndpoints
     }
 
     private static async Task<IResult> ListRoots(YzeDbContext db, CancellationToken cancellationToken) =>
-        Results.Ok(await Summaries(db, null, cancellationToken));
+        Results.Ok(await Summaries(db, OrganizerRoot.Id, cancellationToken));
 
     private static async Task<IResult> ListChildren(
         Guid id,
@@ -56,7 +56,7 @@ public static class PlaceEndpoints
         var visited = new HashSet<Guid> { place.Id };
         var parentId = place.ParentPlaceId;
 
-        while (parentId is not null && visited.Add(parentId.Value))
+        while (parentId is not null && parentId != OrganizerRoot.Id && visited.Add(parentId.Value))
         {
             var parent = await db.Places
                 .AsNoTracking()
@@ -79,8 +79,9 @@ public static class PlaceEndpoints
 
         return Results.Ok(new PlaceDetailsResponse(
             place.Id,
+            place.Id == OrganizerRoot.Id,
             place.Name,
-            place.ParentPlaceId,
+            place.ParentPlaceId == OrganizerRoot.Id ? null : place.ParentPlaceId,
             place.PhotoUrl,
             place.Description,
             place.CreatedAt,
@@ -98,8 +99,8 @@ public static class PlaceEndpoints
         var errors = RequestValidation.ValidatePlace(request.Name, request.PhotoUrl, request.Description);
         if (errors.Count > 0) return ApiProblems.Validation(errors);
 
-        if (request.ParentPlaceId is not null &&
-            !await db.Places.AnyAsync(place => place.Id == request.ParentPlaceId, cancellationToken))
+        var parentPlaceId = request.ParentPlaceId ?? OrganizerRoot.Id;
+        if (!await db.Places.AnyAsync(place => place.Id == parentPlaceId, cancellationToken))
         {
             return ApiProblems.NotFound(
                 "parent_place_not_found",
@@ -111,7 +112,7 @@ public static class PlaceEndpoints
         {
             Id = Guid.CreateVersion7(),
             Name = request.Name!.Trim(),
-            ParentPlaceId = request.ParentPlaceId,
+            ParentPlaceId = parentPlaceId,
             PhotoUrl = RequestValidation.NormalizeOptional(request.PhotoUrl),
             Description = RequestValidation.NormalizeOptional(request.Description),
             CreatedAt = now,
@@ -140,6 +141,8 @@ public static class PlaceEndpoints
         YzeDbContext db,
         CancellationToken cancellationToken)
     {
+        if (id == OrganizerRoot.Id) return ImmutableRoot();
+
         var errors = RequestValidation.ValidatePlace(request.Name, request.PhotoUrl, request.Description);
         if (errors.Count > 0) return ApiProblems.Validation(errors);
 
@@ -164,6 +167,8 @@ public static class PlaceEndpoints
         YzeDbContext db,
         CancellationToken cancellationToken)
     {
+        if (id == OrganizerRoot.Id) return ImmutableRoot();
+
         await using var transaction = await db.Database.BeginTransactionAsync(
             IsolationLevel.Serializable,
             cancellationToken);
@@ -173,15 +178,17 @@ public static class PlaceEndpoints
             return ApiProblems.NotFound("place_not_found", "The requested Place does not exist.");
         }
 
-        if (request.ParentPlaceId == place.Id)
+        var parentPlaceId = request.ParentPlaceId ?? OrganizerRoot.Id;
+
+        if (parentPlaceId == place.Id)
         {
             return ApiProblems.Conflict("place_cycle", "A Place cannot be its own parent.");
         }
 
-        if (request.ParentPlaceId is not null)
+        if (parentPlaceId != OrganizerRoot.Id)
         {
             if (!await db.Places.AnyAsync(
-                    value => value.Id == request.ParentPlaceId.Value,
+                    value => value.Id == parentPlaceId,
                     cancellationToken))
             {
                 return ApiProblems.NotFound(
@@ -189,7 +196,7 @@ public static class PlaceEndpoints
                     "The selected parent Place does not exist.");
             }
 
-            if (await CreatesCycle(place.Id, request.ParentPlaceId.Value, db, cancellationToken))
+            if (await CreatesCycle(place.Id, parentPlaceId, db, cancellationToken))
             {
                 return ApiProblems.Conflict(
                     "place_cycle",
@@ -197,7 +204,7 @@ public static class PlaceEndpoints
             }
         }
 
-        place.ParentPlaceId = request.ParentPlaceId;
+        place.ParentPlaceId = parentPlaceId;
         place.UpdatedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
@@ -210,6 +217,8 @@ public static class PlaceEndpoints
         YzeDbContext db,
         CancellationToken cancellationToken)
     {
+        if (id == OrganizerRoot.Id) return ImmutableRoot();
+
         var place = await db.Places.SingleOrDefaultAsync(value => value.Id == id, cancellationToken);
         if (place is null)
         {
@@ -301,4 +310,8 @@ public static class PlaceEndpoints
 
         return currentId is not null;
     }
+
+    private static IResult ImmutableRoot() => ApiProblems.Conflict(
+        "organizer_root_immutable",
+        "The organizer root cannot be edited, moved, or deleted.");
 }

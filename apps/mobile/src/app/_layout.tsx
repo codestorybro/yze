@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Slot, ThemeProvider as NavigationThemeProvider } from "expo-router"
 import * as SplashScreen from "expo-splash-screen"
 import { useFonts } from "@expo-google-fonts/space-grotesk"
+import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 
 import { AppLaunchGate } from "@/components/AppLaunchGate"
@@ -42,17 +43,21 @@ export default function Root() {
   }, [fontError])
 
   return (
-    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <ThemeProvider>
-        <ToastProvider>
-          <AppLaunchGate ready={loaded}>
-            <RootNavigation />
-          </AppLaunchGate>
-        </ToastProvider>
-      </ThemeProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={$root}>
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+        <ThemeProvider>
+          <ToastProvider>
+            <AppLaunchGate ready={loaded}>
+              <RootNavigation />
+            </AppLaunchGate>
+          </ToastProvider>
+        </ThemeProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   )
 }
+
+const $root = { flex: 1 } as const
 
 function RootNavigation() {
   const { navigationTheme } = useAppTheme()

@@ -6,7 +6,7 @@ import { useToast } from "@/components/feedback/ToastProvider"
 import { ContextualToolbar } from "@/components/navigation/ContextualToolbar"
 import { FloatingBackButton } from "@/components/navigation/FloatingBackButton"
 import { ItemDetailsScreen } from "@/screens/ItemDetailsScreen"
-import { deleteItem, getItem } from "@/services/api"
+import { deleteItem, getItem, getPlace } from "@/services/api"
 import { apiFailureMessage } from "@/services/api/problemMessage"
 import { notifySuccess } from "@/utils/safeHaptics"
 
@@ -33,6 +33,8 @@ export default function ItemDetailsRoute() {
     if (deleting) return
     setDeleting(true)
     const itemResult = await getItem(id)
+    const placeResult =
+      itemResult.kind === "ok" ? await getPlace(itemResult.data.placeId) : undefined
     const result = await deleteItem(id)
     setDeleting(false)
 
@@ -40,7 +42,9 @@ export default function ItemDetailsRoute() {
       showToast("Item deleted")
       void notifySuccess()
       router.dismissTo(
-        (itemResult.kind === "ok" ? `/places/${itemResult.data.placeId}` : "/places") as Href,
+        (itemResult.kind === "ok" && placeResult?.kind === "ok" && !placeResult.data.isRoot
+          ? `/places/${itemResult.data.placeId}`
+          : "/places") as Href,
       )
       return
     }

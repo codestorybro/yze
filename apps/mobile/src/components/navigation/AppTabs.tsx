@@ -1,9 +1,13 @@
 import { useState } from "react"
 import { Platform } from "react-native"
+import { usePathname } from "expo-router"
 import { NativeTabs } from "expo-router/unstable-native-tabs"
 
 import { NativeTabsScreenChromeProvider } from "@/components/ScreenChromeContext"
 import { useAppTheme } from "@/theme/context"
+
+import type { ContextualToolbarAction } from "./ContextualToolbar.types"
+import { NativeTabAccessory } from "./NativeTabAccessory"
 
 /**
  * The semantic bottom-navigation boundary for the application.
@@ -14,6 +18,10 @@ import { useAppTheme } from "@/theme/context"
  */
 export function AppTabs() {
   const [hidden, setHidden] = useState(false)
+  const [accessoryActions, setAccessoryActions] = useState<ContextualToolbarAction[]>([])
+  const pathname = usePathname()
+  const normalizedPathname = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname
+  const effectiveHidden = hidden || normalizedPathname.startsWith("/places/")
   const {
     theme: { colors },
   } = useAppTheme()
@@ -26,17 +34,26 @@ export function AppTabs() {
   })
 
   return (
-    <NativeTabsScreenChromeProvider hidden={hidden} setHidden={setHidden}>
+    <NativeTabsScreenChromeProvider
+      hidden={effectiveHidden}
+      setAccessoryActions={setAccessoryActions}
+      setHidden={setHidden}
+    >
       <NativeTabs
         backBehavior="history"
         backgroundColor={Platform.select({ web: colors.surfaceRaised })}
         disableTransparentOnScrollEdge
-        hidden={hidden}
+        hidden={effectiveHidden}
         labelVisibilityMode="labeled"
         labelStyle={webLabelStyle}
         tabBarRespectsIMEInsets
         tintColor={colors.tint}
       >
+        {!effectiveHidden && accessoryActions.length > 0 ? (
+          <NativeTabs.BottomAccessory>
+            <NativeTabAccessory actions={accessoryActions} />
+          </NativeTabs.BottomAccessory>
+        ) : null}
         <NativeTabs.Trigger name="index" indicatorColor={webIndicatorColor}>
           <NativeTabs.Trigger.Icon
             sf={{ default: "house", selected: "house.fill" }}

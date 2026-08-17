@@ -69,6 +69,7 @@ export function PlaceDetailsScreen({ placeId }: PlaceDetailsScreenProps) {
           <View style={themed($header)}>
             <FeatureHeader
               eyebrow={contents.length === 0 ? place.name : "Place"}
+              reserveNavigationSpace={false}
               title={contents.length === 0 ? "Ready for something" : place.name}
               subtitle={
                 contents.length === 0
@@ -134,6 +135,7 @@ export function PlaceDetailsScreen({ placeId }: PlaceDetailsScreenProps) {
         }
         return null
       }}
+      bounces={contents.length > 0}
       showsVerticalScrollIndicator={false}
     />
   )
